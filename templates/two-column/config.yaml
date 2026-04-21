@@ -1,0 +1,17 @@
+id: two-column
+name: Two Column
+version: "1.0.0"
+category: layout
+slots:
+  - name: title
+    type: text
+    required: false
+    description: "Optional slide title displayed above both columns"
+  - name: leftContent
+    type: richText
+    required: true
+    description: "HTML content for the left column"
+  - name: rightContent
+    type: richText
+    required: true
+    description: "HTML content for the right column"

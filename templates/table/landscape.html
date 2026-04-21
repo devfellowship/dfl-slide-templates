@@ -1,0 +1,25 @@
+<div class="tpl-root tpl-table">
+  {{#title}}
+  <h2 class="tpl-table__title">{{title}}</h2>
+  {{/title}}
+  <div class="tpl-table__wrapper">
+    <table class="tpl-table__table">
+      <thead class="tpl-table__thead">
+        <tr class="tpl-table__header-row">
+          {{#headers}}
+          <th class="tpl-table__th">{{label}}</th>
+          {{/headers}}
+        </tr>
+      </thead>
+      <tbody class="tpl-table__tbody">
+        {{#rows}}
+        <tr class="tpl-table__row">
+          {{#cells}}
+          <td class="tpl-table__td">{{value}}</td>
+          {{/cells}}
+        </tr>
+        {{/rows}}
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,12 @@
+{
+  "templates": [
+    {"id": "title", "version": "1.0.0", "category": "content"},
+    {"id": "bullet-list", "version": "1.0.0", "category": "content"},
+    {"id": "two-column", "version": "1.0.0", "category": "layout"},
+    {"id": "img-text", "version": "1.0.0", "category": "layout"},
+    {"id": "quote", "version": "1.0.0", "category": "content"},
+    {"id": "code-block", "version": "1.0.0", "category": "content"},
+    {"id": "table", "version": "1.0.0", "category": "data"},
+    {"id": "chart", "version": "1.0.0", "category": "data"}
+  ]
+}

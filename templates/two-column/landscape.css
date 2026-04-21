@@ -1,0 +1,68 @@
+.tpl-root.tpl-two-column {
+  display: flex;
+  flex-direction: column;
+  width: 960px;
+  height: 540px;
+  background: #ffffff;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  box-sizing: border-box;
+  padding: 48px 60px;
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 28px 0;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__columns {
+  display: flex;
+  flex: 1;
+  gap: 0;
+  overflow: hidden;
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__col {
+  flex: 1;
+  overflow: hidden;
+  font-size: 18px;
+  color: #374151;
+  line-height: 1.6;
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__col--left {
+  padding-right: 32px;
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__col--right {
+  padding-left: 32px;
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__divider {
+  width: 1px;
+  background: #e5e7eb;
+  flex-shrink: 0;
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__col h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 12px 0;
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__col p {
+  margin: 0 0 12px 0;
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__col ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__col li {
+  margin-bottom: 6px;
+}

@@ -1,0 +1,17 @@
+id: chart
+name: Chart
+version: "1.0.0"
+category: data
+slots:
+  - name: title
+    type: text
+    required: false
+    description: "Optional heading displayed above the chart"
+  - name: chartType
+    type: text
+    required: true
+    description: "Chart type: bar, line, or pie"
+  - name: data
+    type: data
+    required: true
+    description: "JSON data object for the chart (labels and datasets arrays)"

@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  NODE_ENV: development
+
+jobs:
+  lint-css:
+    name: Lint CSS scoping
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run CSS lint
+        run: npm run lint:css
+
+  preview-regen:
+    name: Regenerate previews
+    runs-on: ubuntu-latest
+    needs: lint-css
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Generate previews
+        run: npm run preview
+
+      - name: Check for diff (PRs — fail if previews changed)
+        if: github.event_name == 'pull_request'
+        run: |
+          if ! git diff --quiet; then
+            echo "Preview images are out of date. Please run 'npm run preview' locally and commit the results."
+            git diff --stat
+            exit 1
+          fi
+
+      - name: Commit regenerated previews (push to main only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if ! git diff --quiet; then
+            git add templates/*/preview-landscape.png templates/*/preview-portrait.png
+            git commit -m "chore: regenerate template previews [skip ci]"
+            git push
+          else
+            echo "No preview changes to commit."
+          fi

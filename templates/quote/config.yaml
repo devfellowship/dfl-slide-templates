@@ -1,0 +1,17 @@
+id: quote
+name: Quote
+version: "1.0.0"
+category: content
+slots:
+  - name: quote
+    type: text
+    required: true
+    description: "The main quote text displayed in large format"
+  - name: author
+    type: text
+    required: false
+    description: "Name of the person being quoted"
+  - name: source
+    type: text
+    required: false
+    description: "Source, publication, or context for the quote"

@@ -1,0 +1,67 @@
+.tpl-root.tpl-table {
+  display: flex;
+  flex-direction: column;
+  width: 960px;
+  height: 540px;
+  background: #ffffff;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  box-sizing: border-box;
+  padding: 48px 60px;
+}
+
+.tpl-root.tpl-table .tpl-table__title {
+  font-size: 30px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 24px 0;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.tpl-root.tpl-table .tpl-table__wrapper {
+  flex: 1;
+  overflow: auto;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.tpl-root.tpl-table .tpl-table__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+}
+
+.tpl-root.tpl-table .tpl-table__thead {
+  background: #f3f4f6;
+}
+
+.tpl-root.tpl-table .tpl-table__th {
+  padding: 14px 18px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 700;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+
+.tpl-root.tpl-table .tpl-table__row {
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.tpl-root.tpl-table .tpl-table__row:last-child {
+  border-bottom: none;
+}
+
+.tpl-root.tpl-table .tpl-table__row:nth-child(even) {
+  background: #f9fafb;
+}
+
+.tpl-root.tpl-table .tpl-table__td {
+  padding: 13px 18px;
+  color: #374151;
+  font-size: 15px;
+  line-height: 1.4;
+}

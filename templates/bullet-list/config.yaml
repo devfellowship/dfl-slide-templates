@@ -1,0 +1,13 @@
+id: bullet-list
+name: Bullet List
+version: "1.0.0"
+category: content
+slots:
+  - name: title
+    type: text
+    required: true
+    description: "Section heading displayed at the top of the slide"
+  - name: items
+    type: items
+    required: true
+    description: "Array of list items, each with a 'text' property"

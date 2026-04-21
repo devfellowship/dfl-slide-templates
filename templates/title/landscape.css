@@ -1,0 +1,34 @@
+.tpl-root.tpl-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 960px;
+  height: 540px;
+  background: #ffffff;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  box-sizing: border-box;
+  padding: 60px 80px;
+  text-align: center;
+}
+
+.tpl-root.tpl-title .tpl-title__inner {
+  max-width: 760px;
+}
+
+.tpl-root.tpl-title .tpl-title__heading {
+  font-size: 56px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.15;
+  margin: 0 0 24px 0;
+  letter-spacing: -0.02em;
+}
+
+.tpl-root.tpl-title .tpl-title__subtitle {
+  font-size: 26px;
+  font-weight: 400;
+  color: #6b7280;
+  line-height: 1.4;
+  margin: 0;
+  letter-spacing: -0.01em;
+}

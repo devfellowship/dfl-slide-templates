@@ -1,0 +1,52 @@
+.tpl-root.tpl-bullet-list {
+  display: flex;
+  flex-direction: column;
+  width: 960px;
+  height: 540px;
+  background: #ffffff;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  box-sizing: border-box;
+  padding: 48px 72px;
+}
+
+.tpl-root.tpl-bullet-list .tpl-bullet-list__title {
+  font-size: 36px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 32px 0;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.tpl-root.tpl-bullet-list .tpl-bullet-list__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+  overflow: hidden;
+}
+
+.tpl-root.tpl-bullet-list .tpl-bullet-list__item {
+  display: flex;
+  align-items: flex-start;
+  font-size: 22px;
+  color: #1f2937;
+  line-height: 1.4;
+}
+
+.tpl-root.tpl-bullet-list .tpl-bullet-list__item::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #3b82f6;
+  border-radius: 50%;
+  margin-top: 8px;
+  margin-right: 16px;
+  flex-shrink: 0;
+}

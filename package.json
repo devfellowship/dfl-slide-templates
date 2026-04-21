@@ -1,0 +1,17 @@
+{
+  "name": "dfl-slide-templates",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "preview": "ts-node scripts/preview-gen.ts",
+    "lint:css": "node scripts/lint-css.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.44.0",
+    "@types/mustache": "^4.2.5",
+    "mustache": "^4.2.0",
+    "playwright": "^1.44.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}

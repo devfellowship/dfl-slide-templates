@@ -1,0 +1,57 @@
+.tpl-root.tpl-code-block {
+  display: flex;
+  flex-direction: column;
+  width: 540px;
+  height: 960px;
+  background: #ffffff;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  box-sizing: border-box;
+  padding: 60px 48px;
+}
+
+.tpl-root.tpl-code-block .tpl-code-block__title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 24px 0;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.tpl-root.tpl-code-block .tpl-code-block__container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #1e1e2e;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.tpl-root.tpl-code-block .tpl-code-block__lang-badge {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.tpl-root.tpl-code-block .tpl-code-block__pre {
+  flex: 1;
+  margin: 0;
+  padding: 24px 24px;
+  overflow: auto;
+}
+
+.tpl-root.tpl-code-block .tpl-code-block__code {
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #cdd6f4;
+  white-space: pre;
+  display: block;
+}

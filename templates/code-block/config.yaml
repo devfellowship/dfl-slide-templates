@@ -1,0 +1,17 @@
+id: code-block
+name: Code Block
+version: "1.0.0"
+category: content
+slots:
+  - name: title
+    type: text
+    required: false
+    description: "Optional heading shown above the code block"
+  - name: code
+    type: text
+    required: true
+    description: "The code content to display in monospace format"
+  - name: language
+    type: text
+    required: false
+    description: "Programming language label (e.g. javascript, python)"

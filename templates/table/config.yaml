@@ -1,0 +1,17 @@
+id: table
+name: Data Table
+version: "1.0.0"
+category: data
+slots:
+  - name: title
+    type: text
+    required: false
+    description: "Optional heading displayed above the table"
+  - name: headers
+    type: items
+    required: true
+    description: "Array of column header items, each with a 'label' property"
+  - name: rows
+    type: rows
+    required: true
+    description: "Array of row objects, each with a 'cells' array of objects with a 'value' property"

@@ -1,0 +1,18 @@
+<div class="tpl-root tpl-chart">
+  {{#title}}
+  <h2 class="tpl-chart__title">{{title}}</h2>
+  {{/title}}
+  <div class="tpl-chart__area">
+    <canvas class="tpl-chart__canvas" id="tpl-chart-canvas" data-type="{{chartType}}" data-data="{{data}}"></canvas>
+    <div class="tpl-chart__placeholder">
+      <div class="tpl-chart__placeholder-icon">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="6" y="28" width="8" height="14" rx="1" fill="#3b82f6"/>
+          <rect x="20" y="18" width="8" height="24" rx="1" fill="#60a5fa"/>
+          <rect x="34" y="10" width="8" height="32" rx="1" fill="#93c5fd"/>
+        </svg>
+      </div>
+      <p class="tpl-chart__placeholder-label">{{chartType}} chart</p>
+    </div>
+  </div>
+</div>

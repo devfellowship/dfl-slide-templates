@@ -1,0 +1,21 @@
+id: img-text
+name: Image and Text
+version: "1.0.0"
+category: layout
+slots:
+  - name: imageUrl
+    type: image
+    required: true
+    description: "URL of the image to display"
+  - name: imageAlt
+    type: text
+    required: false
+    description: "Alt text for the image for accessibility"
+  - name: title
+    type: text
+    required: false
+    description: "Optional heading displayed above the body text"
+  - name: body
+    type: richText
+    required: true
+    description: "HTML body text displayed alongside the image"

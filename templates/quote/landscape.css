@@ -1,0 +1,55 @@
+.tpl-root.tpl-quote {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 960px;
+  height: 540px;
+  background: #f9fafb;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  box-sizing: border-box;
+  padding: 60px 100px;
+}
+
+.tpl-root.tpl-quote .tpl-quote__inner {
+  max-width: 720px;
+  text-align: center;
+}
+
+.tpl-root.tpl-quote .tpl-quote__mark {
+  font-size: 96px;
+  line-height: 0.5;
+  color: #3b82f6;
+  font-family: Georgia, 'Times New Roman', serif;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.tpl-root.tpl-quote .tpl-quote__text {
+  font-size: 28px;
+  font-weight: 400;
+  color: #111827;
+  line-height: 1.5;
+  margin: 0 0 28px 0;
+  font-style: italic;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+.tpl-root.tpl-quote .tpl-quote__attribution {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.tpl-root.tpl-quote .tpl-quote__author {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+  display: block;
+}
+
+.tpl-root.tpl-quote .tpl-quote__source {
+  font-size: 15px;
+  color: #6b7280;
+  display: block;
+}

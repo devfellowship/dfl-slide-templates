@@ -6,9 +6,6 @@ on:
   pull_request:
     branches: [main]
 
-permissions:
-  contents: write
-
 env:
   NODE_ENV: development
 
@@ -39,8 +36,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -57,24 +52,11 @@ jobs:
       - name: Generate previews
         run: npm run preview
 
-      - name: Check for diff (PRs — fail if previews changed)
+      - name: Check for preview drift
         if: github.event_name == 'pull_request'
         run: |
           if ! git diff --quiet; then
-            echo "Preview images are out of date. Please run 'npm run preview' locally and commit the results."
+            echo "::warning::Preview images differ from committed versions. Run 'npm run preview' locally and commit the results."
             git diff --stat
             exit 1
-          fi
-
-      - name: Commit regenerated previews (push to main only)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if ! git diff --quiet; then
-            git add templates/*/preview-landscape.png templates/*/preview-portrait.png
-            git commit -m "chore: regenerate template previews [skip ci]"
-            git push
-          else
-            echo "No preview changes to commit."
           fi

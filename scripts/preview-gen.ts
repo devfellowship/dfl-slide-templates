@@ -56,6 +56,11 @@ const SAMPLE_DATA: Record<string, Record<string, unknown>> = {
     language: "typescript",
     code: `import Mustache from 'mustache';\nimport * as fs from 'fs';\n\nconst template = fs.readFileSync('landscape.html', 'utf8');\nconst output = Mustache.render(template, {\n  title: 'Hello, World!',\n  subtitle: 'My first slide',\n});\n\nconsole.log(output);`,
   },
+  image: {
+    imageUrl:
+      "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&auto=format&fit=crop",
+    description: "A developer working on the next generation of slide templates",
+  },
   table: {
     title: "Q1 Performance",
     headers: [
@@ -81,6 +86,8 @@ const SAMPLE_DATA: Record<string, Record<string, unknown>> = {
   },
 };
 
+const DARK_TEMPLATES = new Set(["title", "image", "table"]);
+
 async function buildHtmlPage(
   templateId: string,
   orientation: "landscape" | "portrait"
@@ -93,6 +100,7 @@ async function buildHtmlPage(
   const css = fs.readFileSync(path.join(dir, `${orientation}.css`), "utf8");
   const data = SAMPLE_DATA[templateId] ?? {};
   const renderedHtml = Mustache.render(htmlTemplate, data);
+  const bgColor = DARK_TEMPLATES.has(templateId) ? "#1a1a2e" : "#ffffff";
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -102,7 +110,7 @@ async function buildHtmlPage(
   <title>${templateId} – ${orientation}</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; background: #ffffff; }
+    html, body { margin: 0; padding: 0; background: ${bgColor}; }
     ${css}
   </style>
 </head>

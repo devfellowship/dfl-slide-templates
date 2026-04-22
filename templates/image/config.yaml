@@ -1,0 +1,13 @@
+id: image
+name: Image Slide
+version: "1.0.0"
+category: content
+slots:
+  - name: imageUrl
+    type: image
+    required: true
+    description: "URL of the image to display"
+  - name: description
+    type: text
+    required: false
+    description: "Caption text displayed below the image"

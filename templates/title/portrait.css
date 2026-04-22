@@ -4,31 +4,30 @@
   justify-content: center;
   width: 540px;
   height: 960px;
-  background: #ffffff;
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: transparent;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   box-sizing: border-box;
-  padding: 80px 60px;
+  padding: 40px;
   text-align: center;
 }
 
 .tpl-root.tpl-title .tpl-title__inner {
-  max-width: 420px;
+  max-width: 460px;
 }
 
 .tpl-root.tpl-title .tpl-title__heading {
-  font-size: 48px;
+  font-size: 56px;
   font-weight: 700;
-  color: #111827;
-  line-height: 1.15;
-  margin: 0 0 28px 0;
-  letter-spacing: -0.02em;
+  color: #ffffff;
+  line-height: 1.2;
+  margin: 0 0 24px 0;
+  word-wrap: break-word;
 }
 
 .tpl-root.tpl-title .tpl-title__subtitle {
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 400;
-  color: #6b7280;
+  color: #e0e0e0;
   line-height: 1.5;
   margin: 0;
-  letter-spacing: -0.01em;
 }

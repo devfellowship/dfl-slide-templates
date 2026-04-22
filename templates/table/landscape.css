@@ -1,67 +1,63 @@
 .tpl-root.tpl-table {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   width: 960px;
   height: 540px;
-  background: #ffffff;
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: transparent;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   box-sizing: border-box;
-  padding: 48px 60px;
+  padding: 40px;
 }
 
 .tpl-root.tpl-table .tpl-table__title {
   font-size: 30px;
   font-weight: 700;
-  color: #111827;
+  color: #ffffff;
   margin: 0 0 24px 0;
   letter-spacing: -0.02em;
   line-height: 1.2;
+  align-self: flex-start;
+  width: 80%;
+  max-width: 900px;
 }
 
 .tpl-root.tpl-table .tpl-table__wrapper {
-  flex: 1;
   overflow: auto;
   border-radius: 8px;
-  border: 1px solid #e5e7eb;
+  width: 80%;
+  max-width: 900px;
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .tpl-root.tpl-table .tpl-table__table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 16px;
+  font-size: 20px;
+  color: #ffffff;
 }
 
 .tpl-root.tpl-table .tpl-table__thead {
-  background: #f3f4f6;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .tpl-root.tpl-table .tpl-table__th {
-  padding: 14px 18px;
+  padding: 16px 24px;
   text-align: left;
-  font-size: 13px;
-  font-weight: 700;
-  color: #374151;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  border-bottom: 1px solid #e5e7eb;
-  white-space: nowrap;
+  font-weight: 600;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .tpl-root.tpl-table .tpl-table__row {
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .tpl-root.tpl-table .tpl-table__row:last-child {
   border-bottom: none;
 }
 
-.tpl-root.tpl-table .tpl-table__row:nth-child(even) {
-  background: #f9fafb;
-}
-
 .tpl-root.tpl-table .tpl-table__td {
-  padding: 13px 18px;
-  color: #374151;
-  font-size: 15px;
+  padding: 16px 24px;
   line-height: 1.4;
 }

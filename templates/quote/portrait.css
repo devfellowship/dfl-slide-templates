@@ -4,8 +4,8 @@
   justify-content: center;
   width: 720px;
   height: 1280px;
-  background: #f9fafb;
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg, #f9fafb);
+  font-family: var(--font-family, 'Segoe UI', system-ui, -apple-system, sans-serif);
   box-sizing: border-box;
   padding: 80px 60px;
 }
@@ -18,7 +18,7 @@
 .tpl-root.tpl-quote .tpl-quote__mark {
   font-size: 96px;
   line-height: 0.5;
-  color: #3b82f6;
+  color: var(--primary, #3b82f6);
   font-family: Georgia, 'Times New Roman', serif;
   margin-bottom: 24px;
   display: block;
@@ -27,7 +27,7 @@
 .tpl-root.tpl-quote .tpl-quote__text {
   font-size: 26px;
   font-weight: 400;
-  color: #111827;
+  color: var(--heading-color, #111827);
   line-height: 1.55;
   margin: 0 0 32px 0;
   font-style: italic;
@@ -44,7 +44,7 @@
 .tpl-root.tpl-quote .tpl-quote__author {
   font-size: 17px;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--text, #1f2937);
   display: block;
 }
 

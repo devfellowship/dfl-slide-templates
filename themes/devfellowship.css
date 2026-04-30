@@ -1,0 +1,13 @@
+/* dfl-slide-templates: devfellowship theme
+ * DFL brand palette (Tainan-provided 2026-04-30).
+ * Inject this before any template CSS so --vars resolve.
+ */
+:root {
+  --primary: #C52614;       /* DFL red — accents, bullets */
+  --bg: #FEEBDC;            /* DFL cream — slide background */
+  --text: #3C2422;          /* DFL coffee — body text */
+  --heading-color: #3C2422; /* same coffee for headings */
+  --border: rgba(60, 36, 34, 0.15); /* coffee at 15% opacity */
+  --font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-family-heading: 'Futura PT Cond', 'Futura', 'Helvetica Neue', sans-serif;
+}

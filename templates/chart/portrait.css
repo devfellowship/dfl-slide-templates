@@ -3,8 +3,8 @@
   flex-direction: column;
   width: 720px;
   height: 1280px;
-  background: #ffffff;
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg, #ffffff);
+  font-family: var(--font-family, 'Segoe UI', system-ui, -apple-system, sans-serif);
   box-sizing: border-box;
   padding: 60px 48px;
 }
@@ -12,7 +12,7 @@
 .tpl-root.tpl-chart .tpl-chart__title {
   font-size: 28px;
   font-weight: 700;
-  color: #111827;
+  color: var(--heading-color, #111827);
   margin: 0 0 24px 0;
   letter-spacing: -0.02em;
   line-height: 1.2;
@@ -21,8 +21,8 @@
 .tpl-root.tpl-chart .tpl-chart__area {
   flex: 1;
   border-radius: 10px;
-  border: 1px solid #e5e7eb;
-  background: #f9fafb;
+  border: 1px solid var(--border, #e5e7eb);
+  background: var(--bg, #f9fafb);
   position: relative;
   overflow: hidden;
 }

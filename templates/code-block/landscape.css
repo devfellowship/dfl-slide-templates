@@ -3,8 +3,8 @@
   flex-direction: column;
   width: 1280px;
   height: 720px;
-  background: #ffffff;
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg, #ffffff);
+  font-family: var(--font-family, 'Segoe UI', system-ui, -apple-system, sans-serif);
   box-sizing: border-box;
   padding: 48px 60px;
 }
@@ -12,7 +12,7 @@
 .tpl-root.tpl-code-block .tpl-code-block__title {
   font-size: 30px;
   font-weight: 700;
-  color: #111827;
+  color: var(--heading-color, #111827);
   margin: 0 0 24px 0;
   letter-spacing: -0.02em;
   line-height: 1.2;

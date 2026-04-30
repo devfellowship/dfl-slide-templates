@@ -1,8 +1,8 @@
 .tpl-root.tpl-chart {
   display: flex;
   flex-direction: column;
-  width: 960px;
-  height: 540px;
+  width: 1280px;
+  height: 720px;
   background: #ffffff;
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   box-sizing: border-box;

@@ -1,8 +1,8 @@
 .tpl-root.tpl-two-column {
   display: flex;
   flex-direction: column;
-  width: 540px;
-  height: 960px;
+  width: 720px;
+  height: 1280px;
   background: #ffffff;
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   box-sizing: border-box;

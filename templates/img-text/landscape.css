@@ -3,8 +3,8 @@
   flex-direction: row;
   width: 1280px;
   height: 720px;
-  background: #ffffff;
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg, #ffffff);
+  font-family: var(--font-family, 'Segoe UI', system-ui, -apple-system, sans-serif);
   box-sizing: border-box;
   overflow: hidden;
 }
@@ -12,7 +12,7 @@
 .tpl-root.tpl-img-text .tpl-img-text__image-pane {
   flex: 0 0 45%;
   overflow: hidden;
-  background: #f3f4f6;
+  background: var(--bg, #f3f4f6);
 }
 
 .tpl-root.tpl-img-text .tpl-img-text__image {
@@ -34,7 +34,7 @@
 .tpl-root.tpl-img-text .tpl-img-text__title {
   font-size: 30px;
   font-weight: 700;
-  color: #111827;
+  color: var(--heading-color, #111827);
   margin: 0 0 20px 0;
   letter-spacing: -0.02em;
   line-height: 1.2;
@@ -42,7 +42,7 @@
 
 .tpl-root.tpl-img-text .tpl-img-text__body {
   font-size: 18px;
-  color: #374151;
+  color: var(--text, #374151);
   line-height: 1.65;
 }
 

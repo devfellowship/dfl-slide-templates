@@ -3,8 +3,8 @@
   flex-direction: column;
   width: 1280px;
   height: 720px;
-  background: var(--bg, #ffffff);
-  font-family: var(--font-family, 'Segoe UI', system-ui, -apple-system, sans-serif);
+  background: var(--slide-bg, #ffffff);
+  font-family: var(--slide-font-family, 'Segoe UI', system-ui, -apple-system, sans-serif);
   box-sizing: border-box;
   padding: 48px 72px;
 }
@@ -12,12 +12,12 @@
 .tpl-root.tpl-bullet-list .tpl-bullet-list__title {
   font-size: 36px;
   font-weight: 700;
-  color: var(--heading-color, #111827);
+  color: var(--slide-heading-color, #111827);
   margin: 0 0 32px 0;
   letter-spacing: -0.02em;
   line-height: 1.2;
   padding-bottom: 20px;
-  border-bottom: 2px solid var(--border, #e5e7eb);
+  border-bottom: 2px solid var(--slide-border, #e5e7eb);
 }
 
 .tpl-root.tpl-bullet-list .tpl-bullet-list__list {
@@ -35,7 +35,7 @@
   display: flex;
   align-items: flex-start;
   font-size: 22px;
-  color: var(--text, #1f2937);
+  color: var(--slide-text, #1f2937);
   line-height: 1.4;
 }
 
@@ -44,7 +44,7 @@
   display: inline-block;
   width: 8px;
   height: 8px;
-  background: var(--primary, #3b82f6);
+  background: var(--slide-primary, #3b82f6);
   border-radius: 50%;
   margin-top: 8px;
   margin-right: 16px;

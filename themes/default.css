@@ -2,12 +2,12 @@
  * Pixel-accurate freeze of the original hardcoded values.
  * Inject this before any template CSS so --vars resolve.
  */
-:root {
-  --primary: #3b82f6;
-  --bg: #ffffff;
-  --text: #1f2937;
-  --heading-color: #111827;
-  --border: #e5e7eb;
-  --font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  --font-family-heading: var(--font-family);
+.tpl-root {
+  --slide-primary: #3b82f6;
+  --slide-bg: #ffffff;
+  --slide-text: #1f2937;
+  --slide-heading-color: #111827;
+  --slide-border: #e5e7eb;
+  --slide-font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --slide-font-family-heading: var(--slide-font-family);
 }

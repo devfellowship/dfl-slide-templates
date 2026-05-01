@@ -58,7 +58,7 @@ export function TemplateGallery() {
     <div className="p-6">
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-2xl font-bold">Templates</h2>
-        <Button onClick={() => navigate('/editor/new')}>
+        <Button onClick={() => navigate('/templates/new')}>
           <Plus className="mr-2 h-4 w-4" />
           New Template
         </Button>
@@ -93,11 +93,15 @@ function TemplateCard({
   entry: RegistryEntry
   catalog: NonNullable<ReturnType<typeof useTemplates>['catalog']>
 }) {
+  const navigate = useNavigate()
   const assets = catalog.templates.get(entry.id)
   const previewUrl = `${BASE_URL}/templates/${entry.id}/preview-landscape.png`
 
   return (
-    <Card className="overflow-hidden transition-shadow hover:shadow-lg">
+    <Card
+      className="cursor-pointer overflow-hidden transition-shadow hover:shadow-lg"
+      onClick={() => navigate(`/templates/${entry.id}`)}
+    >
       <div className="aspect-video bg-muted">
         <img
           src={previewUrl}

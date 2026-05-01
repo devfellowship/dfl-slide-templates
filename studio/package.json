@@ -1,0 +1,38 @@
+{
+  "name": "studio",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@fontsource-variable/geist": "^5.2.8",
+    "@supabase/supabase-js": "^2.49.1",
+    "@tailwindcss/vite": "^4.1.4",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "js-yaml": "^4.1.0",
+    "lucide-react": "^0.468.0",
+    "mustache": "^4.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0",
+    "tailwind-merge": "^2.6.0",
+    "tailwindcss": "^4.1.4",
+    "tw-animate-css": "^1.2.5",
+    "zustand": "^5.0.2"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/mustache": "^4.2.5",
+    "@types/node": "^22.10.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "~5.6.3",
+    "vite": "^6.0.0"
+  }
+}

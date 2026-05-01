@@ -8,6 +8,7 @@
     {"id": "code-block", "version": "1.0.0", "category": "content"},
     {"id": "image", "version": "1.0.0", "category": "content"},
     {"id": "table", "version": "1.0.0", "category": "data"},
-    {"id": "chart", "version": "1.0.0", "category": "data"}
+    {"id": "chart", "version": "1.0.0", "category": "data"},
+    {"id": "blank", "version": "1.0.0", "category": "layout"}
   ]
 }

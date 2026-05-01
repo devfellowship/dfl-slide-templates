@@ -1,0 +1,15 @@
+/*
+ * Blank template — intentionally empty canvas (portrait variant).
+ *
+ * Used by Lesson Studio's "screen + webcam only" recording mode (Etapa 2 of
+ * plan 20260501-lesson-studio-record-and-publish-flow). See landscape.css
+ * for the full rationale and the ADR-1 reference about avoiding hardcoded px.
+ */
+.tpl-root.tpl-blank {
+  width: 100%;
+  height: 100%;
+  background: #000000;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}

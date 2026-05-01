@@ -1,0 +1,21 @@
+/*
+ * Blank template — intentionally empty canvas.
+ *
+ * Used by Lesson Studio's "screen + webcam only" recording mode (Etapa 2 of
+ * plan 20260501-lesson-studio-record-and-publish-flow), where the slide
+ * surface is just a black backdrop and all visible content comes from the
+ * captured screen + webcam streams composited on top.
+ *
+ * NOTE: width/height are 100% (not hardcoded px) so the canvas fills whatever
+ * container the runtime gives us. This avoids the bug captured in ADR-1 of
+ * plan 20260430-lesson-studio-ai-mode-ux-fixes (px-hardcoded templates that
+ * fail to fill the recorder canvas).
+ */
+.tpl-root.tpl-blank {
+  width: 100%;
+  height: 100%;
+  background: #000000;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}

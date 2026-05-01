@@ -7,8 +7,9 @@ import { CodeEditor } from '@/components/editor/CodeEditor'
 import { TemplatePreview, FullscreenPreview } from '@/components/editor/TemplatePreview'
 import { SlotSchemaEditor } from '@/components/editor/SlotSchemaEditor'
 import { ThemeSelector } from '@/components/editor/ThemeSelector'
-import { ArrowLeft, Save } from 'lucide-react'
+import { ArrowLeft, Save, Upload } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { PublishDialog } from '@/components/PublishDialog'
 
 const TABS: { key: CodeTab; label: string; lang: 'html' | 'css' }[] = [
   { key: 'landscape.html', label: 'landscape.html', lang: 'html' },
@@ -36,6 +37,7 @@ export function TemplateEditor() {
   const toggleFullscreen = useEditorStore((s) => s.toggleFullscreen)
 
   const [bottomPanelOpen, setBottomPanelOpen] = useState(true)
+  const [showPublish, setShowPublish] = useState(false)
   const initializedRef = useRef(false)
 
   useEffect(() => {
@@ -110,6 +112,18 @@ export function TemplateEditor() {
           <Save className="h-3.5 w-3.5" />
           Save
         </Button>
+        <Button
+          variant="default"
+          size="sm"
+          onClick={() => {
+            if (isDirty) saveDraft()
+            setShowPublish(true)
+          }}
+          className="h-7 gap-1 px-2"
+        >
+          <Upload className="h-3.5 w-3.5" />
+          Publish
+        </Button>
         <span className="text-xs text-muted-foreground">
           {isDirty
             ? 'Unsaved changes'
@@ -176,6 +190,9 @@ export function TemplateEditor() {
 
       {/* Fullscreen overlay */}
       {fullscreenPreview && <FullscreenPreview onClose={toggleFullscreen} />}
+
+      {/* Publish dialog */}
+      {showPublish && <PublishDialog onClose={() => setShowPublish(false)} />}
     </div>
   )
 }

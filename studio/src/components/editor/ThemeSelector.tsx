@@ -15,7 +15,7 @@ export function ThemeSelector() {
 
   useEffect(() => {
     loadThemeCss(selectedTheme).then((css) => setTheme(selectedTheme, css))
-  }, [])
+  }, [selectedTheme, setTheme])
 
   const handleChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const name = e.target.value

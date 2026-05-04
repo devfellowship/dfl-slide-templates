@@ -204,7 +204,9 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
   },
 }))
 
-function tabToField(tab: CodeTab): keyof EditorState {
+type CodeField = 'landscapeHtml' | 'portraitHtml' | 'landscapeCss' | 'portraitCss'
+
+function tabToField(tab: CodeTab): CodeField {
   switch (tab) {
     case 'landscape.html': return 'landscapeHtml'
     case 'portrait.html': return 'portraitHtml'

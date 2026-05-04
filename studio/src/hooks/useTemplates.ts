@@ -73,9 +73,22 @@ async function fetchTemplateAssets(templateId: string): Promise<TemplateAssets> 
   return { config, landscapeHtml, landscapeCss, portraitHtml, portraitCss }
 }
 
+function getInitialCatalog(): TemplateCatalog | null {
+  if (inMemoryCache && Date.now() - inMemoryCacheTs < SESSION_CACHE_MS) {
+    return inMemoryCache
+  }
+  const cached = getLocalStorageCache()
+  if (cached) {
+    inMemoryCache = cached
+    inMemoryCacheTs = Date.now()
+    return cached
+  }
+  return null
+}
+
 export function useTemplates() {
-  const [catalog, setCatalog] = useState<TemplateCatalog | null>(inMemoryCache)
-  const [loading, setLoading] = useState(!inMemoryCache)
+  const [catalog, setCatalog] = useState<TemplateCatalog | null>(getInitialCatalog)
+  const [loading, setLoading] = useState(!catalog)
   const [error, setError] = useState<Error | null>(null)
   const fetchedRef = useRef(false)
 
@@ -104,26 +117,39 @@ export function useTemplates() {
   }, [])
 
   useEffect(() => {
-    if (fetchedRef.current) return
+    if (fetchedRef.current || catalog) return
     fetchedRef.current = true
 
-    if (inMemoryCache && Date.now() - inMemoryCacheTs < SESSION_CACHE_MS) {
-      setCatalog(inMemoryCache)
-      setLoading(false)
-      return
-    }
+    let cancelled = false
+    ;(async () => {
+      try {
+        const registry = await fetchRegistry()
+        const entries = await Promise.all(
+          registry.templates.map((entry) => fetchTemplateAssets(entry.id))
+        )
+        if (cancelled) return
 
-    const cached = getLocalStorageCache()
-    if (cached) {
-      inMemoryCache = cached
-      inMemoryCacheTs = Date.now()
-      setCatalog(cached)
-      setLoading(false)
-      return
-    }
+        const templates = new Map<string, TemplateAssets>()
+        entries.forEach((assets) => templates.set(assets.config.id, assets))
 
-    refresh()
-  }, [refresh])
+        const newCatalog: TemplateCatalog = { registry, templates }
+        inMemoryCache = newCatalog
+        inMemoryCacheTs = Date.now()
+        setLocalStorageCache(newCatalog)
+        setCatalog(newCatalog)
+      } catch (err) {
+        if (!cancelled) {
+          setError(err instanceof Error ? err : new Error(String(err)))
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false)
+        }
+      }
+    })()
+
+    return () => { cancelled = true }
+  }, [catalog])
 
   return { catalog, loading, error, refresh }
 }

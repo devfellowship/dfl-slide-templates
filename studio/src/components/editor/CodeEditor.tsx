@@ -16,7 +16,10 @@ export function CodeEditor({ value, language, onChange }: CodeEditorProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const viewRef = useRef<EditorView | null>(null)
   const onChangeRef = useRef(onChange)
-  onChangeRef.current = onChange
+
+  useEffect(() => {
+    onChangeRef.current = onChange
+  })
 
   useEffect(() => {
     if (!containerRef.current) return

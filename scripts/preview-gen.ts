@@ -6,6 +6,59 @@ import Mustache from "mustache";
 const REPO_ROOT = path.resolve(__dirname, "..");
 const REGISTRY_PATH = path.join(REPO_ROOT, "registry.json");
 
+/**
+ * Minimal JS/TS highlighter for preview rendering only.
+ * Emits HTML with token classes (tok-kw, tok-str, tok-num, tok-com, tok-fn, tok-pun)
+ * that the code-block template's CSS knows how to color.
+ *
+ * NOT a substitute for a real highlighter at runtime — host apps should plug in
+ * prism / shiki / highlight.js and pass the result via the `codeHtml` slot.
+ */
+function highlightJsTs(src: string): string {
+  const KEYWORDS = new Set([
+    "const", "let", "var", "function", "return", "if", "else", "for", "while",
+    "do", "switch", "case", "break", "continue", "new", "class", "extends",
+    "import", "from", "export", "default", "async", "await", "try", "catch",
+    "finally", "throw", "typeof", "instanceof", "in", "of", "this", "super",
+    "true", "false", "null", "undefined", "void", "yield", "static", "get", "set",
+    "interface", "type", "enum", "implements", "public", "private", "protected",
+    "readonly", "as", "is", "namespace", "declare", "module",
+  ]);
+  const escapeHtml = (s: string) =>
+    s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  // Tokenize via a single combined regex: comments, strings, numbers, identifiers, punctuation, whitespace
+  const re =
+    /(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`)|(\b\d+(?:\.\d+)?\b)|([A-Za-z_$][A-Za-z0-9_$]*)|([{}()\[\];,.:=+\-*/<>!?&|^~%]+)|(\s+)/g;
+
+  let out = "";
+  let m: RegExpExecArray | null;
+  let lastIndex = 0;
+  while ((m = re.exec(src)) !== null) {
+    if (m.index > lastIndex) {
+      out += escapeHtml(src.slice(lastIndex, m.index));
+    }
+    const [full, com, str, num, ident, pun, ws] = m;
+    if (com) out += `<span class="tok-com">${escapeHtml(com)}</span>`;
+    else if (str) out += `<span class="tok-str">${escapeHtml(str)}</span>`;
+    else if (num) out += `<span class="tok-num">${escapeHtml(num)}</span>`;
+    else if (ident) {
+      if (KEYWORDS.has(ident)) {
+        out += `<span class="tok-kw">${ident}</span>`;
+      } else if (src[re.lastIndex] === "(") {
+        out += `<span class="tok-fn">${ident}</span>`;
+      } else {
+        out += escapeHtml(ident);
+      }
+    } else if (pun) out += `<span class="tok-pun">${escapeHtml(pun)}</span>`;
+    else if (ws) out += ws;
+    else out += escapeHtml(full);
+    lastIndex = re.lastIndex;
+  }
+  if (lastIndex < src.length) out += escapeHtml(src.slice(lastIndex));
+  return out;
+}
+
 interface RegistryEntry {
   id: string;
   version: string;
@@ -53,11 +106,19 @@ const SAMPLE_DATA: Record<string, Record<string, unknown>> = {
     author: "Arthur C. Clarke",
     source: "Profiles of the Future, 1962",
   },
-  "code-block": {
-    title: "Rendering a Template",
-    language: "typescript",
-    code: `import Mustache from 'mustache';\nimport * as fs from 'fs';\n\nconst template = fs.readFileSync('landscape.html', 'utf8');\nconst output = Mustache.render(template, {\n  title: 'Hello, World!',\n  subtitle: 'My first slide',\n});\n\nconsole.log(output);`,
-  },
+  "code-block": (() => {
+    const code = `// levels.js — escolhendo a forma certa\nconst levels = ['Explorer', 'Builder', 'Architect'];\n\nfunction promote(person, evidence) {\n  if (!evidence.solid) return null;\n  const idx = levels.indexOf(person.level);\n  return levels[idx + 1] ?? person.level;\n}\n\nexport { promote, levels };`;
+    return {
+      title: "Builder — o salto técnico",
+      pageNumber: "05",
+      filename: "levels.js",
+      language: "javascript",
+      code,
+      codeHtml: highlightJsTs(code),
+      caption:
+        "Para o Builder, 'qual é a forma certa' substitui 'como faço'.",
+    };
+  })(),
   image: {
     imageUrl:
       "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&auto=format&fit=crop",

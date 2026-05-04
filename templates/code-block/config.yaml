@@ -1,17 +1,33 @@
 id: code-block
 name: Code Block
-version: "1.0.0"
+version: "1.1.0"
 category: content
 slots:
   - name: title
     type: text
     required: false
-    description: "Optional heading shown above the code block"
-  - name: code
+    description: "Heading shown top-left of the slide"
+  - name: pageNumber
     type: text
-    required: true
-    description: "The code content to display in monospace format"
+    required: false
+    description: "Mono page-number label shown top-right (e.g. '05')"
+  - name: filename
+    type: text
+    required: false
+    description: "Filename shown inside the code window header (e.g. 'levels.js')"
   - name: language
     type: text
     required: false
-    description: "Programming language label (e.g. javascript, python)"
+    description: "Programming language label shown in the window chrome (e.g. 'javascript')"
+  - name: code
+    type: text
+    required: true
+    description: "Plain code string. Used when codeHtml is not provided. HTML-escaped at render time."
+  - name: codeHtml
+    type: richText
+    required: false
+    description: "Pre-highlighted code as HTML (use spans with classes tok-kw, tok-str, tok-num, tok-com, tok-fn, tok-pun). Takes precedence over code when present."
+  - name: caption
+    type: text
+    required: false
+    description: "Short italic caption shown below the code block"

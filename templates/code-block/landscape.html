@@ -1,11 +1,30 @@
 <div class="tpl-root tpl-code-block">
-  {{#title}}
-  <h2 class="tpl-code-block__title">{{title}}</h2>
-  {{/title}}
+  <header class="tpl-code-block__header">
+    {{#title}}
+    <h2 class="tpl-code-block__title">{{title}}</h2>
+    {{/title}}
+    {{#pageNumber}}
+    <span class="tpl-code-block__page-number">{{pageNumber}}</span>
+    {{/pageNumber}}
+  </header>
   <div class="tpl-code-block__container">
-    {{#language}}
-    <div class="tpl-code-block__lang-badge">{{language}}</div>
-    {{/language}}
-    <pre class="tpl-code-block__pre"><code class="tpl-code-block__code">{{code}}</code></pre>
+    <div class="tpl-code-block__chrome">
+      <span class="tpl-code-block__dot tpl-code-block__dot--red"></span>
+      <span class="tpl-code-block__dot tpl-code-block__dot--yellow"></span>
+      <span class="tpl-code-block__dot tpl-code-block__dot--green"></span>
+      {{#filename}}
+      <span class="tpl-code-block__filename">{{filename}}</span>
+      {{/filename}}
+      {{#language}}
+      <span class="tpl-code-block__lang-badge">{{language}}</span>
+      {{/language}}
+    </div>
+    <pre class="tpl-code-block__pre"><code class="tpl-code-block__code">{{#codeHtml}}{{{codeHtml}}}{{/codeHtml}}{{^codeHtml}}{{code}}{{/codeHtml}}</code></pre>
   </div>
+  {{#caption}}
+  <p class="tpl-code-block__caption">{{caption}}</p>
+  {{/caption}}
+  <footer class="tpl-code-block__footer">
+    <span class="tpl-code-block__brand">DFL · devfellowship</span>
+  </footer>
 </div>

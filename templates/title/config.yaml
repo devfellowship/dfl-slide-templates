@@ -1,13 +1,17 @@
 id: title
 name: Title Slide
-version: "1.0.0"
+version: "2.0.0"
 category: content
 slots:
   - name: title
     type: text
     required: true
-    description: "Main title text displayed prominently in the center"
+    description: "Main display title (cream, large)"
   - name: subtitle
     type: text
     required: false
-    description: "Optional subtitle text displayed below the main title"
+    description: "Optional subhead displayed below the main title"
+  - name: lessonNumber
+    type: text
+    required: false
+    description: "Mono uppercase eyebrow above the title, e.g. 'LESSON · 02'"

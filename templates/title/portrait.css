@@ -1,33 +1,114 @@
 .tpl-root.tpl-title {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   width: 720px;
   height: 1280px;
-  background: transparent;
+  background: #0F0E0C;
+  color: #FEEBDC;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   box-sizing: border-box;
-  padding: 40px;
-  text-align: center;
+  padding: 96px 56px;
+  overflow: hidden;
+}
+
+.tpl-root.tpl-title .tpl-title__grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(254, 235, 220, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(254, 235, 220, 0.035) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse at center, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 70%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse at center, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 70%, transparent 100%);
 }
 
 .tpl-root.tpl-title .tpl-title__inner {
-  max-width: 460px;
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: 24px;
+  max-width: 440px;
+  width: 100%;
+  z-index: 1;
+}
+
+.tpl-root.tpl-title .tpl-title__rule {
+  flex: 0 0 4px;
+  align-self: stretch;
+  background: #C52614;
+  border-radius: 2px;
+  min-height: 220px;
+}
+
+.tpl-root.tpl-title .tpl-title__content {
+  flex: 1 1 auto;
+  text-align: left;
+}
+
+.tpl-root.tpl-title .tpl-title__eyebrow {
+  font-family: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #FEEBDC;
+  opacity: 0.72;
+  margin: 0 0 18px 0;
 }
 
 .tpl-root.tpl-title .tpl-title__heading {
+  font-family: 'Futura PT Cond', 'Futura', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 56px;
   font-weight: 700;
-  color: #ffffff;
-  line-height: 1.2;
-  margin: 0 0 24px 0;
+  color: #FEEBDC;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  margin: 0;
   word-wrap: break-word;
 }
 
 .tpl-root.tpl-title .tpl-title__subtitle {
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 400;
-  color: #e0e0e0;
+  color: #FEEBDC;
+  opacity: 0.78;
   line-height: 1.5;
-  margin: 0;
+  margin: 20px 0 0 0;
+}
+
+.tpl-root.tpl-title .tpl-title__brand {
+  position: absolute;
+  right: 48px;
+  bottom: 56px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 1;
+}
+
+.tpl-root.tpl-title .tpl-title__brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: #C52614;
+  color: #FEEBDC;
+  font-family: 'Futura PT Cond', 'Futura', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.tpl-root.tpl-title .tpl-title__brand-name {
+  font-family: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #FEEBDC;
+  opacity: 0.85;
 }

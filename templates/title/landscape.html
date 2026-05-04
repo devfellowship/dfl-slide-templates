@@ -1,8 +1,19 @@
 <div class="tpl-root tpl-title">
+  <div class="tpl-title__grid" aria-hidden="true"></div>
   <div class="tpl-title__inner">
-    <h1 class="tpl-title__heading">{{title}}</h1>
-    {{#subtitle}}
-    <p class="tpl-title__subtitle">{{subtitle}}</p>
-    {{/subtitle}}
+    <span class="tpl-title__rule" aria-hidden="true"></span>
+    <div class="tpl-title__content">
+      {{#lessonNumber}}
+      <p class="tpl-title__eyebrow">{{lessonNumber}}</p>
+      {{/lessonNumber}}
+      <h1 class="tpl-title__heading">{{title}}</h1>
+      {{#subtitle}}
+      <p class="tpl-title__subtitle">{{subtitle}}</p>
+      {{/subtitle}}
+    </div>
+  </div>
+  <div class="tpl-title__brand" aria-hidden="true">
+    <span class="tpl-title__brand-mark">D</span>
+    <span class="tpl-title__brand-name">DEVFELLOWSHIP</span>
   </div>
 </div>

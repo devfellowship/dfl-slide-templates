@@ -19,8 +19,9 @@ interface Registry {
 // Sample data used to fill each template's Mustache tokens for preview rendering.
 const SAMPLE_DATA: Record<string, Record<string, unknown>> = {
   title: {
-    title: "Welcome to the Platform",
-    subtitle: "A modern foundation for your presentations",
+    lessonNumber: "LESSON · 02",
+    title: "Building Your First Agent",
+    subtitle: "A practical introduction to the DFL platform.",
   },
   "bullet-list": {
     title: "Key Highlights",

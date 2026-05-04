@@ -23,12 +23,14 @@ const SAMPLE_DATA: Record<string, Record<string, unknown>> = {
     subtitle: "A modern foundation for your presentations",
   },
   "bullet-list": {
-    title: "Key Highlights",
+    eyebrow: "NÍVEL · 04",
+    title: "Princípios de design",
+    number: "04",
     items: [
-      { text: "Fully customisable slide templates" },
-      { text: "Mustache-powered token substitution" },
-      { text: "Landscape and portrait orientations" },
-      { text: "Automated preview generation" },
+      { text: "Fundação visual coerente em toda a marca" },
+      { text: "Tipografia condensada para títulos com peso" },
+      { text: "Acentos vermelhos usados com parcimônia", highlighted: true },
+      { text: "Hierarquia clara entre eyebrow, título e corpo" },
     ],
   },
   "two-column": {
@@ -86,7 +88,7 @@ const SAMPLE_DATA: Record<string, Record<string, unknown>> = {
   },
 };
 
-const DARK_TEMPLATES = new Set(["title", "image", "table"]);
+const DARK_TEMPLATES = new Set(["title", "image", "table", "bullet-list"]);
 
 async function buildHtmlPage(
   templateId: string,

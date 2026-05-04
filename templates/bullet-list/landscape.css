@@ -1,52 +1,135 @@
+/* W2.2 — Bullets slide redesign per DFL brand book page 10.
+ * Dark coffee background, cream display title with mono eyebrow,
+ * faded 2-digit number on the right, em-dash bullet markers,
+ * optional highlighted bullet rendered as cream-on-coffee chip,
+ * DFL brand mark bottom-right.
+ *
+ * Backward compatible: still accepts { title, items:[{text}] }.
+ * Falls back gracefully when devfellowship.css is not loaded by using
+ * inline DFL palette literals as defaults.
+ */
 .tpl-root.tpl-bullet-list {
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 1280px;
   height: 720px;
-  background: var(--slide-bg, #ffffff);
-  font-family: var(--slide-font-family, 'Segoe UI', system-ui, -apple-system, sans-serif);
+  background: var(--slide-heading-color, #3C2422); /* DFL coffee */
+  color: var(--slide-bg, #FEEBDC); /* DFL cream */
+  font-family: var(--slide-font-family, 'Helvetica Neue', Helvetica, Arial, sans-serif);
   box-sizing: border-box;
-  padding: 48px 72px;
+  padding: 72px 96px;
+  overflow: hidden;
 }
 
-.tpl-root.tpl-bullet-list .tpl-bullet-list__title {
-  font-size: 36px;
+/* Faded display number on the right. */
+.tpl-root.tpl-bullet-list .tpl-bullet-list__number {
+  position: absolute;
+  top: 50%;
+  right: 64px;
+  transform: translateY(-50%);
+  font-family: var(--slide-font-family-heading, 'Futura PT Cond', 'Futura', 'Helvetica Neue', sans-serif);
   font-weight: 700;
-  color: var(--slide-heading-color, #111827);
-  margin: 0 0 32px 0;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-  padding-bottom: 20px;
-  border-bottom: 2px solid var(--slide-border, #e5e7eb);
+  font-size: 360px;
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+  color: var(--slide-bg, #FEEBDC);
+  opacity: 0.08;
+  pointer-events: none;
+  user-select: none;
+}
+
+.tpl-root.tpl-bullet-list .tpl-bullet-list__head {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 48px;
+}
+
+/* Mono uppercase eyebrow — e.g. "NÍVEL · 01". */
+.tpl-root.tpl-bullet-list .tpl-bullet-list__eyebrow {
+  font-family: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--slide-primary, #C52614); /* DFL red accent */
+  margin-bottom: 16px;
+}
+
+/* Display title — cream, bold, condensed. */
+.tpl-root.tpl-bullet-list .tpl-bullet-list__title {
+  font-family: var(--slide-font-family-heading, 'Futura PT Cond', 'Futura', 'Helvetica Neue', sans-serif);
+  font-size: 64px;
+  font-weight: 700;
+  color: var(--slide-bg, #FEEBDC);
+  margin: 0;
+  letter-spacing: -0.015em;
+  line-height: 1.05;
+  max-width: 80%;
 }
 
 .tpl-root.tpl-bullet-list .tpl-bullet-list__list {
+  position: relative;
+  z-index: 1;
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
   flex: 1;
   overflow: hidden;
+  max-width: 80%;
 }
 
 .tpl-root.tpl-bullet-list .tpl-bullet-list__item {
   display: flex;
-  align-items: flex-start;
-  font-size: 22px;
-  color: var(--slide-text, #1f2937);
+  align-items: baseline;
+  gap: 18px;
+  font-size: 24px;
+  font-weight: 400;
+  color: var(--slide-bg, #FEEBDC);
   line-height: 1.4;
 }
 
-.tpl-root.tpl-bullet-list .tpl-bullet-list__item::before {
-  content: '';
+/* Em-dash bullet marker — replaces the old round dot. */
+.tpl-root.tpl-bullet-list .tpl-bullet-list__dash {
   display: inline-block;
-  width: 8px;
-  height: 8px;
-  background: var(--slide-primary, #3b82f6);
-  border-radius: 50%;
-  margin-top: 8px;
-  margin-right: 16px;
   flex-shrink: 0;
+  width: 24px;
+  font-weight: 600;
+  color: var(--slide-primary, #C52614);
+  line-height: 1.4;
+}
+
+.tpl-root.tpl-bullet-list .tpl-bullet-list__text {
+  flex: 1;
+}
+
+/* Highlighted bullet — cream-on-coffee chip with red accent dash. */
+.tpl-root.tpl-bullet-list .tpl-bullet-list__item.is-highlighted {
+  align-items: center;
+  background: var(--slide-bg, #FEEBDC);
+  color: var(--slide-heading-color, #3C2422);
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.tpl-root.tpl-bullet-list .tpl-bullet-list__item.is-highlighted .tpl-bullet-list__dash {
+  color: var(--slide-primary, #C52614);
+}
+
+/* DFL brand mark bottom-right. */
+.tpl-root.tpl-bullet-list .tpl-bullet-list__brand {
+  position: absolute;
+  right: 48px;
+  bottom: 32px;
+  font-family: var(--slide-font-family-heading, 'Futura PT Cond', 'Futura', 'Helvetica Neue', sans-serif);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  color: var(--slide-bg, #FEEBDC);
+  opacity: 0.55;
+  z-index: 2;
 }

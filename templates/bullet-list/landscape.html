@@ -1,8 +1,20 @@
 <div class="tpl-root tpl-bullet-list">
-  <h2 class="tpl-bullet-list__title">{{title}}</h2>
+  {{#number}}
+  <div class="tpl-bullet-list__number" aria-hidden="true">{{number}}</div>
+  {{/number}}
+  <div class="tpl-bullet-list__head">
+    {{#eyebrow}}
+    <div class="tpl-bullet-list__eyebrow">{{eyebrow}}</div>
+    {{/eyebrow}}
+    <h2 class="tpl-bullet-list__title">{{title}}</h2>
+  </div>
   <ul class="tpl-bullet-list__list">
     {{#items}}
-    <li class="tpl-bullet-list__item">{{text}}</li>
+    <li class="tpl-bullet-list__item {{#highlighted}}is-highlighted{{/highlighted}}">
+      <span class="tpl-bullet-list__dash" aria-hidden="true">—</span>
+      <span class="tpl-bullet-list__text">{{text}}</span>
+    </li>
     {{/items}}
   </ul>
+  <div class="tpl-bullet-list__brand" aria-hidden="true">DFL</div>
 </div>

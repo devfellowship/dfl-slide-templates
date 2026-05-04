@@ -1,13 +1,21 @@
 id: bullet-list
 name: Bullet List
-version: "1.0.0"
+version: "2.0.0"
 category: content
 slots:
+  - name: eyebrow
+    type: text
+    required: false
+    description: "Mono uppercase eyebrow above the title (e.g. 'NÍVEL · 01'). Optional."
   - name: title
     type: text
     required: true
     description: "Section heading displayed at the top of the slide"
+  - name: number
+    type: text
+    required: false
+    description: "Two-digit decorative number rendered faded on the right (e.g. '04'). Optional."
   - name: items
     type: items
     required: true
-    description: "Array of list items, each with a 'text' property"
+    description: "Array of list items, each with a 'text' property. Set 'highlighted: true' on an item to render it as a cream-on-coffee chip."

@@ -6,6 +6,7 @@ import { LoginPage } from '@/pages/LoginPage'
 import { TemplateGallery } from '@/pages/TemplateGallery'
 import { TemplateEditor } from '@/pages/TemplateEditor'
 import { ThemesPage } from '@/pages/ThemesPage'
+import { ThemeEditor } from '@/pages/ThemeEditor'
 
 function AuthGuard() {
   const { user, loading } = useAuth()
@@ -39,6 +40,7 @@ export default function App() {
             <Route path="/" element={<Navigate to="/templates" replace />} />
           </Route>
           <Route path="/templates/:id" element={<TemplateEditor />} />
+          <Route path="/themes/:id" element={<ThemeEditor />} />
         </Route>
       </Routes>
     </BrowserRouter>

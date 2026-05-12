@@ -1,4 +1,4 @@
-import { useEffect, useRef, useMemo, useCallback } from 'react'
+import { useEffect, useRef, useMemo, useCallback, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useThemes } from '@/hooks/useThemes'
 import { useThemeEditorStore } from '@/stores/themeEditorStore'
@@ -14,21 +14,22 @@ const LANDSCAPE_W = 960
 const LANDSCAPE_H = 540
 const PORTRAIT_W = 540
 const PORTRAIT_H = 960
-const PREVIEW_SCALE = 0.3
 
 function PreviewFrame({
   srcdoc,
   width,
   height,
   label,
+  scale,
 }: {
   srcdoc: string
   width: number
   height: number
   label: string
+  scale: number
 }) {
-  const scaledW = Math.round(width * PREVIEW_SCALE)
-  const scaledH = Math.round(height * PREVIEW_SCALE)
+  const scaledW = Math.round(width * scale)
+  const scaledH = Math.round(height * scale)
 
   return (
     <div className="flex flex-col gap-1">
@@ -47,7 +48,7 @@ function PreviewFrame({
           style={{
             width: `${width}px`,
             height: `${height}px`,
-            transform: `scale(${PREVIEW_SCALE})`,
+            transform: `scale(${scale})`,
           }}
         />
       </div>
@@ -61,6 +62,9 @@ function ThemePreviewPanel() {
   const selectedPreviewTemplate = useThemeEditorStore((s) => s.selectedPreviewTemplate)
   const setPreviewTemplate = useThemeEditorStore((s) => s.setPreviewTemplate)
 
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [scale, setScale] = useState(0.3)
+
   // Default to first template
   useEffect(() => {
     if (!selectedPreviewTemplate && catalog) {
@@ -68,6 +72,32 @@ function ThemePreviewPanel() {
       if (first) setPreviewTemplate(first.id)
     }
   }, [catalog, selectedPreviewTemplate, setPreviewTemplate])
+
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+
+    const compute = () => {
+      const availW = el.clientWidth - 32
+      const availH = el.clientHeight - 32
+      if (availW <= 0 || availH <= 0) return
+      const GAP = 16
+      const perFrameW = (availW - GAP) / 2
+      const best = Math.min(
+        perFrameW / LANDSCAPE_W,
+        perFrameW / PORTRAIT_W,
+        availH / LANDSCAPE_H,
+        availH / PORTRAIT_H,
+        0.7,
+      )
+      setScale(Math.max(best, 0.1))
+    }
+
+    compute()
+    const ro = new ResizeObserver(compute)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
 
   const assets = catalog?.templates.get(selectedPreviewTemplate)
 
@@ -111,13 +141,14 @@ function ThemePreviewPanel() {
       </div>
 
       {assets ? (
-        <div className="flex flex-1 items-start gap-4 overflow-auto p-4">
+        <div ref={containerRef} className="flex flex-1 items-start gap-4 overflow-auto p-4">
           <div>
             <PreviewFrame
               srcdoc={landscapeSrcdoc}
               width={LANDSCAPE_W}
               height={LANDSCAPE_H}
               label="Landscape"
+              scale={scale}
             />
           </div>
           <div>
@@ -126,6 +157,7 @@ function ThemePreviewPanel() {
               width={PORTRAIT_W}
               height={PORTRAIT_H}
               label="Portrait"
+              scale={scale}
             />
           </div>
         </div>

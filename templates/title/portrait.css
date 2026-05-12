@@ -4,8 +4,8 @@
   justify-content: center;
   width: 720px;
   height: 1280px;
-  background: transparent;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--slide-bg, #1a2340);
+  font-family: var(--slide-font-family-heading, var(--slide-font-family, 'Inter', system-ui, -apple-system, sans-serif));
   box-sizing: border-box;
   padding: 40px;
   text-align: center;
@@ -18,7 +18,7 @@
 .tpl-root.tpl-title .tpl-title__heading {
   font-size: 56px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--slide-heading-color, #ffffff);
   line-height: 1.2;
   margin: 0 0 24px 0;
   word-wrap: break-word;
@@ -27,7 +27,7 @@
 .tpl-root.tpl-title .tpl-title__subtitle {
   font-size: 26px;
   font-weight: 400;
-  color: #e0e0e0;
+  color: var(--slide-text, #e0e0e0);
   line-height: 1.5;
   margin: 0;
 }

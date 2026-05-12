@@ -14,6 +14,7 @@ const LANDSCAPE_W = 960
 const LANDSCAPE_H = 540
 const PORTRAIT_W = 540
 const PORTRAIT_H = 960
+const PREVIEW_SCALE = 0.3
 
 function PreviewFrame({
   srcdoc,
@@ -26,6 +27,9 @@ function PreviewFrame({
   height: number
   label: string
 }) {
+  const scaledW = Math.round(width * PREVIEW_SCALE)
+  const scaledH = Math.round(height * PREVIEW_SCALE)
+
   return (
     <div className="flex flex-col gap-1">
       <span className="text-xs text-muted-foreground">
@@ -33,7 +37,7 @@ function PreviewFrame({
       </span>
       <div
         className="relative overflow-hidden rounded border border-border bg-white"
-        style={{ aspectRatio: `${width}/${height}` }}
+        style={{ width: `${scaledW}px`, height: `${scaledH}px` }}
       >
         <iframe
           srcDoc={srcdoc}
@@ -43,7 +47,7 @@ function PreviewFrame({
           style={{
             width: `${width}px`,
             height: `${height}px`,
-            transform: `scale(var(--preview-scale, 0.3))`,
+            transform: `scale(${PREVIEW_SCALE})`,
           }}
         />
       </div>
@@ -107,11 +111,8 @@ function ThemePreviewPanel() {
       </div>
 
       {assets ? (
-        <div
-          className="flex flex-1 gap-4 overflow-auto p-4"
-          style={{ '--preview-scale': '0.3' } as React.CSSProperties}
-        >
-          <div className="flex-1">
+        <div className="flex flex-1 items-start gap-4 overflow-auto p-4">
+          <div>
             <PreviewFrame
               srcdoc={landscapeSrcdoc}
               width={LANDSCAPE_W}
@@ -119,7 +120,7 @@ function ThemePreviewPanel() {
               label="Landscape"
             />
           </div>
-          <div className="flex-1">
+          <div>
             <PreviewFrame
               srcdoc={portraitSrcdoc}
               width={PORTRAIT_W}

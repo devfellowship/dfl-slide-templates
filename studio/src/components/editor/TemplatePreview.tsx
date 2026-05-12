@@ -1,4 +1,4 @@
-import { useMemo, useRef, useCallback } from 'react'
+import { useMemo, useCallback } from 'react'
 import { renderTemplate } from '@/lib/renderTemplate'
 import { generateSampleData } from '@/lib/sampleData'
 import { useEditorStore } from '@/stores/editorStore'
@@ -9,6 +9,8 @@ const LANDSCAPE_W = 960
 const LANDSCAPE_H = 540
 const PORTRAIT_W = 540
 const PORTRAIT_H = 960
+
+const PREVIEW_SCALE = 0.3
 
 function PreviewFrame({
   srcdoc,
@@ -21,15 +23,15 @@ function PreviewFrame({
   height: number
   label: string
 }) {
-  const containerRef = useRef<HTMLDivElement>(null)
+  const scaledW = Math.round(width * PREVIEW_SCALE)
+  const scaledH = Math.round(height * PREVIEW_SCALE)
 
   return (
     <div className="flex flex-col gap-1">
       <span className="text-xs text-muted-foreground">{label} ({width}x{height})</span>
       <div
-        ref={containerRef}
         className="relative overflow-hidden rounded border border-border bg-white"
-        style={{ aspectRatio: `${width}/${height}` }}
+        style={{ width: `${scaledW}px`, height: `${scaledH}px` }}
       >
         <iframe
           srcDoc={srcdoc}
@@ -39,7 +41,7 @@ function PreviewFrame({
           style={{
             width: `${width}px`,
             height: `${height}px`,
-            transform: `scale(var(--preview-scale, 0.3))`,
+            transform: `scale(${PREVIEW_SCALE})`,
           }}
         />
       </div>
@@ -54,11 +56,12 @@ export function TemplatePreview() {
   const portraitCss = useEditorStore((s) => s.portraitCss)
   const themeCss = useEditorStore((s) => s.themeCss)
   const config = useEditorStore((s) => s.config)
+  const sampleOverrides = useEditorStore((s) => s.sampleOverrides)
   const toggleFullscreen = useEditorStore((s) => s.toggleFullscreen)
 
   const sampleData = useMemo(
-    () => generateSampleData(config.slots),
-    [config.slots],
+    () => ({ ...generateSampleData(config.slots), ...sampleOverrides }),
+    [config.slots, sampleOverrides],
   )
 
   const landscapeSrcdoc = useMemo(
@@ -79,8 +82,8 @@ export function TemplatePreview() {
           <Maximize2 className="h-3.5 w-3.5" />
         </Button>
       </div>
-      <div className="flex flex-1 gap-4 overflow-auto p-4" style={{ '--preview-scale': '0.3' } as React.CSSProperties}>
-        <div className="flex-1">
+      <div className="flex flex-1 items-start gap-4 overflow-auto p-4">
+        <div>
           <PreviewFrame
             srcdoc={landscapeSrcdoc}
             width={LANDSCAPE_W}
@@ -88,7 +91,7 @@ export function TemplatePreview() {
             label="Landscape"
           />
         </div>
-        <div className="flex-1">
+        <div>
           <PreviewFrame
             srcdoc={portraitSrcdoc}
             width={PORTRAIT_W}

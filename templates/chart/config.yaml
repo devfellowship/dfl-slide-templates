@@ -7,10 +7,12 @@ slots:
     type: text
     required: false
     description: "Optional heading displayed above the chart"
+    sample: "Monthly Growth"
   - name: chartType
     type: text
     required: true
     description: "Chart type: bar, line, or pie"
+    sample: "bar"
   - name: data
     type: data
     required: true

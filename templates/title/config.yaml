@@ -7,7 +7,9 @@ slots:
     type: text
     required: true
     description: "Main title text displayed prominently in the center"
+    sample: "Welcome to the Platform"
   - name: subtitle
     type: text
     required: false
     description: "Optional subtitle text displayed below the main title"
+    sample: "A modern foundation for your presentations"

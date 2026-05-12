@@ -7,11 +7,14 @@ slots:
     type: text
     required: false
     description: "Optional heading shown above the code block"
+    sample: "Deploy in One Command"
   - name: code
     type: text
     required: true
     description: "The code content to display in monospace format"
+    sample: "npx create-app my-project\ncd my-project\nnpm run dev"
   - name: language
     type: text
     required: false
     description: "Programming language label (e.g. javascript, python)"
+    sample: "bash"

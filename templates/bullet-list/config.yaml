@@ -7,7 +7,12 @@ slots:
     type: text
     required: true
     description: "Section heading displayed at the top of the slide"
+    sample: "Key Takeaways"
   - name: items
     type: items
     required: true
     description: "Array of list items, each with a 'text' property"
+    sample:
+      - text: "Ship fast, iterate based on real feedback"
+      - text: "Automate repetitive work so teams focus on impact"
+      - text: "Keep systems observable and recoverable"

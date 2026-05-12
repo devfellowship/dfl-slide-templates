@@ -7,15 +7,19 @@ slots:
     type: image
     required: true
     description: "URL of the image to display"
+    sample: "https://placehold.co/600x400/1e293b/94a3b8?text=Feature+Image"
   - name: imageAlt
     type: text
     required: false
     description: "Alt text for the image for accessibility"
+    sample: "Feature illustration"
   - name: title
     type: text
     required: false
     description: "Optional heading displayed above the body text"
+    sample: "Built for Teams That Ship"
   - name: body
     type: richText
     required: true
     description: "HTML body text displayed alongside the image"
+    sample: "<p>Collaborate, iterate, and deliver — all in one place. Our platform grows with your team from first commit to production.</p>"

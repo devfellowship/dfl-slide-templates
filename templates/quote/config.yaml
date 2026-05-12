@@ -7,11 +7,14 @@ slots:
     type: text
     required: true
     description: "The main quote text displayed in large format"
+    sample: "The best way to predict the future is to build it."
   - name: author
     type: text
     required: false
     description: "Name of the person being quoted"
+    sample: "Alan Kay"
   - name: source
     type: text
     required: false
     description: "Source, publication, or context for the quote"
+    sample: "PARC, 1971"

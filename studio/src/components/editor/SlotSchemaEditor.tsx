@@ -1,6 +1,7 @@
 import { useEditorStore } from '@/stores/editorStore'
+import { generateSampleData } from '@/lib/sampleData'
 import { Button } from '@/components/ui/button'
-import { Plus, Trash2, ChevronUp, ChevronDown } from 'lucide-react'
+import { Plus, Trash2, ChevronUp, ChevronDown, RotateCcw } from 'lucide-react'
 
 const SLOT_TYPES = ['text', 'richText', 'image', 'items', 'rows', 'data'] as const
 
@@ -11,6 +12,12 @@ export function SlotSchemaEditor() {
   const removeSlot = useEditorStore((s) => s.removeSlot)
   const moveSlot = useEditorStore((s) => s.moveSlot)
   const updateConfigField = useEditorStore((s) => s.updateConfigField)
+  const sampleOverrides = useEditorStore((s) => s.sampleOverrides)
+  const setSampleOverride = useEditorStore((s) => s.setSampleOverride)
+  const clearSampleOverrides = useEditorStore((s) => s.clearSampleOverrides)
+
+  const autoSample = generateSampleData(config.slots)
+  const textSlots = config.slots.filter((s) => s.type === 'text' || s.type === 'richText')
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
@@ -134,6 +141,48 @@ export function SlotSchemaEditor() {
             </div>
           ))}
         </div>
+
+        {textSlots.length > 0 && (
+          <div className="mt-4">
+            <div className="mb-2 flex items-center justify-between">
+              <span className="text-xs font-medium text-muted-foreground">
+                Preview sample data
+                <span className="ml-1 text-muted-foreground/60">(edit to change preview content)</span>
+              </span>
+              {Object.keys(sampleOverrides).length > 0 && (
+                <button
+                  onClick={clearSampleOverrides}
+                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                  title="Reset to auto-generated values"
+                >
+                  <RotateCcw className="h-3 w-3" />
+                  Reset
+                </button>
+              )}
+            </div>
+            <div className="space-y-1">
+              {textSlots.map((slot) => {
+                const auto = String(autoSample[slot.name] ?? '')
+                const value = sampleOverrides[slot.name] ?? auto
+                const isOverridden = slot.name in sampleOverrides
+                return (
+                  <div key={slot.name} className="flex items-center gap-2">
+                    <span className="w-24 shrink-0 text-xs text-muted-foreground">{slot.name}</span>
+                    <input
+                      type="text"
+                      value={value}
+                      onChange={(e) => setSampleOverride(slot.name, e.target.value)}
+                      placeholder={auto}
+                      className={`flex-1 rounded border px-2 py-1 text-xs bg-background ${
+                        isOverridden ? 'border-primary' : 'border-input'
+                      }`}
+                    />
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

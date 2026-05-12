@@ -24,6 +24,7 @@ interface EditorState {
   isDirty: boolean
   lastSavedAt: number | null
   fullscreenPreview: boolean
+  sampleOverrides: Record<string, string>
 }
 
 interface EditorActions {
@@ -42,6 +43,8 @@ interface EditorActions {
   loadDraft: (id: string) => boolean
   toggleFullscreen: () => void
   getCodeForTab: (tab: CodeTab) => string
+  setSampleOverride: (name: string, value: string) => void
+  clearSampleOverrides: () => void
 }
 
 const BLANK_CONFIG: TemplateConfig = {
@@ -60,6 +63,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
   templateId: 'new',
   isNew: true,
   config: { ...BLANK_CONFIG },
+  sampleOverrides: {},
   landscapeHtml: BLANK_HTML,
   landscapeCss: `.tpl-root {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 100%;\n  height: 100%;\n  background: var(--slide-bg, #fff);\n  color: var(--slide-text, #1f2937);\n  font-family: var(--slide-font-family, sans-serif);\n}\n\n.tpl-root h1 {\n  font-size: 3rem;\n  color: var(--slide-heading-color, #111827);\n}`,
   landscapeCss_default: '',
@@ -101,6 +105,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
       isDirty: false,
       lastSavedAt: null,
       activeTab: 'landscape.html',
+      sampleOverrides: {},
     }),
 
   createNewTemplate: () => {
@@ -116,6 +121,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
       activeTab: 'landscape.html',
       isDirty: false,
       lastSavedAt: null,
+      sampleOverrides: {},
     })
   },
 
@@ -162,6 +168,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
       landscapeCss: state.landscapeCss,
       portraitHtml: state.portraitHtml,
       portraitCss: state.portraitCss,
+      sampleOverrides: state.sampleOverrides,
     }
     try {
       localStorage.setItem(
@@ -187,6 +194,7 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
         landscapeCss: draft.landscapeCss,
         portraitHtml: draft.portraitHtml,
         portraitCss: draft.portraitCss,
+        sampleOverrides: draft.sampleOverrides ?? {},
         isDirty: false,
         lastSavedAt: Date.now(),
       })
@@ -202,6 +210,14 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
     const state = get()
     return state[tabToField(tab)]
   },
+
+  setSampleOverride: (name, value) =>
+    set((state) => ({
+      sampleOverrides: { ...state.sampleOverrides, [name]: value },
+      isDirty: true,
+    })),
+
+  clearSampleOverrides: () => set({ sampleOverrides: {}, isDirty: true }),
 }))
 
 type CodeField = 'landscapeHtml' | 'portraitHtml' | 'landscapeCss' | 'portraitCss'

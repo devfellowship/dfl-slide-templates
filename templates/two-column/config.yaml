@@ -7,11 +7,14 @@ slots:
     type: text
     required: false
     description: "Optional slide title displayed above both columns"
+    sample: "Before vs. After"
   - name: leftContent
     type: richText
     required: true
     description: "HTML content for the left column"
+    sample: "<h3>Before</h3><p>Manual processes, scattered tooling, and slow feedback loops holding your team back.</p>"
   - name: rightContent
     type: richText
     required: true
     description: "HTML content for the right column"
+    sample: "<h3>After</h3><p>Automated workflows, unified platform, and instant visibility from commit to deploy.</p>"

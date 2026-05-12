@@ -7,11 +7,33 @@ slots:
     type: text
     required: false
     description: "Optional heading displayed above the table"
+    sample: "Q1 Performance Overview"
   - name: headers
     type: items
     required: true
     description: "Array of column header items, each with a 'label' property"
+    sample:
+      - label: "Metric"
+      - label: "Target"
+      - label: "Actual"
+      - label: "Status"
   - name: rows
     type: rows
     required: true
     description: "Array of row objects, each with a 'cells' array of objects with a 'value' property"
+    sample:
+      - cells:
+          - value: "Revenue"
+          - value: "$1.2M"
+          - value: "$1.4M"
+          - value: "✓"
+      - cells:
+          - value: "Users"
+          - value: "5,000"
+          - value: "6,200"
+          - value: "✓"
+      - cells:
+          - value: "Churn"
+          - value: "< 3%"
+          - value: "2.1%"
+          - value: "✓"

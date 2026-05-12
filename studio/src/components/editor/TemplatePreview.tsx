@@ -153,10 +153,11 @@ export function FullscreenPreview({ onClose }: { onClose: () => void }) {
   const portraitCss = useEditorStore((s) => s.portraitCss)
   const themeCss = useEditorStore((s) => s.themeCss)
   const config = useEditorStore((s) => s.config)
+  const sampleOverrides = useEditorStore((s) => s.sampleOverrides)
 
   const sampleData = useMemo(
-    () => generateSampleData(config.slots),
-    [config.slots],
+    () => ({ ...generateSampleData(config.slots), ...sampleOverrides }),
+    [config.slots, sampleOverrides],
   )
 
   const landscapeSrcdoc = useMemo(

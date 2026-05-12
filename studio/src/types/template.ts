@@ -13,6 +13,7 @@ export interface TemplateSlot {
   type: string
   required: boolean
   description: string
+  sample?: string | string[] | Record<string, unknown>
 }
 
 export interface TemplateConfig {

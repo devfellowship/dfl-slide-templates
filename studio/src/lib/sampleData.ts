@@ -6,6 +6,13 @@ export function generateSampleData(
   const data: Record<string, unknown> = {}
 
   for (const slot of slots) {
+    // Prefer the canonical sample value from the YAML schema when available
+    if (slot.sample !== undefined) {
+      data[slot.name] = slot.sample
+      continue
+    }
+
+    // Fallback: algorithmic generation based on type
     switch (slot.type) {
       case 'text':
         data[slot.name] = `Sample ${slot.name}`

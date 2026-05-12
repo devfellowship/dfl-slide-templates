@@ -41,6 +41,7 @@ interface EditorActions {
   moveSlot: (fromIndex: number, toIndex: number) => void
   saveDraft: () => void
   loadDraft: (id: string) => boolean
+  loadDraftOverridesOnly: (id: string) => void
   toggleFullscreen: () => void
   getCodeForTab: (tab: CodeTab) => string
   setSampleOverride: (name: string, value: string) => void
@@ -201,6 +202,18 @@ export const useEditorStore = create<EditorState & EditorActions>((set, get) => 
       return true
     } catch {
       return false
+    }
+  },
+
+  loadDraftOverridesOnly: (id) => {
+    try {
+      const raw = localStorage.getItem(`${DRAFT_KEY_PREFIX}${id}`)
+      if (!raw) return
+      const draft = JSON.parse(raw)
+      // Only restore sample overrides — HTML/CSS comes from catalog (always fresh)
+      set({ sampleOverrides: draft.sampleOverrides ?? {} })
+    } catch {
+      // ignore stale/corrupt draft
     }
   },
 

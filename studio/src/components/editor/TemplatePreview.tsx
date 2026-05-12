@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react'
+import { useMemo, useCallback, useRef, useState, useEffect } from 'react'
 import { renderTemplate } from '@/lib/renderTemplate'
 import { generateSampleData } from '@/lib/sampleData'
 import { useEditorStore } from '@/stores/editorStore'
@@ -10,21 +10,21 @@ const LANDSCAPE_H = 540
 const PORTRAIT_W = 540
 const PORTRAIT_H = 960
 
-const PREVIEW_SCALE = 0.3
-
 function PreviewFrame({
   srcdoc,
   width,
   height,
   label,
+  scale,
 }: {
   srcdoc: string
   width: number
   height: number
   label: string
+  scale: number
 }) {
-  const scaledW = Math.round(width * PREVIEW_SCALE)
-  const scaledH = Math.round(height * PREVIEW_SCALE)
+  const scaledW = Math.round(width * scale)
+  const scaledH = Math.round(height * scale)
 
   return (
     <div className="flex flex-col gap-1">
@@ -41,7 +41,7 @@ function PreviewFrame({
           style={{
             width: `${width}px`,
             height: `${height}px`,
-            transform: `scale(${PREVIEW_SCALE})`,
+            transform: `scale(${scale})`,
           }}
         />
       </div>
@@ -58,6 +58,46 @@ export function TemplatePreview() {
   const config = useEditorStore((s) => s.config)
   const sampleOverrides = useEditorStore((s) => s.sampleOverrides)
   const toggleFullscreen = useEditorStore((s) => s.toggleFullscreen)
+
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [scale, setScale] = useState(0.3)
+
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+
+    const compute = () => {
+      const availW = el.clientWidth - 32 // 16px padding each side
+      const availH = el.clientHeight - 32
+      if (availW <= 0 || availH <= 0) return
+
+      // Two frames side by side with a gap; compute per-frame slot width
+      const GAP = 16
+      const perFrameW = (availW - GAP) / 2
+
+      // Scale so each frame fits its slot without overflow
+      const scaleByLandscapeW = perFrameW / LANDSCAPE_W
+      const scaleByPortraitW = perFrameW / PORTRAIT_W
+      // Both frames must fit the available height
+      const scaleByLandscapeH = availH / LANDSCAPE_H
+      const scaleByPortraitH = availH / PORTRAIT_H
+
+      // Choose the scale that satisfies all constraints, capped at 0.7
+      const best = Math.min(
+        scaleByLandscapeW,
+        scaleByPortraitW,
+        scaleByLandscapeH,
+        scaleByPortraitH,
+        0.7,
+      )
+      setScale(Math.max(best, 0.1))
+    }
+
+    compute()
+    const ro = new ResizeObserver(compute)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
 
   const sampleData = useMemo(
     () => ({ ...generateSampleData(config.slots), ...sampleOverrides }),
@@ -82,13 +122,14 @@ export function TemplatePreview() {
           <Maximize2 className="h-3.5 w-3.5" />
         </Button>
       </div>
-      <div className="flex flex-1 items-start gap-4 overflow-auto p-4">
+      <div ref={containerRef} className="flex flex-1 items-start gap-4 overflow-auto p-4">
         <div>
           <PreviewFrame
             srcdoc={landscapeSrcdoc}
             width={LANDSCAPE_W}
             height={LANDSCAPE_H}
             label="Landscape"
+            scale={scale}
           />
         </div>
         <div>
@@ -97,6 +138,7 @@ export function TemplatePreview() {
             width={PORTRAIT_W}
             height={PORTRAIT_H}
             label="Portrait"
+            scale={scale}
           />
         </div>
       </div>

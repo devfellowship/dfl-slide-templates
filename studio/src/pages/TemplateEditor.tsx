@@ -29,6 +29,7 @@ export function TemplateEditor() {
   const loadTemplate = useEditorStore((s) => s.loadTemplate)
   const createNewTemplate = useEditorStore((s) => s.createNewTemplate)
   const loadDraft = useEditorStore((s) => s.loadDraft)
+  const loadDraftOverridesOnly = useEditorStore((s) => s.loadDraftOverridesOnly)
   const saveDraft = useEditorStore((s) => s.saveDraft)
   const isDirty = useEditorStore((s) => s.isDirty)
   const lastSavedAt = useEditorStore((s) => s.lastSavedAt)
@@ -42,24 +43,27 @@ export function TemplateEditor() {
 
   useEffect(() => {
     if (initializedRef.current) return
-    initializedRef.current = true
 
     if (id === 'new') {
+      initializedRef.current = true
       if (!loadDraft('new')) {
         createNewTemplate()
       }
       return
     }
 
-    if (id && loadDraft(id)) return
-
+    // For catalog templates: always load HTML/CSS from catalog (never from stale draft),
+    // then overlay only sampleOverrides from draft to preserve user customizations.
+    // Wait until catalog is available before marking as initialized.
     if (id && catalog) {
+      initializedRef.current = true
       const assets = catalog.templates.get(id)
       if (assets) {
         loadTemplate(id, assets)
+        loadDraftOverridesOnly(id)
       }
     }
-  }, [id, catalog, loadTemplate, createNewTemplate, loadDraft])
+  }, [id, catalog, loadTemplate, createNewTemplate, loadDraft, loadDraftOverridesOnly])
 
   useEffect(() => {
     const timer = setInterval(() => {

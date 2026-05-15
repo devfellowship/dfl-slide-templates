@@ -9,6 +9,10 @@
     {"id": "image", "version": "1.0.0", "category": "content"},
     {"id": "table", "version": "1.0.0", "category": "data"},
     {"id": "chart", "version": "1.0.0", "category": "data"},
-    {"id": "blank", "version": "1.0.0", "category": "layout"}
+    {"id": "blank", "version": "1.0.0", "category": "layout"},
+    {"id": "kpi", "version": "1.0.0", "category": "data"},
+    {"id": "section-header", "version": "1.0.0", "category": "layout"},
+    {"id": "steps", "version": "1.0.0", "category": "layout"},
+    {"id": "callout", "version": "1.0.0", "category": "content"}
   ]
 }

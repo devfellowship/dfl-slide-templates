@@ -1,0 +1,25 @@
+id: section-header
+name: Section Header
+version: "1.0.0"
+category: layout
+slots:
+  - name: chapterNo
+    type: text
+    required: true
+    description: "Chapter or section number rendered in large brand-coloured display type"
+    sample: "03"
+  - name: eyebrow
+    type: text
+    required: false
+    description: "Optional uppercase label (e.g. 'Module · Backend foundations')"
+    sample: "Module · Backend foundations"
+  - name: title
+    type: text
+    required: true
+    description: "Section title displayed in display type"
+    sample: "Designing for failure"
+  - name: description
+    type: text
+    required: false
+    description: "Short paragraph describing the section's contents"
+    sample: "Distributed systems fail. This chapter walks through the patterns we use at scale — circuit breakers, retries, idempotency keys."

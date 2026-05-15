@@ -1,0 +1,39 @@
+id: steps
+name: Steps / Timeline
+version: "1.0.0"
+category: layout
+slots:
+  - name: eyebrow
+    type: text
+    required: false
+    description: "Short uppercase label rendered above the title (e.g. 'Process')"
+    sample: "Process"
+  - name: title
+    type: text
+    required: true
+    description: "Slide heading"
+    sample: "Record & publish flow"
+  - name: items
+    type: items
+    required: true
+    description: |
+      Array of step entries. Each item has:
+        num   — display number (e.g. "01")
+        title — short heading for the step
+        body  — one-line description
+        state — optional: "done" | "active" | "" (default)
+    sample:
+      - num: "01"
+        title: "Plan"
+        body: "Outline the lesson in our editor with AI assistance."
+        state: "done"
+      - num: "02"
+        title: "Record"
+        body: "Screen + webcam capture, multi-take support."
+        state: "active"
+      - num: "03"
+        title: "Edit"
+        body: "Auto-cut silences, generate captions, B-roll."
+      - num: "04"
+        title: "Publish"
+        body: "Ship to fellows + companies with one click."

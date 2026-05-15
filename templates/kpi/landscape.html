@@ -1,0 +1,14 @@
+<div class="tpl-root tpl-kpi">
+  {{#eyebrow}}<span class="dfl-eyebrow">{{eyebrow}}</span>{{/eyebrow}}
+  <h2 class="dfl-section-title tpl-kpi__title">{{title}}</h2>
+  <div class="dfl-section-rule"></div>
+  <div class="tpl-kpi__grid">
+    {{#items}}
+    <div class="tpl-kpi__card{{#brand}} is-brand{{/brand}}">
+      <span class="tpl-kpi__label">{{label}}</span>
+      <span class="tpl-kpi__value">{{value}}</span>
+      {{#delta}}<span class="tpl-kpi__delta">{{delta}}</span>{{/delta}}
+    </div>
+    {{/items}}
+  </div>
+</div>

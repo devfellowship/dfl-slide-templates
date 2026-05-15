@@ -1,0 +1,104 @@
+/* tpl-steps · portrait — 540×960 */
+
+.tpl-root.tpl-steps.tpl-steps--portrait {
+  position: relative;
+  width: 540px;
+  height: 960px;
+  padding: 72px 56px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.tpl-root.tpl-steps.tpl-steps--portrait::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-steps.tpl-steps--portrait > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-steps.tpl-steps--portrait .tpl-steps__title { margin-top: 14px; }
+
+.tpl-root.tpl-steps.tpl-steps--portrait .tpl-steps__rail {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  position: relative;
+}
+
+.tpl-root.tpl-steps.tpl-steps--portrait .tpl-steps__rail::before {
+  content: "";
+  position: absolute;
+  top: 18px;
+  bottom: 18px;
+  left: 18px;
+  width: 1px;
+  height: auto;
+  background: var(--s-border-subtle, #2a2622);
+  z-index: 0;
+}
+
+.tpl-root.tpl-steps.tpl-steps--portrait .tpl-steps__step {
+  position: relative;
+  padding: 0 0 24px 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1;
+}
+
+.tpl-root.tpl-steps.tpl-steps--portrait .tpl-steps__num {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--s-surface-page, #0a0908);
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--p-text-13, 13px);
+  font-weight: var(--p-weight-500, 500);
+  color: var(--s-ink-muted, #7d7568);
+  flex-shrink: 0;
+}
+
+.tpl-root.tpl-steps.tpl-steps--portrait .tpl-steps__step--active .tpl-steps__num {
+  background: var(--s-brand-solid, #E07A4A);
+  border-color: var(--s-brand-solid, #E07A4A);
+  color: var(--s-ink-inverse, #0a0908);
+}
+
+.tpl-root.tpl-steps.tpl-steps--portrait .tpl-steps__step--done .tpl-steps__num {
+  background: var(--s-surface-raised, #1a1714);
+  border-color: var(--s-border-strong, #3a3530);
+  color: var(--s-brand-fg, #f0a872);
+}
+
+.tpl-root.tpl-steps.tpl-steps--portrait .tpl-steps__name {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-weight: var(--p-weight-600, 600);
+  font-size: 22px;
+  margin: 0;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+}
+
+.tpl-root.tpl-steps.tpl-steps--portrait .tpl-steps__body {
+  font-size: 14px;
+  color: var(--s-ink-muted, #7d7568);
+  margin: 0;
+  line-height: 1.5;
+}

@@ -1,0 +1,75 @@
+/* tpl-kpi · portrait — 540×960 */
+
+.tpl-root.tpl-kpi.tpl-kpi--portrait {
+  position: relative;
+  width: 540px;
+  height: 960px;
+  padding: 72px 56px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.tpl-root.tpl-kpi.tpl-kpi--portrait::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-kpi.tpl-kpi--portrait > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-kpi.tpl-kpi--portrait .tpl-kpi__title { margin-top: 14px; }
+
+.tpl-root.tpl-kpi.tpl-kpi--portrait .tpl-kpi__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.tpl-root.tpl-kpi.tpl-kpi--portrait .tpl-kpi__card {
+  padding: 22px 24px;
+  background: var(--s-surface-panel, #141210);
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  border-radius: var(--p-radius-lg, 10px);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+}
+
+.tpl-root.tpl-kpi.tpl-kpi--portrait .tpl-kpi__card.is-brand {
+  background: var(--s-brand-subtle, rgba(224, 122, 74, 0.10));
+  border-color: var(--s-brand-border, rgba(224, 122, 74, 0.22));
+}
+
+.tpl-root.tpl-kpi.tpl-kpi--portrait .tpl-kpi__label {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--p-text-10, 10px);
+  letter-spacing: var(--p-tracking-wider, 0.8px);
+  text-transform: uppercase;
+  color: var(--s-ink-muted, #7d7568);
+}
+
+.tpl-root.tpl-kpi.tpl-kpi--portrait .tpl-kpi__value {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 40px;
+  font-weight: var(--p-weight-700, 700);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  line-height: 1;
+  color: var(--s-ink-primary, #f6f1e7);
+  font-feature-settings: "tnum" 1;
+}
+
+.tpl-root.tpl-kpi.tpl-kpi--portrait .tpl-kpi__delta {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--p-text-12, 12px);
+  color: var(--s-success-fg, #7ad79a);
+}

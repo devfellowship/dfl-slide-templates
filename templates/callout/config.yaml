@@ -1,0 +1,25 @@
+id: callout
+name: Callout
+version: "1.0.0"
+category: content
+slots:
+  - name: icon
+    type: text
+    required: false
+    description: "Short symbol rendered inside the badge (e.g. '!', '?', '★'). Defaults to '!' if omitted."
+    sample: "!"
+  - name: eyebrow
+    type: text
+    required: false
+    description: "Optional uppercase label rendered above the headline (e.g. 'Key takeaway')"
+    sample: "Key takeaway"
+  - name: title
+    type: text
+    required: true
+    description: "The headline message"
+    sample: "Templates are CSS, not magic."
+  - name: body
+    type: text
+    required: false
+    description: "Short supporting paragraph"
+    sample: "Every Lesson Studio template ships as a single HTML/CSS file with a documented data contract. Swap themes by swapping one stylesheet."

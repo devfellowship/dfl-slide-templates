@@ -1,13 +1,194 @@
-/* dfl-slide-templates: devfellowship theme
- * DFL brand palette (Tainan-provided 2026-04-30).
- * Inject this before any template CSS so --vars resolve.
- */
+/* dfl-slide-templates: devfellowship theme (DFL DS Redesign · v0)
+ * --------------------------------------------------------------------
+ * The DFL Design System, three-layer token architecture:
+ *   1. PRIMITIVE — raw scales (--p-amber-500, --p-text-14, …)
+ *   2. SEMANTIC — intent (--s-surface-page, --s-ink-primary, --s-brand-solid)
+ *   3. LEGACY ALIAS — backwards-compat shims (--slide-bg, --slide-text)
+ *      so existing default/devfellowship templates keep working.
+ *
+ * Plus shared "slide chassis" utilities (.dfl-eyebrow,
+ * .dfl-section-title, .dfl-section-rule) used by the new
+ * DS-redesigned templates (kpi / section / steps / callout).
+ *
+ * All rules are scoped under .tpl-root so the CSS-scoping linter passes
+ * and tokens don't leak into the host studio app.
+ *
+ * v0 — 2026-05-15 · ported from "DFL DS Redesign" V0 bundle (Tainan).
+ * -------------------------------------------------------------------- */
+
+/* ─── 1 · PRIMITIVES ──────────────────────────────────────────────── */
 .tpl-root {
-  --slide-primary: #C52614;       /* DFL red — accents, bullets */
-  --slide-bg: #FEEBDC;            /* DFL cream — slide background */
-  --slide-text: #3C2422;          /* DFL coffee — body text */
-  --slide-heading-color: #3C2422; /* same coffee for headings */
-  --slide-border: rgba(60, 36, 34, 0.15); /* coffee at 15% opacity */
-  --slide-font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  --slide-font-family-heading: 'Futura PT Cond', 'Futura', 'Helvetica Neue', sans-serif;
+  /* Color · Sand (warm low-chroma neutrals) */
+  --p-sand-50:   #f6f1e7;
+  --p-sand-100:  #e8e0d0;
+  --p-sand-200:  #c9c0b4;
+  --p-sand-300:  #a89e8f;
+  --p-sand-400:  #7d7568;
+  --p-sand-500:  #5a5249;
+  --p-sand-600:  #3a3530;
+  --p-sand-700:  #2a2622;
+  --p-sand-800:  #1f1c18;
+  --p-sand-850:  #1a1714;
+  --p-sand-900:  #141210;
+  --p-sand-950:  #0a0908;
+
+  /* Color · Amber (brand) */
+  --p-amber-50:  #fff1e6;
+  --p-amber-100: #fadcc0;
+  --p-amber-200: #f5c298;
+  --p-amber-300: #f0a872;
+  --p-amber-400: #ea915a;
+  --p-amber-500: #E07A4A;
+  --p-amber-600: #c2663b;
+  --p-amber-700: #9e5230;
+  --p-amber-800: #783e25;
+  --p-amber-900: #4d2818;
+
+  /* Color · Status */
+  --p-green-400: #7ad79a;
+  --p-green-500: #5ec27e;
+  --p-yellow-400: #f0c875;
+  --p-yellow-500: #e0b04a;
+  --p-blue-400:  #9ab9e8;
+  --p-blue-500:  #7aa2e0;
+  --p-red-400:   #e89898;
+  --p-red-500:   #e07a7a;
+
+  /* Type · families */
+  --p-font-display: 'Barlow Condensed', 'Inter', system-ui, sans-serif;
+  --p-font-sans:    'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --p-font-mono:    'JetBrains Mono', ui-monospace, 'SF Mono', monospace;
+
+  /* Type · sizes (px) */
+  --p-text-10: 10px;
+  --p-text-11: 11px;
+  --p-text-12: 12px;
+  --p-text-13: 13px;
+  --p-text-14: 14px;
+  --p-text-15: 15px;
+  --p-text-16: 16px;
+  --p-text-18: 18px;
+  --p-text-20: 20px;
+  --p-text-24: 24px;
+  --p-text-32: 32px;
+  --p-text-40: 40px;
+
+  --p-weight-400: 400;
+  --p-weight-500: 500;
+  --p-weight-600: 600;
+  --p-weight-700: 700;
+
+  --p-leading-tight:   1.2;
+  --p-leading-snug:    1.4;
+  --p-leading-normal:  1.55;
+  --p-leading-relaxed: 1.7;
+
+  --p-tracking-tight:  -0.4px;
+  --p-tracking-normal: 0;
+  --p-tracking-wide:   0.5px;
+  --p-tracking-wider:  0.8px;
+
+  /* Spacing · 4px base */
+  --p-space-1:  4px;
+  --p-space-2:  8px;
+  --p-space-3:  12px;
+  --p-space-4:  16px;
+  --p-space-5:  20px;
+  --p-space-6:  24px;
+  --p-space-8:  32px;
+  --p-space-10: 40px;
+  --p-space-12: 48px;
+  --p-space-16: 64px;
+
+  --p-radius-sm:   4px;
+  --p-radius-md:   6px;
+  --p-radius-lg:   10px;
+  --p-radius-xl:   14px;
+  --p-radius-pill: 999px;
+
+  /* ─── 2 · SEMANTIC ────────────────────────────────────────────── */
+  --s-surface-page:     var(--p-sand-950);
+  --s-surface-panel:    var(--p-sand-900);
+  --s-surface-raised:   var(--p-sand-850);
+  --s-surface-elevated: var(--p-sand-800);
+
+  --s-border-subtle: var(--p-sand-700);
+  --s-border-strong: var(--p-sand-600);
+  --s-border-focus:  var(--p-amber-500);
+
+  --s-ink-primary:   var(--p-sand-50);
+  --s-ink-secondary: var(--p-sand-200);
+  --s-ink-muted:     var(--p-sand-400);
+  --s-ink-inverse:   var(--p-sand-950);
+
+  --s-brand-solid:   var(--p-amber-500);
+  --s-brand-hover:   var(--p-amber-400);
+  --s-brand-pressed: var(--p-amber-600);
+  --s-brand-fg:      var(--p-amber-300);
+  --s-brand-subtle:  rgba(224, 122, 74, 0.10);
+  --s-brand-border:  rgba(224, 122, 74, 0.22);
+  --s-brand-ring:    rgba(224, 122, 74, 0.45);
+
+  --s-success-solid:  var(--p-green-500);
+  --s-success-fg:     var(--p-green-400);
+  --s-warning-solid:  var(--p-yellow-500);
+  --s-warning-fg:     var(--p-yellow-400);
+  --s-danger-solid:   var(--p-red-500);
+  --s-danger-fg:      var(--p-red-400);
+  --s-info-solid:     var(--p-blue-500);
+  --s-info-fg:        var(--p-blue-400);
+
+  --s-font-display: var(--p-font-display);
+  --s-font-body:    var(--p-font-sans);
+  --s-font-mono:    var(--p-font-mono);
+
+  /* ─── 3 · LEGACY ALIASES (back-compat with pre-redesign templates) */
+  --slide-primary:             var(--s-brand-solid);
+  --slide-bg:                  var(--s-surface-page);
+  --slide-text:                var(--s-ink-primary);
+  --slide-heading-color:       var(--s-ink-primary);
+  --slide-border:              var(--s-border-subtle);
+  --slide-font-family:         var(--s-font-body);
+  --slide-font-family-heading: var(--s-font-display);
+}
+
+/* ─── Shared slide-chassis utilities (used by new DS templates) ──── */
+.tpl-root .dfl-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--s-font-mono);
+  font-size: var(--p-text-12);
+  letter-spacing: var(--p-tracking-wider);
+  text-transform: uppercase;
+  color: var(--s-ink-muted);
+  font-weight: var(--p-weight-500);
+}
+.tpl-root .dfl-eyebrow::before {
+  content: "";
+  width: 18px;
+  height: 1px;
+  background: var(--s-brand-solid);
+}
+
+.tpl-root .dfl-section-title {
+  font-family: var(--s-font-display);
+  font-weight: var(--p-weight-600);
+  letter-spacing: var(--p-tracking-tight);
+  font-size: 40px;
+  line-height: 1.05;
+  margin: 0;
+  color: var(--s-ink-primary);
+}
+
+.tpl-root .dfl-section-rule {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    var(--s-brand-solid) 0,
+    var(--s-brand-solid) 56px,
+    var(--s-border-subtle) 56px,
+    var(--s-border-subtle) 100%
+  );
+  margin: 18px 0 28px;
 }

@@ -84,9 +84,64 @@ const SAMPLE_DATA: Record<string, Record<string, unknown>> = {
       datasets: [{ label: "MAU", data: [1200, 1900, 2400, 2200, 2800, 3100] }],
     }),
   },
+  kpi: {
+    eyebrow: "Snapshot",
+    title: "Cohort 23 · By the numbers",
+    items: [
+      { label: "Fellows", value: "248", delta: "▲ 32 vs 22", brand: true },
+      { label: "Companies", value: "17", delta: "▲ 5 new" },
+      { label: "Lessons", value: "94" },
+      { label: "Avg NPS", value: "9.2", delta: "▲ +0.4" },
+      { label: "Completion", value: "87%", delta: "▲ +6 pp" },
+      { label: "Repos shipped", value: "1.4k" },
+    ],
+  },
+  "section-header": {
+    chapterNo: "03",
+    eyebrow: "Module · Backend foundations",
+    title: "Designing for failure",
+    description:
+      "Distributed systems fail. This chapter walks through the patterns we use at scale — circuit breakers, retries, idempotency keys.",
+  },
+  steps: {
+    eyebrow: "Process",
+    title: "Record & publish flow",
+    items: [
+      { num: "01", title: "Plan", body: "Outline the lesson in our editor with AI assistance.", state: "done" },
+      { num: "02", title: "Record", body: "Screen + webcam capture, multi-take support.", state: "active" },
+      { num: "03", title: "Edit", body: "Auto-cut silences, generate captions, B-roll." },
+      { num: "04", title: "Publish", body: "Ship to fellows + companies with one click." },
+    ],
+  },
+  callout: {
+    icon: "!",
+    eyebrow: "Key takeaway",
+    title: "Templates are CSS, not magic.",
+    body: "Every Lesson Studio template ships as a single HTML/CSS file with a documented data contract. Swap themes by swapping one stylesheet.",
+  },
 };
 
-const DARK_TEMPLATES = new Set(["title", "image", "table"]);
+const DARK_TEMPLATES = new Set([
+  "title",
+  "image",
+  "table",
+  "kpi",
+  "section-header",
+  "steps",
+  "callout",
+]);
+
+// Templates that render under the DFL Design System (DS Redesign v0).
+// These get the devfellowship theme CSS (tokens + shared chassis utilities)
+// injected before the template's own CSS so that --s-*/--p-* tokens resolve
+// and shared classes (.dfl-eyebrow, .dfl-section-title, .dfl-section-rule)
+// render correctly. Older templates keep their plain hard-coded fallbacks.
+const DS_REDESIGN_TEMPLATES = new Set([
+  "kpi",
+  "section-header",
+  "steps",
+  "callout",
+]);
 
 async function buildHtmlPage(
   templateId: string,
@@ -100,7 +155,14 @@ async function buildHtmlPage(
   const css = fs.readFileSync(path.join(dir, `${orientation}.css`), "utf8");
   const data = SAMPLE_DATA[templateId] ?? {};
   const renderedHtml = Mustache.render(htmlTemplate, data);
-  const bgColor = DARK_TEMPLATES.has(templateId) ? "#1a1a2e" : "#ffffff";
+  const bgColor = DARK_TEMPLATES.has(templateId) ? "#0a0908" : "#ffffff";
+
+  const themeCss = DS_REDESIGN_TEMPLATES.has(templateId)
+    ? fs.readFileSync(
+        path.join(REPO_ROOT, "themes", "devfellowship.css"),
+        "utf8"
+      )
+    : "";
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -111,6 +173,7 @@ async function buildHtmlPage(
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; background: ${bgColor}; }
+    ${themeCss}
     ${css}
   </style>
 </head>

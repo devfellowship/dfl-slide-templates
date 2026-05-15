@@ -1,0 +1,14 @@
+<div class="tpl-root tpl-steps">
+  {{#eyebrow}}<span class="dfl-eyebrow">{{eyebrow}}</span>{{/eyebrow}}
+  <h2 class="dfl-section-title tpl-steps__title">{{title}}</h2>
+  <div class="dfl-section-rule"></div>
+  <div class="tpl-steps__rail">
+    {{#items}}
+    <div class="tpl-steps__step tpl-steps__step--{{state}}">
+      <div class="tpl-steps__num">{{num}}</div>
+      <h4 class="tpl-steps__name">{{title}}</h4>
+      <p class="tpl-steps__body">{{body}}</p>
+    </div>
+    {{/items}}
+  </div>
+</div>

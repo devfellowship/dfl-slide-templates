@@ -196,8 +196,8 @@ async function main(): Promise<void> {
       width: number;
       height: number;
     }> = [
-      { name: "landscape", width: 960, height: 540 },
-      { name: "portrait", width: 540, height: 960 },
+      { name: "landscape", width: 1280, height: 720 },
+      { name: "portrait", width: 720, height: 1280 },
     ];
 
     for (const { name, width, height } of orientations) {

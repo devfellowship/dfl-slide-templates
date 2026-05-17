@@ -10,7 +10,7 @@
 }
 
 .tpl-root.tpl-chart .tpl-chart__title {
-  font-size: 30px;
+  font-size: 40px;
   font-weight: 700;
   color: var(--slide-heading-color, #111827);
   margin: 0 0 24px 0;
@@ -50,7 +50,7 @@
 }
 
 .tpl-root.tpl-chart .tpl-chart__placeholder-label {
-  font-size: 16px;
+  font-size: 22px;
   color: #9ca3af;
   margin: 0;
   text-transform: capitalize;

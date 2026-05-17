@@ -47,7 +47,7 @@
 
 .tpl-root.tpl-section-header .tpl-section-header__eyebrow {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: var(--p-text-11, 11px);
+  font-size: 14px;
   letter-spacing: var(--p-tracking-wider, 0.8px);
   text-transform: uppercase;
   color: var(--s-ink-muted, #7d7568);
@@ -55,7 +55,7 @@
 
 .tpl-root.tpl-section-header .tpl-section-header__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 72px;
+  font-size: 90px;
   font-weight: var(--p-weight-700, 700);
   line-height: 0.95;
   margin: 0;
@@ -65,7 +65,7 @@
 }
 
 .tpl-root.tpl-section-header .tpl-section-header__description {
-  font-size: 18px;
+  font-size: 24px;
   color: var(--s-ink-secondary, #c9c0b4);
   line-height: 1.5;
   margin: 0;

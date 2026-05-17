@@ -12,7 +12,7 @@
 }
 
 .tpl-root.tpl-table .tpl-table__title {
-  font-size: 28px;
+  font-size: 38px;
   font-weight: 700;
   color: #ffffff;
   margin: 0 0 24px 0;
@@ -32,7 +32,7 @@
 .tpl-root.tpl-table .tpl-table__table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 18px;
+  font-size: 24px;
   color: #ffffff;
 }
 

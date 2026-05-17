@@ -32,7 +32,7 @@
 }
 
 .tpl-root.tpl-img-text .tpl-img-text__title {
-  font-size: 28px;
+  font-size: 38px;
   font-weight: 700;
   color: var(--slide-heading-color, #111827);
   margin: 0 0 18px 0;
@@ -41,7 +41,7 @@
 }
 
 .tpl-root.tpl-img-text .tpl-img-text__body {
-  font-size: 17px;
+  font-size: 24px;
   color: var(--slide-text, #374151);
   line-height: 1.65;
 }

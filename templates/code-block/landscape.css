@@ -10,7 +10,7 @@
 }
 
 .tpl-root.tpl-code-block .tpl-code-block__title {
-  font-size: 30px;
+  font-size: 40px;
   font-weight: 700;
   color: var(--slide-heading-color, #111827);
   margin: 0 0 24px 0;
@@ -32,7 +32,7 @@
   position: absolute;
   top: 14px;
   right: 18px;
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 600;
   color: #94a3b8;
   text-transform: uppercase;
@@ -49,7 +49,7 @@
 
 .tpl-root.tpl-code-block .tpl-code-block__code {
   font-family: 'Cascadia Code', 'Fira Code', 'Consolas', 'Courier New', monospace;
-  font-size: 16px;
+  font-size: 20px;
   line-height: 1.7;
   color: #cdd6f4;
   white-space: pre;

@@ -65,7 +65,7 @@
   align-items: center;
   justify-content: center;
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: var(--p-text-13, 13px);
+  font-size: 16px;
   font-weight: var(--p-weight-500, 500);
   color: var(--s-ink-muted, #7d7568);
   flex-shrink: 0;
@@ -86,14 +86,14 @@
 .tpl-root.tpl-steps .tpl-steps__name {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
   font-weight: var(--p-weight-600, 600);
-  font-size: 22px;
+  font-size: 28px;
   margin: 0;
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
 }
 
 .tpl-root.tpl-steps .tpl-steps__body {
-  font-size: 14px;
+  font-size: 18px;
   color: var(--s-ink-muted, #7d7568);
   margin: 0;
   line-height: 1.5;

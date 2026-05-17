@@ -10,7 +10,7 @@
 }
 
 .tpl-root.tpl-two-column .tpl-two-column__title {
-  font-size: 30px;
+  font-size: 40px;
   font-weight: 700;
   color: var(--slide-heading-color, #111827);
   margin: 0 0 32px 0;
@@ -29,7 +29,7 @@
 .tpl-root.tpl-two-column .tpl-two-column__col {
   flex: 1;
   overflow: hidden;
-  font-size: 17px;
+  font-size: 24px;
   color: var(--slide-text, #374151);
   line-height: 1.6;
 }
@@ -49,7 +49,7 @@
 }
 
 .tpl-root.tpl-two-column .tpl-two-column__col h3 {
-  font-size: 19px;
+  font-size: 24px;
   font-weight: 600;
   color: var(--slide-heading-color, #111827);
   margin: 0 0 10px 0;

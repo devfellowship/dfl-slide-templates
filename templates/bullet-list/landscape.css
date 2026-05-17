@@ -10,7 +10,7 @@
 }
 
 .tpl-root.tpl-bullet-list .tpl-bullet-list__title {
-  font-size: 36px;
+  font-size: 46px;
   font-weight: 700;
   color: var(--slide-heading-color, #111827);
   margin: 0 0 32px 0;
@@ -34,7 +34,7 @@
 .tpl-root.tpl-bullet-list .tpl-bullet-list__item {
   display: flex;
   align-items: flex-start;
-  font-size: 22px;
+  font-size: 30px;
   color: var(--slide-text, #1f2937);
   line-height: 1.4;
 }

@@ -25,7 +25,7 @@
 }
 
 .tpl-root.tpl-quote .tpl-quote__text {
-  font-size: 28px;
+  font-size: 36px;
   font-weight: 400;
   color: var(--slide-heading-color, #111827);
   line-height: 1.5;
@@ -42,14 +42,14 @@
 }
 
 .tpl-root.tpl-quote .tpl-quote__author {
-  font-size: 18px;
+  font-size: 24px;
   font-weight: 600;
   color: var(--slide-text, #1f2937);
   display: block;
 }
 
 .tpl-root.tpl-quote .tpl-quote__source {
-  font-size: 15px;
+  font-size: 20px;
   color: #6b7280;
   display: block;
 }

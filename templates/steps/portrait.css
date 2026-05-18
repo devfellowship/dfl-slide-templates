@@ -11,6 +11,9 @@
   box-sizing: border-box;
   overflow: hidden;
   isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .tpl-root.tpl-steps.tpl-steps--portrait::before {

@@ -10,6 +10,7 @@ slots:
     sample: "Deploy in One Command"
   - name: code
     type: text
+    format: multiline
     required: true
     description: "The code content to display in monospace format"
     sample: "npx create-app my-project\ncd my-project\nnpm run dev"

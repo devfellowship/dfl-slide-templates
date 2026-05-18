@@ -9,11 +9,16 @@ slots:
     description: "Optional heading displayed above the chart"
     sample: "Monthly Growth"
   - name: chartType
-    type: text
+    type: select
     required: true
-    description: "Chart type: bar, line, or pie"
+    description: "Chart type"
+    options:
+      - bar
+      - line
+      - pie
     sample: "bar"
   - name: data
-    type: data
+    type: json
     required: true
     description: "JSON data object for the chart (labels and datasets arrays)"
+    sample: '{"labels":["Jan","Feb","Mar"],"datasets":[{"label":"Revenue","data":[12,19,8]}]}'

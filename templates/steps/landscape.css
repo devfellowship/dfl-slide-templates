@@ -1,9 +1,9 @@
-/* tpl-steps · landscape — 960×540 */
+/* tpl-steps · landscape — 1280×720 */
 
 .tpl-root.tpl-steps {
   position: relative;
-  width: 960px;
-  height: 540px;
+  width: 1280px;
+  height: 720px;
   padding: 56px 72px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
@@ -30,9 +30,10 @@
 .tpl-root.tpl-steps .tpl-steps__rail {
   margin-top: 8px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 0;
   position: relative;
+  counter-reset: step-counter;
 }
 
 .tpl-root.tpl-steps .tpl-steps__rail::before {
@@ -53,6 +54,7 @@
   flex-direction: column;
   gap: 10px;
   z-index: 1;
+  counter-increment: step-counter;
 }
 
 .tpl-root.tpl-steps .tpl-steps__num {
@@ -69,6 +71,10 @@
   font-weight: var(--p-weight-500, 500);
   color: var(--s-ink-muted, #7d7568);
   flex-shrink: 0;
+}
+
+.tpl-root.tpl-steps .tpl-steps__num::before {
+  content: counter(step-counter, decimal-leading-zero);
 }
 
 .tpl-root.tpl-steps .tpl-steps__step--active .tpl-steps__num {

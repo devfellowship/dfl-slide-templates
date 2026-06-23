@@ -1,0 +1,86 @@
+/* tpl-image-row · portrait — 720×1280 */
+
+.tpl-root.tpl-image-row.tpl-image-row--portrait {
+  position: relative;
+  width: 720px;
+  height: 1280px;
+  padding: 72px 56px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 36px;
+}
+
+.tpl-root.tpl-image-row.tpl-image-row--portrait::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-image-row.tpl-image-row--portrait > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-image-row.tpl-image-row--portrait .tpl-image-row__row {
+  width: 100%;
+  height: 920px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.tpl-root.tpl-image-row.tpl-image-row--portrait .tpl-image-row__cell {
+  flex: 1 1 0;
+  min-height: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tpl-root.tpl-image-row.tpl-image-row--portrait .tpl-image-row__frame {
+  width: 100%;
+  flex: 1 1 0;
+  min-height: 0;
+  border-radius: var(--p-radius-xl, 14px);
+  overflow: hidden;
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  background: var(--s-surface-raised, #1a1714);
+}
+
+.tpl-root.tpl-image-row.tpl-image-row--portrait .tpl-image-row__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tpl-root.tpl-image-row.tpl-image-row--portrait .tpl-image-row__credit {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 14px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  color: var(--s-ink-muted, #7d7568);
+  text-align: center;
+  margin: 0;
+}
+
+.tpl-root.tpl-image-row.tpl-image-row--portrait .tpl-image-row__eyebrow {
+  margin: 0;
+}
+
+.tpl-root.tpl-image-row.tpl-image-row--portrait .tpl-image-row__title {
+  text-align: center;
+  margin: 0;
+  font-size: 48px;
+}

@@ -1,0 +1,33 @@
+id: image-row
+name: Image Row
+version: "1.0.0"
+category: media
+slots:
+  - name: images
+    type: items
+    required: true
+    description: |
+      Array of 1–5 images rendered side-by-side in a row, evenly spaced.
+      Each item:
+        url    — image URL (required)
+        alt    — alt text for accessibility (optional)
+        credit — small credit/caption shown under that image (optional)
+    sample:
+      - url: "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&auto=format&fit=crop"
+        alt: "Developer working on a laptop"
+        credit: "Unsplash · Charles Deluvio"
+      - url: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&auto=format&fit=crop"
+        alt: "Code on a screen"
+      - url: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop"
+        alt: "Terminal and editor side by side"
+        credit: "Unsplash · Markus Spiske"
+  - name: title
+    type: text
+    required: false
+    description: "Short title centered below the image row"
+    sample: "Three pillars of agentic coding"
+  - name: eyebrow
+    type: text
+    required: false
+    description: "Optional small uppercase label above/with the title"
+    sample: "Claude Code 101"

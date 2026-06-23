@@ -1,0 +1,14 @@
+<div class="tpl-root tpl-image-row">
+  <div class="tpl-image-row__row">
+    {{#images}}
+    <figure class="tpl-image-row__cell">
+      <div class="tpl-image-row__frame">
+        <img src="{{url}}" alt="{{alt}}" class="tpl-image-row__img" crossorigin="anonymous" />
+      </div>
+      {{#credit}}<figcaption class="tpl-image-row__credit">{{credit}}</figcaption>{{/credit}}
+    </figure>
+    {{/images}}
+  </div>
+  {{#eyebrow}}<span class="dfl-eyebrow tpl-image-row__eyebrow">{{eyebrow}}</span>{{/eyebrow}}
+  {{#title}}<h2 class="dfl-section-title tpl-image-row__title">{{title}}</h2>{{/title}}
+</div>

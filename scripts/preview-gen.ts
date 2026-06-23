@@ -119,6 +119,26 @@ const SAMPLE_DATA: Record<string, Record<string, unknown>> = {
     title: "Templates are CSS, not magic.",
     body: "Every Lesson Studio template ships as a single HTML/CSS file with a documented data contract. Swap themes by swapping one stylesheet.",
   },
+  "image-row": {
+    eyebrow: "Claude Code 101",
+    title: "Three pillars of agentic coding",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&auto=format&fit=crop",
+        alt: "Developer working on a laptop",
+        credit: "Unsplash · Charles Deluvio",
+      },
+      {
+        url: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&auto=format&fit=crop",
+        alt: "Code on a screen",
+      },
+      {
+        url: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop",
+        alt: "Terminal and editor side by side",
+        credit: "Unsplash · Markus Spiske",
+      },
+    ],
+  },
 };
 
 const DARK_TEMPLATES = new Set([
@@ -129,6 +149,7 @@ const DARK_TEMPLATES = new Set([
   "section-header",
   "steps",
   "callout",
+  "image-row",
 ]);
 
 // Templates that render under the DFL Design System (DS Redesign v0).
@@ -141,6 +162,7 @@ const DS_REDESIGN_TEMPLATES = new Set([
   "section-header",
   "steps",
   "callout",
+  "image-row",
 ]);
 
 async function buildHtmlPage(

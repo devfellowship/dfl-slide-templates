@@ -13,6 +13,7 @@
     {"id": "kpi", "version": "1.0.0", "category": "data"},
     {"id": "section-header", "version": "1.0.0", "category": "layout"},
     {"id": "steps", "version": "1.0.0", "category": "layout"},
-    {"id": "callout", "version": "1.0.0", "category": "content"}
+    {"id": "callout", "version": "1.0.0", "category": "content"},
+    {"id": "image-row", "version": "1.0.0", "category": "media"}
   ]
 }

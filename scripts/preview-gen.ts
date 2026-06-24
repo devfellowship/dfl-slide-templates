@@ -139,6 +139,107 @@ const SAMPLE_DATA: Record<string, Record<string, unknown>> = {
       },
     ],
   },
+  "big-statement": {
+    statement:
+      "AI won't replace developers — developers using AI will replace those who don't.",
+    eyebrow: "The thesis",
+  },
+  "full-bleed": {
+    imageUrl:
+      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1600&auto=format&fit=crop",
+    imageAlt: "A glowing network of connected nodes",
+    title: "The Network Era",
+    eyebrow: "Module 3",
+  },
+  "big-image": {
+    imageUrl:
+      "https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?w=1400&auto=format&fit=crop",
+    imageAlt: "A laptop showing a terminal interface",
+    title: "The Claude Code terminal UI",
+    caption: "Agentic coding in your terminal",
+  },
+  "image-grid": {
+    title: "What you'll build",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&auto=format&fit=crop",
+        alt: "Code on a screen",
+      },
+      {
+        url: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop",
+        alt: "Terminal and editor side by side",
+      },
+      {
+        url: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop",
+        alt: "Developer workstation with code",
+      },
+      {
+        url: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&auto=format&fit=crop",
+        alt: "Software code on a monitor",
+      },
+    ],
+  },
+  comparison: {
+    title: "Manual vs Agentic",
+    leftLabel: "Before",
+    rightLabel: "After",
+    leftItems: [
+      { text: "Copy-paste from docs by hand" },
+      { text: "Context lives only in your head" },
+      { text: "Repetitive boilerplate every time" },
+    ],
+    rightItems: [
+      { text: "Agent reads the docs for you" },
+      { text: "Context persists across sessions" },
+      { text: "Boilerplate generated on demand" },
+    ],
+  },
+  "stat-number": {
+    value: "73%",
+    label: "of developers now use AI tools daily",
+    eyebrow: "Stack Overflow 2025",
+    source: "n=90,000 respondents",
+  },
+  "feature-cards": {
+    eyebrow: "Claude Code 101",
+    title: "Three pillars",
+    cards: [
+      {
+        iconUrl:
+          "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&auto=format&fit=crop",
+        title: "Read",
+        caption: "Understands your whole codebase",
+      },
+      {
+        iconUrl:
+          "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&auto=format&fit=crop",
+        title: "Plan",
+        caption: "Breaks work into clear steps",
+      },
+      {
+        iconUrl:
+          "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&auto=format&fit=crop",
+        title: "Ship",
+        caption: "Writes, tests, and opens the PR",
+      },
+    ],
+  },
+  "image-quote": {
+    imageUrl:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&auto=format&fit=crop",
+    imageAlt: "Portrait of a person",
+    quote: "The best way to predict the future is to invent it.",
+    author: "Alan Kay",
+    role: "Computer scientist",
+  },
+  "title-image": {
+    eyebrow: "DevFellowship",
+    title: "Claude Code 101",
+    subtitle: "From zero to agentic coding",
+    imageUrl:
+      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1000&auto=format&fit=crop",
+    imageAlt: "A terminal and code editor side by side",
+  },
 };
 
 const DARK_TEMPLATES = new Set([

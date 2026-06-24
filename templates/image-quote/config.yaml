@@ -1,0 +1,30 @@
+id: image-quote
+name: Image + Quote
+version: "1.0.0"
+category: media
+slots:
+  - name: imageUrl
+    type: image
+    required: true
+    description: "Portrait image shown on one side"
+    sample: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&auto=format&fit=crop"
+  - name: imageAlt
+    type: text
+    required: false
+    description: "Alt text for the portrait image"
+    sample: "Portrait of a person"
+  - name: quote
+    type: text
+    required: true
+    description: "The quote text"
+    sample: "The best way to predict the future is to invent it."
+  - name: author
+    type: text
+    required: false
+    description: "Quote author"
+    sample: "Alan Kay"
+  - name: role
+    type: text
+    required: false
+    description: "Author's role or title"
+    sample: "Computer scientist"

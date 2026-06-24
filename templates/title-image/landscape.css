@@ -1,0 +1,64 @@
+/* tpl-title-image · landscape — 960×540 */
+
+.tpl-root.tpl-title-image {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 1fr 420px;
+}
+
+.tpl-root.tpl-title-image .tpl-title-image__panel {
+  padding: 64px 64px 64px 72px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+}
+
+.tpl-root.tpl-title-image .tpl-title-image__eyebrow {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 14px;
+  letter-spacing: var(--p-tracking-wider, 0.8px);
+  text-transform: uppercase;
+  color: var(--s-brand-fg, #f0a872);
+}
+
+.tpl-root.tpl-title-image .tpl-title-image__title {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 84px;
+  font-weight: var(--p-weight-700, 700);
+  line-height: 0.95;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+  text-wrap: balance;
+}
+
+.tpl-root.tpl-title-image .tpl-title-image__subtitle {
+  font-size: 24px;
+  line-height: 1.45;
+  color: var(--s-ink-secondary, #c9c0b4);
+  margin: 0;
+  max-width: 32ch;
+}
+
+.tpl-root.tpl-title-image .tpl-title-image__media {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: var(--s-surface-raised, #1a1714);
+}
+
+.tpl-root.tpl-title-image .tpl-title-image__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}

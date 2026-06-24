@@ -1,0 +1,30 @@
+id: title-image
+name: Title over Image
+version: "1.0.0"
+category: media
+slots:
+  - name: eyebrow
+    type: text
+    required: false
+    description: "Optional small uppercase label above the title"
+    sample: "DevFellowship"
+  - name: title
+    type: text
+    required: true
+    description: "Headline shown in the text panel"
+    sample: "Claude Code 101"
+  - name: subtitle
+    type: text
+    required: false
+    description: "Supporting subtitle below the headline"
+    sample: "From zero to agentic coding"
+  - name: imageUrl
+    type: image
+    required: true
+    description: "Image shown in the adjacent panel"
+    sample: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1000&auto=format&fit=crop"
+  - name: imageAlt
+    type: text
+    required: false
+    description: "Alt text for the image"
+    sample: "A terminal and code editor side by side"

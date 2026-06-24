@@ -1,0 +1,33 @@
+id: feature-cards
+name: Feature Cards
+version: "1.0.0"
+category: media
+slots:
+  - name: eyebrow
+    type: text
+    required: false
+    description: "Optional small uppercase label above the title"
+    sample: "Claude Code 101"
+  - name: title
+    type: text
+    required: false
+    description: "Short title shown above the row of cards"
+    sample: "Three pillars"
+  - name: cards
+    type: items
+    required: true
+    description: |
+      Row of 3–4 feature cards. Each item:
+        iconUrl — square image shown at the top of the card (optional)
+        title   — card heading (required)
+        caption — one-line supporting text (optional)
+    sample:
+      - iconUrl: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&auto=format&fit=crop"
+        title: "Read"
+        caption: "Understands your whole codebase"
+      - iconUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&auto=format&fit=crop"
+        title: "Plan"
+        caption: "Breaks work into clear steps"
+      - iconUrl: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&auto=format&fit=crop"
+        title: "Ship"
+        caption: "Writes, tests, and opens the PR"

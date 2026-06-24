@@ -1,0 +1,14 @@
+<div class="tpl-root tpl-image-quote">
+  <div class="tpl-image-quote__media">
+    <img src="{{imageUrl}}" alt="{{imageAlt}}" class="tpl-image-quote__img" />
+  </div>
+  <div class="tpl-image-quote__body">
+    <blockquote class="tpl-image-quote__quote">{{quote}}</blockquote>
+    {{#author}}
+    <div class="tpl-image-quote__attribution">
+      <span class="tpl-image-quote__author">{{author}}</span>
+      {{#role}}<span class="tpl-image-quote__role">{{role}}</span>{{/role}}
+    </div>
+    {{/author}}
+  </div>
+</div>

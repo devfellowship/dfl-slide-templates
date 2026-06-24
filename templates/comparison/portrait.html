@@ -1,0 +1,18 @@
+<div class="tpl-root tpl-comparison tpl-comparison--portrait">
+  {{#title}}<h2 class="tpl-comparison__title">{{title}}</h2>{{/title}}
+  <div class="tpl-comparison__panels">
+    <div class="tpl-comparison__panel tpl-comparison__panel--left">
+      <span class="tpl-comparison__label">{{leftLabel}}</span>
+      <ul class="tpl-comparison__list">
+        {{#leftItems}}<li class="tpl-comparison__item">{{text}}</li>{{/leftItems}}
+      </ul>
+    </div>
+    <div class="tpl-comparison__vs">VS</div>
+    <div class="tpl-comparison__panel tpl-comparison__panel--right">
+      <span class="tpl-comparison__label">{{rightLabel}}</span>
+      <ul class="tpl-comparison__list">
+        {{#rightItems}}<li class="tpl-comparison__item">{{text}}</li>{{/rightItems}}
+      </ul>
+    </div>
+  </div>
+</div>

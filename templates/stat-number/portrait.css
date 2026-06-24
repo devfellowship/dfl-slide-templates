@@ -1,0 +1,71 @@
+/* tpl-stat-number · portrait — 540×960 */
+
+.tpl-root.tpl-stat-number.tpl-stat-number--portrait {
+  position: relative;
+  width: 540px;
+  height: 960px;
+  padding: 72px 56px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tpl-root.tpl-stat-number.tpl-stat-number--portrait::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-stat-number.tpl-stat-number--portrait > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-stat-number.tpl-stat-number--portrait .tpl-stat-number__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  max-width: 12ch;
+}
+
+.tpl-root.tpl-stat-number.tpl-stat-number--portrait .tpl-stat-number__eyebrow {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 14px;
+  letter-spacing: var(--p-tracking-wider, 0.8px);
+  text-transform: uppercase;
+  color: var(--s-ink-muted, #7d7568);
+}
+
+.tpl-root.tpl-stat-number.tpl-stat-number--portrait .tpl-stat-number__value {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 260px;
+  font-weight: var(--p-weight-700, 700);
+  line-height: 0.82;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-brand-fg, #f0a872);
+  font-feature-settings: "tnum" 1;
+}
+
+.tpl-root.tpl-stat-number.tpl-stat-number--portrait .tpl-stat-number__label {
+  font-size: 28px;
+  line-height: 1.35;
+  color: var(--s-ink-secondary, #c9c0b4);
+  margin: 12px 0 0;
+  text-wrap: balance;
+}
+
+.tpl-root.tpl-stat-number.tpl-stat-number--portrait .tpl-stat-number__source {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 13px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  color: var(--s-ink-muted, #7d7568);
+}

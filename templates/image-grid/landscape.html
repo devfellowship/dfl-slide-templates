@@ -1,0 +1,10 @@
+<div class="tpl-root tpl-image-grid">
+  {{#title}}<h2 class="tpl-image-grid__title">{{title}}</h2>{{/title}}
+  <div class="tpl-image-grid__grid">
+    {{#images}}
+    <div class="tpl-image-grid__cell">
+      <img src="{{url}}" alt="{{alt}}" class="tpl-image-grid__img" />
+    </div>
+    {{/images}}
+  </div>
+</div>

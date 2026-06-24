@@ -1,0 +1,15 @@
+id: big-statement
+name: Big Statement
+version: "1.0.0"
+category: content
+slots:
+  - name: statement
+    type: text
+    required: true
+    description: "Single oversized centered statement — the slide's only message"
+    sample: "AI won't replace developers — developers using AI will replace those who don't."
+  - name: eyebrow
+    type: text
+    required: false
+    description: "Optional small uppercase label above the statement"
+    sample: "The thesis"

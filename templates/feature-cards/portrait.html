@@ -1,0 +1,15 @@
+<div class="tpl-root tpl-feature-cards tpl-feature-cards--portrait">
+  {{#eyebrow}}<span class="tpl-feature-cards__eyebrow">{{eyebrow}}</span>{{/eyebrow}}
+  {{#title}}<h2 class="tpl-feature-cards__title">{{title}}</h2>{{/title}}
+  <div class="tpl-feature-cards__row">
+    {{#cards}}
+    <div class="tpl-feature-cards__card">
+      {{#iconUrl}}<div class="tpl-feature-cards__icon"><img src="{{iconUrl}}" alt="" class="tpl-feature-cards__img" /></div>{{/iconUrl}}
+      <div class="tpl-feature-cards__card-text">
+        <span class="tpl-feature-cards__card-title">{{title}}</span>
+        {{#caption}}<span class="tpl-feature-cards__card-caption">{{caption}}</span>{{/caption}}
+      </div>
+    </div>
+    {{/cards}}
+  </div>
+</div>

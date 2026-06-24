@@ -1,0 +1,25 @@
+id: stat-number
+name: Stat Number
+version: "1.0.0"
+category: data
+slots:
+  - name: value
+    type: text
+    required: true
+    description: "The giant hero number (e.g. '73%')"
+    sample: "73%"
+  - name: label
+    type: text
+    required: true
+    description: "Caption describing what the number means"
+    sample: "of developers now use AI tools daily"
+  - name: eyebrow
+    type: text
+    required: false
+    description: "Optional small uppercase label / source name above the number"
+    sample: "Stack Overflow 2025"
+  - name: source
+    type: text
+    required: false
+    description: "Optional fine-print source/footnote below the label"
+    sample: "n=90,000 respondents"

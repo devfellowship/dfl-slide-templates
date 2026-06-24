@@ -1,0 +1,40 @@
+id: comparison
+name: Comparison (A vs B)
+version: "1.0.0"
+category: layout
+slots:
+  - name: title
+    type: text
+    required: false
+    description: "Short title shown above the two panels"
+    sample: "Manual vs Agentic"
+  - name: leftLabel
+    type: text
+    required: true
+    description: "Label for the left (muted) panel"
+    sample: "Before"
+  - name: rightLabel
+    type: text
+    required: true
+    description: "Label for the right (brand-accented) panel"
+    sample: "After"
+  - name: leftItems
+    type: items
+    required: false
+    description: |
+      Bullet items for the left panel. Each item:
+        text — the bullet line (required)
+    sample:
+      - text: "Copy-paste from docs by hand"
+      - text: "Context lives only in your head"
+      - text: "Repetitive boilerplate every time"
+  - name: rightItems
+    type: items
+    required: false
+    description: |
+      Bullet items for the right panel. Each item:
+        text — the bullet line (required)
+    sample:
+      - text: "Agent reads the docs for you"
+      - text: "Context persists across sessions"
+      - text: "Boilerplate generated on demand"

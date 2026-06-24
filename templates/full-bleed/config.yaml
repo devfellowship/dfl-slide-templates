@@ -1,0 +1,25 @@
+id: full-bleed
+name: Full-Bleed Image
+version: "1.0.0"
+category: media
+slots:
+  - name: imageUrl
+    type: image
+    required: true
+    description: "Edge-to-edge background image"
+    sample: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1600&auto=format&fit=crop"
+  - name: imageAlt
+    type: text
+    required: false
+    description: "Alt text for the background image"
+    sample: "A glowing network of connected nodes"
+  - name: title
+    type: text
+    required: true
+    description: "Title overlaid on the image"
+    sample: "The Network Era"
+  - name: eyebrow
+    type: text
+    required: false
+    description: "Optional small uppercase label above the title"
+    sample: "Module 3"

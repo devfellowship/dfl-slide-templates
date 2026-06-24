@@ -1,0 +1,25 @@
+id: big-image
+name: Big Image + Label
+version: "1.0.0"
+category: media
+slots:
+  - name: imageUrl
+    type: image
+    required: true
+    description: "Large framed image"
+    sample: "https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?w=1400&auto=format&fit=crop"
+  - name: imageAlt
+    type: text
+    required: false
+    description: "Alt text for the image"
+    sample: "A laptop showing a terminal interface"
+  - name: title
+    type: text
+    required: false
+    description: "Compact title shown in the label bar"
+    sample: "The Claude Code terminal UI"
+  - name: caption
+    type: text
+    required: false
+    description: "Short caption shown beside the title"
+    sample: "Agentic coding in your terminal"

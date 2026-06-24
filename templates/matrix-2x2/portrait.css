@@ -1,0 +1,118 @@
+/* tpl-matrix-2x2 · portrait — 540×960 */
+
+.tpl-root.tpl-matrix-2x2.tpl-matrix-2x2--portrait {
+  position: relative;
+  width: 540px;
+  height: 960px;
+  padding: 64px 48px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tpl-root.tpl-matrix-2x2.tpl-matrix-2x2--portrait::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-matrix-2x2.tpl-matrix-2x2--portrait > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-matrix-2x2.tpl-matrix-2x2--portrait .tpl-matrix-2x2__title {
+  flex: 0 0 auto;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 42px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+  line-height: 1.0;
+}
+
+.tpl-root.tpl-matrix-2x2.tpl-matrix-2x2--portrait .tpl-matrix-2x2__wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.tpl-root.tpl-matrix-2x2.tpl-matrix-2x2--portrait .tpl-matrix-2x2__y-label {
+  flex: 0 0 auto;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 12px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  color: var(--s-ink-muted, #7d7568);
+  align-self: center;
+  text-align: center;
+}
+
+.tpl-root.tpl-matrix-2x2.tpl-matrix-2x2--portrait .tpl-matrix-2x2__content {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tpl-root.tpl-matrix-2x2.tpl-matrix-2x2--portrait .tpl-matrix-2x2__grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 6px;
+  border: 1px solid var(--s-border-strong, #3a3530);
+  border-radius: var(--p-radius-xl, 14px);
+  overflow: hidden;
+  background: var(--s-border-strong, #3a3530);
+}
+
+.tpl-root.tpl-matrix-2x2.tpl-matrix-2x2--portrait .tpl-matrix-2x2__cell {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 22px 20px;
+  background: var(--s-surface-raised, #1a1714);
+}
+
+.tpl-root.tpl-matrix-2x2.tpl-matrix-2x2--portrait .tpl-matrix-2x2__cell:nth-child(2) {
+  background: var(--s-surface-panel, #1f1c18);
+}
+
+.tpl-root.tpl-matrix-2x2.tpl-matrix-2x2--portrait .tpl-matrix-2x2__cell-label {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 28px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+}
+
+.tpl-root.tpl-matrix-2x2.tpl-matrix-2x2--portrait .tpl-matrix-2x2__cell-note {
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--s-ink-muted, #7d7568);
+}
+
+.tpl-root.tpl-matrix-2x2.tpl-matrix-2x2--portrait .tpl-matrix-2x2__x-label {
+  flex: 0 0 auto;
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 12px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  color: var(--s-ink-muted, #7d7568);
+  text-align: right;
+}

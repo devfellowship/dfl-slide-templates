@@ -1,0 +1,18 @@
+<div class="tpl-root tpl-before-after-image">
+  {{#title}}<h2 class="tpl-before-after-image__title">{{title}}</h2>{{/title}}
+  <div class="tpl-before-after-image__row">
+    <div class="tpl-before-after-image__panel tpl-before-after-image__panel--before">
+      <div class="tpl-before-after-image__frame">
+        <img src="{{beforeUrl}}" alt="{{beforeAlt}}" class="tpl-before-after-image__img" />
+      </div>
+      <span class="tpl-before-after-image__label tpl-before-after-image__label--before">{{beforeLabel}}</span>
+    </div>
+    <div class="tpl-before-after-image__divider"></div>
+    <div class="tpl-before-after-image__panel tpl-before-after-image__panel--after">
+      <div class="tpl-before-after-image__frame">
+        <img src="{{afterUrl}}" alt="{{afterAlt}}" class="tpl-before-after-image__img" />
+      </div>
+      <span class="tpl-before-after-image__label tpl-before-after-image__label--after">{{afterLabel}}</span>
+    </div>
+  </div>
+</div>

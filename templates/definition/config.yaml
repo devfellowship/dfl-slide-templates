@@ -1,0 +1,20 @@
+id: definition
+name: Definition
+version: "1.0.0"
+category: content
+slots:
+  - name: term
+    type: text
+    required: true
+    description: "The word or term being defined — displayed large and prominent"
+    sample: "Agentic Loop"
+  - name: eyebrow
+    type: text
+    required: false
+    description: "Optional small label above the term: pronunciation, part-of-speech, category (e.g. 'noun · AI/ML')"
+    sample: "noun · DevOps"
+  - name: definition
+    type: text
+    required: true
+    description: "The definition sentence(s) explaining the term"
+    sample: "A cycle in which an AI model plans, executes, observes the result, and iterates — without human intervention between steps."

@@ -1,0 +1,25 @@
+id: screenshot-frame
+name: Screenshot Frame
+version: "1.0.0"
+category: media
+slots:
+  - name: imageUrl
+    type: image
+    required: true
+    description: "Screenshot shown inside a browser/app window chrome"
+    sample: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1400&auto=format&fit=crop"
+  - name: imageAlt
+    type: text
+    required: false
+    description: "Alt text for the screenshot"
+    sample: "A dashboard interface"
+  - name: urlBar
+    type: text
+    required: false
+    description: "Text shown in the fake browser address bar"
+    sample: "app.devfellowship.com"
+  - name: title
+    type: text
+    required: false
+    description: "Caption shown below the frame"
+    sample: "The new dashboard, end to end"

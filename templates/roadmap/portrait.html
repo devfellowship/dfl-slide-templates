@@ -1,0 +1,16 @@
+<div class="tpl-root tpl-roadmap tpl-roadmap--portrait">
+  {{#title}}<h2 class="tpl-roadmap__title">{{title}}</h2>{{/title}}
+  <div class="tpl-roadmap__track">
+    {{#phases}}
+    <div class="tpl-roadmap__phase">
+      <div class="tpl-roadmap__phase-header">
+        <span class="tpl-roadmap__phase-label">{{label}}</span>
+        <div class="tpl-roadmap__phase-line"></div>
+      </div>
+      <ul class="tpl-roadmap__bullets">
+        {{#bullets}}<li class="tpl-roadmap__bullet">{{text}}</li>{{/bullets}}
+      </ul>
+    </div>
+    {{/phases}}
+  </div>
+</div>

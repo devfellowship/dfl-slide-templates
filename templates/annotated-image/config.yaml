@@ -1,0 +1,42 @@
+id: annotated-image
+name: Annotated Image
+version: "1.0.0"
+category: media
+slots:
+  - name: imageUrl
+    type: image
+    required: true
+    description: "Large image to annotate with callout pins"
+    sample: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&auto=format&fit=crop"
+  - name: imageAlt
+    type: text
+    required: false
+    description: "Alt text for the image"
+    sample: "A dashboard interface with analytics charts"
+  - name: title
+    type: text
+    required: false
+    description: "Optional title shown above the image"
+    sample: "Key areas to note"
+  - name: pins
+    type: items
+    required: true
+    description: |
+      Array of callout pins overlaid on the image. Each item:
+        number — pin number shown as a badge (required)
+        label  — short label text next to the pin (required)
+        x      — horizontal position as percentage 0–100 (optional, default evenly distributed)
+        y      — vertical position as percentage 0–100 (optional, default evenly distributed)
+    sample:
+      - number: "1"
+        label: "Conversion funnel entry"
+        x: "22"
+        y: "35"
+      - number: "2"
+        label: "Drop-off spike"
+        x: "55"
+        y: "60"
+      - number: "3"
+        label: "Re-engagement zone"
+        x: "78"
+        y: "25"

@@ -1,0 +1,14 @@
+<div class="tpl-root tpl-logo-wall">
+  <div class="tpl-logo-wall__header">
+    {{#eyebrow}}<span class="tpl-logo-wall__eyebrow">{{eyebrow}}</span>{{/eyebrow}}
+    {{#title}}<h2 class="tpl-logo-wall__title">{{title}}</h2>{{/title}}
+  </div>
+  <div class="tpl-logo-wall__grid">
+    {{#logos}}
+    <div class="tpl-logo-wall__cell">
+      <img src="{{url}}" alt="{{alt}}" class="tpl-logo-wall__logo" />
+      {{#name}}<span class="tpl-logo-wall__name">{{name}}</span>{{/name}}
+    </div>
+    {{/logos}}
+  </div>
+</div>

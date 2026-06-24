@@ -1,0 +1,31 @@
+id: hierarchy-tree
+name: Hierarchy Tree
+version: "1.0.0"
+category: data
+slots:
+  - name: title
+    type: text
+    required: false
+    description: "Optional slide heading above the tree"
+    sample: "Team Structure"
+  - name: root
+    type: text
+    required: true
+    description: "Label for the root node at the top of the hierarchy"
+    sample: "CTO"
+  - name: children
+    type: items
+    required: true
+    description: |
+      Array of child nodes (2–4 items) branching from the root. Each item has:
+        label — node name or role title
+        note  — optional subtitle or short description
+    sample:
+      - label: "Frontend"
+        note: "3 engineers"
+      - label: "Backend"
+        note: "4 engineers"
+      - label: "Design"
+        note: "2 designers"
+      - label: "DevOps"
+        note: "1 engineer"

@@ -1,0 +1,14 @@
+<div class="tpl-root tpl-screenshot-frame tpl-screenshot-frame--portrait">
+  <div class="tpl-screenshot-frame__window">
+    <div class="tpl-screenshot-frame__chrome">
+      <span class="tpl-screenshot-frame__dot"></span>
+      <span class="tpl-screenshot-frame__dot"></span>
+      <span class="tpl-screenshot-frame__dot"></span>
+      {{#urlBar}}<span class="tpl-screenshot-frame__url">{{urlBar}}</span>{{/urlBar}}
+    </div>
+    <div class="tpl-screenshot-frame__shot">
+      <img src="{{imageUrl}}" alt="{{imageAlt}}" class="tpl-screenshot-frame__img" />
+    </div>
+  </div>
+  {{#title}}<div class="tpl-screenshot-frame__caption">{{title}}</div>{{/title}}
+</div>

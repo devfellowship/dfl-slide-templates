@@ -12,7 +12,13 @@
       "media_profile": "text-heavy",
       "text_density": "low",
       "layout": "centered big headline + subtitle, no media",
-      "tags": ["opening", "cover", "intro", "headline", "course-start"]
+      "tags": [
+        "opening",
+        "cover",
+        "intro",
+        "headline",
+        "course-start"
+      ]
     },
     {
       "id": "section-header",
@@ -24,7 +30,13 @@
       "media_profile": "text-heavy",
       "text_density": "low",
       "layout": "huge chapter numeral left, title + description right",
-      "tags": ["divider", "chapter", "module-break", "agenda-marker", "transition"]
+      "tags": [
+        "divider",
+        "chapter",
+        "module-break",
+        "agenda-marker",
+        "transition"
+      ]
     },
     {
       "id": "bullet-list",
@@ -36,7 +48,14 @@
       "media_profile": "text-heavy",
       "text_density": "high",
       "layout": "title + vertical list of bullets",
-      "tags": ["list", "points", "takeaways", "summary", "agenda", "features-text"]
+      "tags": [
+        "list",
+        "points",
+        "takeaways",
+        "summary",
+        "agenda",
+        "features-text"
+      ]
     },
     {
       "id": "two-column",
@@ -48,7 +67,12 @@
       "media_profile": "text-heavy",
       "text_density": "high",
       "layout": "two equal text columns",
-      "tags": ["columns", "side-by-side", "split", "parallel"]
+      "tags": [
+        "columns",
+        "side-by-side",
+        "split",
+        "parallel"
+      ]
     },
     {
       "id": "img-text",
@@ -60,7 +84,13 @@
       "media_profile": "balanced",
       "text_density": "medium",
       "layout": "image pane one side, title+body the other",
-      "tags": ["concept", "explain", "image-and-text", "feature", "illustration"]
+      "tags": [
+        "concept",
+        "explain",
+        "image-and-text",
+        "feature",
+        "illustration"
+      ]
     },
     {
       "id": "image",
@@ -72,7 +102,13 @@
       "media_profile": "image-first",
       "text_density": "low",
       "layout": "centered image + caption below",
-      "tags": ["image", "screenshot", "photo", "single-visual", "caption"]
+      "tags": [
+        "image",
+        "screenshot",
+        "photo",
+        "single-visual",
+        "caption"
+      ]
     },
     {
       "id": "image-row",
@@ -84,7 +120,14 @@
       "media_profile": "image-only",
       "text_density": "low",
       "layout": "horizontal row of evenly-spaced images + optional title",
-      "tags": ["gallery", "row", "images", "examples", "peers", "strip"]
+      "tags": [
+        "gallery",
+        "row",
+        "images",
+        "examples",
+        "peers",
+        "strip"
+      ]
     },
     {
       "id": "quote",
@@ -96,7 +139,13 @@
       "media_profile": "text-heavy",
       "text_density": "medium",
       "layout": "large quotation + author/source",
-      "tags": ["quote", "testimonial", "principle", "citation", "wisdom"]
+      "tags": [
+        "quote",
+        "testimonial",
+        "principle",
+        "citation",
+        "wisdom"
+      ]
     },
     {
       "id": "callout",
@@ -108,7 +157,14 @@
       "media_profile": "text-heavy",
       "text_density": "medium",
       "layout": "labeled box with icon + title + body",
-      "tags": ["callout", "tip", "warning", "note", "definition", "important"]
+      "tags": [
+        "callout",
+        "tip",
+        "warning",
+        "note",
+        "definition",
+        "important"
+      ]
     },
     {
       "id": "code-block",
@@ -120,7 +176,14 @@
       "media_profile": "code",
       "text_density": "high",
       "layout": "title + monospace code panel",
-      "tags": ["code", "snippet", "command", "terminal", "programming", "syntax"]
+      "tags": [
+        "code",
+        "snippet",
+        "command",
+        "terminal",
+        "programming",
+        "syntax"
+      ]
     },
     {
       "id": "steps",
@@ -132,7 +195,14 @@
       "media_profile": "text-heavy",
       "text_density": "medium",
       "layout": "numbered horizontal/vertical step sequence",
-      "tags": ["steps", "process", "timeline", "sequence", "how-to", "workflow"]
+      "tags": [
+        "steps",
+        "process",
+        "timeline",
+        "sequence",
+        "how-to",
+        "workflow"
+      ]
     },
     {
       "id": "kpi",
@@ -144,7 +214,14 @@
       "media_profile": "data",
       "text_density": "medium",
       "layout": "title + grid of metric cards",
-      "tags": ["kpi", "metrics", "numbers", "stats", "dashboard", "results"]
+      "tags": [
+        "kpi",
+        "metrics",
+        "numbers",
+        "stats",
+        "dashboard",
+        "results"
+      ]
     },
     {
       "id": "table",
@@ -156,7 +233,14 @@
       "media_profile": "data",
       "text_density": "high",
       "layout": "header row + data rows table",
-      "tags": ["table", "data", "rows", "grid", "matrix", "spec"]
+      "tags": [
+        "table",
+        "data",
+        "rows",
+        "grid",
+        "matrix",
+        "spec"
+      ]
     },
     {
       "id": "chart",
@@ -168,7 +252,13 @@
       "media_profile": "data",
       "text_density": "low",
       "layout": "title + chart area + optional caption",
-      "tags": ["chart", "graph", "trend", "visualization", "data-viz"]
+      "tags": [
+        "chart",
+        "graph",
+        "trend",
+        "visualization",
+        "data-viz"
+      ]
     },
     {
       "id": "blank",
@@ -180,7 +270,12 @@
       "media_profile": "balanced",
       "text_density": "none",
       "layout": "empty themed canvas",
-      "tags": ["blank", "custom", "escape-hatch", "freeform"]
+      "tags": [
+        "blank",
+        "custom",
+        "escape-hatch",
+        "freeform"
+      ]
     },
     {
       "id": "big-statement",
@@ -192,7 +287,14 @@
       "media_profile": "text-heavy",
       "text_density": "low",
       "layout": "single oversized centered statement",
-      "tags": ["statement", "thesis", "provocation", "emphasis", "big-text", "punchline"]
+      "tags": [
+        "statement",
+        "thesis",
+        "provocation",
+        "emphasis",
+        "big-text",
+        "punchline"
+      ]
     },
     {
       "id": "full-bleed",
@@ -204,7 +306,14 @@
       "media_profile": "image-only",
       "text_density": "low",
       "layout": "full-frame background image + overlaid title/eyebrow",
-      "tags": ["hero", "full-bleed", "cover", "background-image", "impact", "mood"]
+      "tags": [
+        "hero",
+        "full-bleed",
+        "cover",
+        "background-image",
+        "impact",
+        "mood"
+      ]
     },
     {
       "id": "big-image",
@@ -216,7 +325,13 @@
       "media_profile": "image-first",
       "text_density": "low",
       "layout": "large framed image + compact title bar",
-      "tags": ["big-image", "visual", "reveal", "screenshot-hero", "showcase"]
+      "tags": [
+        "big-image",
+        "visual",
+        "reveal",
+        "screenshot-hero",
+        "showcase"
+      ]
     },
     {
       "id": "image-grid",
@@ -228,7 +343,14 @@
       "media_profile": "image-only",
       "text_density": "low",
       "layout": "2-3 column image grid + optional title",
-      "tags": ["grid", "mosaic", "gallery", "moodboard", "examples", "outputs"]
+      "tags": [
+        "grid",
+        "mosaic",
+        "gallery",
+        "moodboard",
+        "examples",
+        "outputs"
+      ]
     },
     {
       "id": "comparison",
@@ -240,7 +362,14 @@
       "media_profile": "balanced",
       "text_density": "high",
       "layout": "two labeled panels with a center divider/VS",
-      "tags": ["comparison", "vs", "before-after", "pros-cons", "old-new", "contrast"]
+      "tags": [
+        "comparison",
+        "vs",
+        "before-after",
+        "pros-cons",
+        "old-new",
+        "contrast"
+      ]
     },
     {
       "id": "stat-number",
@@ -252,7 +381,13 @@
       "media_profile": "data",
       "text_density": "low",
       "layout": "single oversized number + caption",
-      "tags": ["stat", "number", "percentage", "hero-metric", "impact-number"]
+      "tags": [
+        "stat",
+        "number",
+        "percentage",
+        "hero-metric",
+        "impact-number"
+      ]
     },
     {
       "id": "feature-cards",
@@ -264,7 +399,14 @@
       "media_profile": "balanced",
       "text_density": "medium",
       "layout": "row of 3-4 icon/image cards with title + caption",
-      "tags": ["features", "cards", "icons", "overview", "pillars", "capabilities"]
+      "tags": [
+        "features",
+        "cards",
+        "icons",
+        "overview",
+        "pillars",
+        "capabilities"
+      ]
     },
     {
       "id": "image-quote",
@@ -276,7 +418,14 @@
       "media_profile": "image-first",
       "text_density": "medium",
       "layout": "portrait image one side, quote + author other",
-      "tags": ["testimonial", "quote", "portrait", "person", "endorsement", "voice"]
+      "tags": [
+        "testimonial",
+        "quote",
+        "portrait",
+        "person",
+        "endorsement",
+        "voice"
+      ]
     },
     {
       "id": "title-image",
@@ -288,7 +437,412 @@
       "media_profile": "image-first",
       "text_density": "low",
       "layout": "headline panel + adjacent image panel",
-      "tags": ["opening", "cover", "title-with-image", "module-start", "split-cover"]
+      "tags": [
+        "opening",
+        "cover",
+        "title-with-image",
+        "module-start",
+        "split-cover"
+      ]
+    },
+    {
+      "id": "screenshot-frame",
+      "version": "1.0.0",
+      "category": "media",
+      "name": "Screenshot Frame",
+      "when_to_use": "Present a UI screenshot inside a browser/app window chrome (dots + address bar) so it reads as a real product surface. Use for product demos, dashboard reveals, feature tours, or any 'here's the actual screen' moment.",
+      "avoid_when": "A non-UI photo or an abstract image (use big-image); when you need callout annotations (use annotated-image).",
+      "media_profile": "image-first",
+      "text_density": "low",
+      "layout": "browser-window frame (traffic-light dots + url bar) around a screenshot + caption",
+      "tags": [
+        "screenshot",
+        "ui",
+        "mockup",
+        "browser",
+        "product",
+        "demo"
+      ]
+    },
+    {
+      "id": "annotated-image",
+      "version": "1.0.0",
+      "category": "media",
+      "name": "Annotated Image",
+      "when_to_use": "Highlight specific areas of a screenshot, diagram, or photo with numbered callout pins. Ideal for product walkthroughs, UX critique, architecture diagrams, or any 'look here' moment where the image is primary and labels provide structured commentary.",
+      "avoid_when": "More than 4-5 pins (labels overflow the side rail), or when the image is decorative and needs no annotation.",
+      "media_profile": "image-first",
+      "text_density": "low",
+      "layout": "image + numbered callout pins with a side label rail",
+      "tags": [
+        "annotation",
+        "callout",
+        "diagram",
+        "screenshot",
+        "walkthrough",
+        "numbered"
+      ]
+    },
+    {
+      "id": "image-caption-grid",
+      "version": "1.0.0",
+      "category": "media",
+      "name": "Image Caption Grid",
+      "when_to_use": "2-4 images that each need their own caption — a feature comparison, a step-by-step visual sequence, a before/during/after series, or a portfolio grid. Per-cell context is the point.",
+      "avoid_when": "Captions are identical or unnecessary (use image-grid), or more than 4 images (captions become unreadable).",
+      "media_profile": "image-first",
+      "text_density": "low",
+      "layout": "optional title + 2x2 grid, each cell image + caption below",
+      "tags": [
+        "grid",
+        "caption",
+        "images",
+        "comparison",
+        "portfolio",
+        "labeled"
+      ]
+    },
+    {
+      "id": "before-after-image",
+      "version": "1.0.0",
+      "category": "media",
+      "name": "Before / After Image",
+      "when_to_use": "Contrast two states of the same subject — a redesign reveal, a refactor diff, a feature improvement. Side-by-side framing makes the delta obvious. Labels are customizable (Old/New, v1/v2, Problem/Solution).",
+      "avoid_when": "The two images aren't directly comparable, or the difference needs textual explanation rather than visual contrast.",
+      "media_profile": "image-first",
+      "text_density": "none",
+      "layout": "two image panels with center divider + a label per side",
+      "tags": [
+        "before-after",
+        "comparison",
+        "redesign",
+        "contrast",
+        "dual-image",
+        "reveal"
+      ]
+    },
+    {
+      "id": "polaroid-stack",
+      "version": "1.0.0",
+      "category": "media",
+      "name": "Polaroid Stack",
+      "when_to_use": "A playful, human-touch moment — team photo highlights, retro memories, event coverage, any 3-photo collage where a loose casual feel is intentional. Slight rotation signals storytelling over analysis.",
+      "avoid_when": "Formal data/technical decks where the playful rotation feels off-brand; more than 3 photos.",
+      "media_profile": "image-only",
+      "text_density": "low",
+      "layout": "3 rotated polaroid cards in a loose fan/stack with caption strips",
+      "tags": [
+        "photos",
+        "polaroid",
+        "stack",
+        "collage",
+        "team",
+        "playful"
+      ]
+    },
+    {
+      "id": "logo-wall",
+      "version": "1.0.0",
+      "category": "media",
+      "name": "Logo Wall",
+      "when_to_use": "A collection of partner logos, tech-stack icons, or 'trusted by' marks. Each logo in its own bordered cell with an optional name. Credibility slides, technology overviews, integration ecosystems, sponsors.",
+      "avoid_when": "Logos have wildly different aspect ratios, or you need a single logo at large focal size (use big-image/split-media).",
+      "media_profile": "image-only",
+      "text_density": "low",
+      "layout": "eyebrow + title + grid of bordered logo cells",
+      "tags": [
+        "logos",
+        "brands",
+        "partners",
+        "stack",
+        "trusted-by",
+        "grid"
+      ]
+    },
+    {
+      "id": "video",
+      "version": "1.0.0",
+      "category": "media",
+      "name": "Video Poster",
+      "when_to_use": "Introduce or link a recorded demo, tutorial, or walkthrough — a strong poster image with a centered play-button overlay makes the video intent obvious without playing inline.",
+      "avoid_when": "A static screenshot with no video association (use big-image/screenshot-frame); primarily text content.",
+      "media_profile": "video",
+      "text_density": "low",
+      "layout": "full-bleed poster image with centered play overlay + optional title/caption bar",
+      "tags": [
+        "video",
+        "demo",
+        "poster",
+        "media",
+        "tutorial",
+        "preview"
+      ]
+    },
+    {
+      "id": "split-media",
+      "version": "1.0.0",
+      "category": "media",
+      "name": "Split Media",
+      "when_to_use": "Two distinct images or video posters side-by-side (landscape) or stacked (portrait) with optional per-side labels — compare two products, a mobile vs desktop variant, or any pair where the media itself carries the story.",
+      "avoid_when": "Panels need heavy text annotation (use comparison); only one image (use big-image).",
+      "media_profile": "image-first",
+      "text_density": "none",
+      "layout": "two equal media panels with thin divider + optional labels",
+      "tags": [
+        "split",
+        "side-by-side",
+        "media",
+        "comparison",
+        "two-up",
+        "visual"
+      ]
+    },
+    {
+      "id": "code-output",
+      "version": "1.0.0",
+      "category": "code",
+      "name": "Code + Output",
+      "when_to_use": "Show a code snippet alongside its terminal result/stdout — CLI demos, API call + response pairs, script invocations, test run output. Left = mono code pane, right = terminal output box.",
+      "avoid_when": "Code with no output to show (use code-block); long prose explanations (use two-column).",
+      "media_profile": "code",
+      "text_density": "medium",
+      "layout": "horizontal split: code pane left, terminal output pane right (stacked in portrait)",
+      "tags": [
+        "code",
+        "terminal",
+        "output",
+        "cli",
+        "demo",
+        "monospace"
+      ]
+    },
+    {
+      "id": "definition",
+      "version": "1.0.0",
+      "category": "content",
+      "name": "Definition",
+      "when_to_use": "Introduce a key term, concept, or piece of jargon — the dictionary-entry layout (eyebrow, giant term, accent rule, definition sentence) creates a pause that makes vocabulary stick. Great as a concept opener.",
+      "avoid_when": "Defining multiple terms at once (use bullet-list/two-column); concept needs visual media to explain.",
+      "media_profile": "text-heavy",
+      "text_density": "low",
+      "layout": "centered: mono eyebrow, giant display term, accent rule, definition body",
+      "tags": [
+        "definition",
+        "term",
+        "vocabulary",
+        "concept",
+        "glossary",
+        "text"
+      ]
+    },
+    {
+      "id": "matrix-2x2",
+      "version": "1.0.0",
+      "category": "data",
+      "name": "2x2 Matrix",
+      "when_to_use": "A classic quadrant / prioritization grid with two axes (effort vs impact, urgency vs importance). Each quadrant gets a label + optional note. Strategic planning, backlog prioritization, risk assessment.",
+      "avoid_when": "More than 4 cells (use table/process-flow); axes not naturally orthogonal.",
+      "media_profile": "diagram",
+      "text_density": "low",
+      "layout": "2x2 grid with X/Y axis labels + 4 labeled quadrant cells",
+      "tags": [
+        "matrix",
+        "quadrant",
+        "diagram",
+        "prioritization",
+        "axes",
+        "strategy"
+      ]
+    },
+    {
+      "id": "timeline",
+      "version": "1.0.0",
+      "category": "data",
+      "name": "Timeline",
+      "when_to_use": "Show a sequence of dated milestones, product history, or roadmap phases. Horizontal connected dots (landscape) / vertical left-spine (portrait). Use when dates/order along a line matter.",
+      "avoid_when": "Cyclic or non-linear processes (use cycle); sequential steps without dates (use process-flow); quarter grids (use roadmap).",
+      "media_profile": "diagram",
+      "text_density": "low",
+      "layout": "horizontal connected-dot rail / vertical left-spine",
+      "tags": [
+        "timeline",
+        "milestones",
+        "roadmap",
+        "history",
+        "dates",
+        "progress"
+      ]
+    },
+    {
+      "id": "process-flow",
+      "version": "1.0.0",
+      "category": "data",
+      "name": "Process Flow",
+      "when_to_use": "Linear, step-by-step processes where order matters — onboarding flows, deployment pipelines, sign-up funnels. Boxes connected by arrow glyphs, no diagram tool needed.",
+      "avoid_when": "Parallel or branching steps (use a flowchart tool); non-process ordered lists (use agenda/bullet-list).",
+      "media_profile": "diagram",
+      "text_density": "low",
+      "layout": "left-to-right connected boxes with arrows / top-to-bottom in portrait",
+      "tags": [
+        "process",
+        "flow",
+        "steps",
+        "pipeline",
+        "sequence",
+        "funnel"
+      ]
+    },
+    {
+      "id": "hierarchy-tree",
+      "version": "1.0.0",
+      "category": "data",
+      "name": "Hierarchy Tree",
+      "when_to_use": "An org chart, reporting structure, component hierarchy, or category breakdown with one parent and 2-4 children. Brand-colored root on top, children below via crossbar connector.",
+      "avoid_when": "More than 2 levels of depth (gets cramped); lateral or many-to-many relationships.",
+      "media_profile": "diagram",
+      "text_density": "none",
+      "layout": "root node centered top, children fanned below via trunk + crossbar",
+      "tags": [
+        "org-chart",
+        "hierarchy",
+        "tree",
+        "structure",
+        "reporting",
+        "breakdown"
+      ]
+    },
+    {
+      "id": "agenda",
+      "version": "1.0.0",
+      "category": "content",
+      "name": "Agenda",
+      "when_to_use": "Open a lesson, module, or presentation by setting expectations — numbered rows of topics, with optional time annotations doubling as a schedule.",
+      "avoid_when": "Unordered bullet lists (use bullet-list); items with completion state (use checklist).",
+      "media_profile": "text-heavy",
+      "text_density": "medium",
+      "layout": "header + rule + numbered list with optional right-aligned note column",
+      "tags": [
+        "agenda",
+        "table-of-contents",
+        "schedule",
+        "numbered",
+        "topics",
+        "session"
+      ]
+    },
+    {
+      "id": "checklist",
+      "version": "1.0.0",
+      "category": "content",
+      "name": "Checklist",
+      "when_to_use": "A list of items with explicit done/not-done state — launch checklists, pre-flight requirements, completion criteria. Done items show a green check, pending an empty box.",
+      "avoid_when": "All items same state or state is irrelevant (use bullet-list/agenda); complex multi-column data (use table).",
+      "media_profile": "text-heavy",
+      "text_density": "medium",
+      "layout": "vertical list with glyph column (done/pending) + text column",
+      "tags": [
+        "checklist",
+        "done",
+        "tasks",
+        "requirements",
+        "status",
+        "review"
+      ]
+    },
+    {
+      "id": "pros-cons",
+      "version": "1.0.0",
+      "category": "content",
+      "name": "Pros & Cons",
+      "when_to_use": "A balanced evaluation of a decision, technology, or approach — 'should we adopt X?', trade-offs of Y. Positive vs negative with check/cross semantic coloring (success green / danger red).",
+      "avoid_when": "Both sides are neutral options rather than advantages vs disadvantages (use comparison); more than ~5 items per side.",
+      "media_profile": "text-heavy",
+      "text_density": "high",
+      "layout": "two columns: success-tinted pros left, danger-tinted cons right",
+      "tags": [
+        "pros",
+        "cons",
+        "trade-offs",
+        "decision",
+        "evaluation",
+        "two-column"
+      ]
+    },
+    {
+      "id": "roadmap",
+      "version": "1.0.0",
+      "category": "layout",
+      "name": "Roadmap (Phase Columns)",
+      "when_to_use": "A phased product/project roadmap with columns for time horizons — Now/Next/Later, Q1/Q2/Q3, Sprint/Backlog/Future. Each column holds a short list; the current column is brand-highlighted.",
+      "avoid_when": "Sequential steps in a single flow (use process-flow/steps); precise dates or Gantt timelines (use timeline).",
+      "media_profile": "diagram",
+      "text_density": "medium",
+      "layout": "horizontal phase columns, header + bullets, first column brand-accented",
+      "tags": [
+        "roadmap",
+        "phases",
+        "planning",
+        "now-next-later",
+        "quarters",
+        "strategy"
+      ]
+    },
+    {
+      "id": "cycle",
+      "version": "1.0.0",
+      "category": "layout",
+      "name": "Cycle / Loop Diagram",
+      "when_to_use": "A repeating circular process — Plan-Build-Ship-Learn, PDCA, an Agile sprint cycle, any feedback loop. The loop indicator + arrows make cyclicality explicit. Best with 3-5 stages.",
+      "avoid_when": "Strictly linear process with no feedback (use process-flow/steps); stages needing detailed sub-steps.",
+      "media_profile": "diagram",
+      "text_density": "low",
+      "layout": "loop indicator above a row of circular nodes with arrows, first node brand-highlighted",
+      "tags": [
+        "cycle",
+        "loop",
+        "process",
+        "iterative",
+        "feedback",
+        "agile"
+      ]
+    },
+    {
+      "id": "chapter-image",
+      "version": "1.0.0",
+      "category": "media",
+      "name": "Chapter Image Divider",
+      "when_to_use": "A section divider that introduces a new chapter/module with visual impact — full-bleed background image with a dark scrim, a large chapter number, and the section title. The image-backed counterpart to section-header.",
+      "avoid_when": "No suitable image available (use section-header); regular content slides (this is transitional only).",
+      "media_profile": "image-first",
+      "text_density": "low",
+      "layout": "full-bleed bg image with scrim; giant chapter number + title + subtitle anchored left",
+      "tags": [
+        "chapter",
+        "section-divider",
+        "image",
+        "module",
+        "transition",
+        "hero"
+      ]
+    },
+    {
+      "id": "stat-grid",
+      "version": "1.0.0",
+      "category": "data",
+      "name": "Stat Grid",
+      "when_to_use": "Showcase 3-4 key metrics at once — 'Q2 at a glance', cohort numbers, a dashboard snapshot. Each cell: giant number + label + optional caption. Between stat-number (single) and kpi (6+ dense cards).",
+      "avoid_when": "More than 4 stats (use kpi); a single number should dominate the slide (use stat-number); non-numeric content.",
+      "media_profile": "data",
+      "text_density": "low",
+      "layout": "row of large stat cells (2x2 in portrait), first cell brand-accented",
+      "tags": [
+        "stats",
+        "metrics",
+        "numbers",
+        "dashboard",
+        "kpi",
+        "data"
+      ]
     }
   ]
 }

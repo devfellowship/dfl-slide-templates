@@ -1,0 +1,33 @@
+id: roadmap
+name: Roadmap (Phase Columns)
+version: "1.0.0"
+category: layout
+slots:
+  - name: title
+    type: text
+    required: false
+    description: "Optional heading above the phase columns"
+    sample: "Product Roadmap"
+  - name: phases
+    type: items
+    required: true
+    description: |
+      Array of phase columns. Each item:
+        label   — phase header (e.g. "Now", "Next", "Later", "Q1")
+        bullets — array of items, each with a text field
+    sample:
+      - label: "Now"
+        bullets:
+          - text: "Ship onboarding v2"
+          - text: "Fix auth edge cases"
+          - text: "Mobile responsive pass"
+      - label: "Next"
+        bullets:
+          - text: "Payments integration"
+          - text: "Team workspaces"
+          - text: "Advanced analytics"
+      - label: "Later"
+        bullets:
+          - text: "Native mobile apps"
+          - text: "API v2 public beta"
+          - text: "White-label offering"

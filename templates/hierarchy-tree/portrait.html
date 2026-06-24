@@ -1,0 +1,25 @@
+<div class="tpl-root tpl-hierarchy-tree tpl-hierarchy-tree--portrait">
+  {{#title}}<h2 class="tpl-hierarchy-tree__title">{{title}}</h2>{{/title}}
+  <div class="tpl-hierarchy-tree__diagram">
+    <div class="tpl-hierarchy-tree__root-row">
+      <div class="tpl-hierarchy-tree__node tpl-hierarchy-tree__node--root">
+        <span class="tpl-hierarchy-tree__node-label">{{root}}</span>
+      </div>
+    </div>
+    <div class="tpl-hierarchy-tree__connector-row">
+      <div class="tpl-hierarchy-tree__trunk"></div>
+      <div class="tpl-hierarchy-tree__crossbar"></div>
+    </div>
+    <div class="tpl-hierarchy-tree__children-row">
+      {{#children}}
+      <div class="tpl-hierarchy-tree__child-col">
+        <div class="tpl-hierarchy-tree__branch-tick"></div>
+        <div class="tpl-hierarchy-tree__node">
+          <span class="tpl-hierarchy-tree__node-label">{{label}}</span>
+          {{#note}}<span class="tpl-hierarchy-tree__node-note">{{note}}</span>{{/note}}
+        </div>
+      </div>
+      {{/children}}
+    </div>
+  </div>
+</div>

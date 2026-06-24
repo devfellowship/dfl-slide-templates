@@ -1,0 +1,30 @@
+id: chapter-image
+name: Chapter Image Divider
+version: "1.0.0"
+category: media
+slots:
+  - name: chapterNumber
+    type: text
+    required: false
+    description: "Big chapter or section number displayed as a decorative numeral"
+    sample: "03"
+  - name: title
+    type: text
+    required: true
+    description: "Main section or chapter title"
+    sample: "Building for Scale"
+  - name: subtitle
+    type: text
+    required: false
+    description: "Optional subtitle or tagline below the title"
+    sample: "Architecture decisions that compound"
+  - name: imageUrl
+    type: image
+    required: true
+    description: "Full-bleed background image dimmed behind a dark scrim"
+    sample: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&auto=format&fit=crop"
+  - name: imageAlt
+    type: text
+    required: false
+    description: "Alt text for the background image"
+    sample: "A developer workstation with multiple monitors"

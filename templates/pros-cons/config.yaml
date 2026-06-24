@@ -1,0 +1,32 @@
+id: pros-cons
+name: Pros & Cons
+version: "1.0.0"
+category: content
+slots:
+  - name: title
+    type: text
+    required: false
+    description: "Optional title shown above the two columns"
+    sample: "Should we migrate to a monorepo?"
+  - name: pros
+    type: items
+    required: true
+    description: |
+      Positive items shown in the left (success-colored) column. Each item:
+        text — the pro statement (required)
+    sample:
+      - text: "Unified dependency management across all services"
+      - text: "Easier cross-package refactoring and code sharing"
+      - text: "Single CI pipeline reduces configuration overhead"
+      - text: "Atomic commits spanning multiple packages"
+  - name: cons
+    type: items
+    required: true
+    description: |
+      Negative items shown in the right (danger-colored) column. Each item:
+        text — the con statement (required)
+    sample:
+      - text: "Initial migration effort is significant"
+      - text: "Build times increase without granular caching"
+      - text: "Requires tooling discipline (Turborepo / Nx)"
+      - text: "Harder to enforce team boundaries"

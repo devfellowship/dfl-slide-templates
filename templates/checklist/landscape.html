@@ -1,0 +1,11 @@
+<div class="tpl-root tpl-checklist">
+  {{#title}}<h2 class="tpl-checklist__title">{{title}}</h2>{{/title}}
+  <ul class="tpl-checklist__list">
+    {{#items}}
+    <li class="tpl-checklist__item{{#done}} tpl-checklist__item--done{{/done}}">
+      <span class="tpl-checklist__glyph">{{#done}}&#10003;{{/done}}{{^done}}&#9744;{{/done}}</span>
+      <span class="tpl-checklist__text">{{text}}</span>
+    </li>
+    {{/items}}
+  </ul>
+</div>

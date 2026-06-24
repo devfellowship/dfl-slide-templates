@@ -1,0 +1,5601 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>dfl-slide-templates — showcase (DevFellowship theme)</title>
+<style>/* dfl-slide-templates: devfellowship theme (DFL DS Redesign · v0)
+ * --------------------------------------------------------------------
+ * The DFL Design System, three-layer token architecture:
+ *   1. PRIMITIVE — raw scales (--p-amber-500, --p-text-14, …)
+ *   2. SEMANTIC — intent (--s-surface-page, --s-ink-primary, --s-brand-solid)
+ *   3. LEGACY ALIAS — backwards-compat shims (--slide-bg, --slide-text)
+ *      so existing default/devfellowship templates keep working.
+ *
+ * Plus shared "slide chassis" utilities (.dfl-eyebrow,
+ * .dfl-section-title, .dfl-section-rule) used by the new
+ * DS-redesigned templates (kpi / section / steps / callout).
+ *
+ * All rules are scoped under .tpl-root so the CSS-scoping linter passes
+ * and tokens don't leak into the host studio app.
+ *
+ * v0 — 2026-05-15 · ported from "DFL DS Redesign" V0 bundle (Tainan).
+ * -------------------------------------------------------------------- */
+
+/* ─── 1 · PRIMITIVES ──────────────────────────────────────────────── */
+.tpl-root {
+  /* Color · Sand (warm low-chroma neutrals) */
+  --p-sand-50:   #f6f1e7;
+  --p-sand-100:  #e8e0d0;
+  --p-sand-200:  #c9c0b4;
+  --p-sand-300:  #a89e8f;
+  --p-sand-400:  #7d7568;
+  --p-sand-500:  #5a5249;
+  --p-sand-600:  #3a3530;
+  --p-sand-700:  #2a2622;
+  --p-sand-800:  #1f1c18;
+  --p-sand-850:  #1a1714;
+  --p-sand-900:  #141210;
+  --p-sand-950:  #0a0908;
+
+  /* Color · Amber (brand) */
+  --p-amber-50:  #fff1e6;
+  --p-amber-100: #fadcc0;
+  --p-amber-200: #f5c298;
+  --p-amber-300: #f0a872;
+  --p-amber-400: #ea915a;
+  --p-amber-500: #E07A4A;
+  --p-amber-600: #c2663b;
+  --p-amber-700: #9e5230;
+  --p-amber-800: #783e25;
+  --p-amber-900: #4d2818;
+
+  /* Color · Status */
+  --p-green-400: #7ad79a;
+  --p-green-500: #5ec27e;
+  --p-yellow-400: #f0c875;
+  --p-yellow-500: #e0b04a;
+  --p-blue-400:  #9ab9e8;
+  --p-blue-500:  #7aa2e0;
+  --p-red-400:   #e89898;
+  --p-red-500:   #e07a7a;
+
+  /* Type · families */
+  --p-font-display: 'Barlow Condensed', 'Inter', system-ui, sans-serif;
+  --p-font-sans:    'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --p-font-mono:    'JetBrains Mono', ui-monospace, 'SF Mono', monospace;
+
+  /* Type · sizes (px) */
+  --p-text-10: 10px;
+  --p-text-11: 11px;
+  --p-text-12: 12px;
+  --p-text-13: 13px;
+  --p-text-14: 14px;
+  --p-text-15: 15px;
+  --p-text-16: 16px;
+  --p-text-18: 18px;
+  --p-text-20: 20px;
+  --p-text-24: 24px;
+  --p-text-32: 32px;
+  --p-text-40: 40px;
+
+  --p-weight-400: 400;
+  --p-weight-500: 500;
+  --p-weight-600: 600;
+  --p-weight-700: 700;
+
+  --p-leading-tight:   1.2;
+  --p-leading-snug:    1.4;
+  --p-leading-normal:  1.55;
+  --p-leading-relaxed: 1.7;
+
+  --p-tracking-tight:  -0.4px;
+  --p-tracking-normal: 0;
+  --p-tracking-wide:   0.5px;
+  --p-tracking-wider:  0.8px;
+
+  /* Spacing · 4px base */
+  --p-space-1:  4px;
+  --p-space-2:  8px;
+  --p-space-3:  12px;
+  --p-space-4:  16px;
+  --p-space-5:  20px;
+  --p-space-6:  24px;
+  --p-space-8:  32px;
+  --p-space-10: 40px;
+  --p-space-12: 48px;
+  --p-space-16: 64px;
+
+  --p-radius-sm:   4px;
+  --p-radius-md:   6px;
+  --p-radius-lg:   10px;
+  --p-radius-xl:   14px;
+  --p-radius-pill: 999px;
+
+  /* ─── 2 · SEMANTIC ────────────────────────────────────────────── */
+  --s-surface-page:     var(--p-sand-950);
+  --s-surface-panel:    var(--p-sand-900);
+  --s-surface-raised:   var(--p-sand-850);
+  --s-surface-elevated: var(--p-sand-800);
+
+  --s-border-subtle: var(--p-sand-700);
+  --s-border-strong: var(--p-sand-600);
+  --s-border-focus:  var(--p-amber-500);
+
+  --s-ink-primary:   var(--p-sand-50);
+  --s-ink-secondary: var(--p-sand-200);
+  --s-ink-muted:     var(--p-sand-400);
+  --s-ink-inverse:   var(--p-sand-950);
+
+  --s-brand-solid:   var(--p-amber-500);
+  --s-brand-hover:   var(--p-amber-400);
+  --s-brand-pressed: var(--p-amber-600);
+  --s-brand-fg:      var(--p-amber-300);
+  --s-brand-subtle:  rgba(224, 122, 74, 0.10);
+  --s-brand-border:  rgba(224, 122, 74, 0.22);
+  --s-brand-ring:    rgba(224, 122, 74, 0.45);
+
+  --s-success-solid:  var(--p-green-500);
+  --s-success-fg:     var(--p-green-400);
+  --s-warning-solid:  var(--p-yellow-500);
+  --s-warning-fg:     var(--p-yellow-400);
+  --s-danger-solid:   var(--p-red-500);
+  --s-danger-fg:      var(--p-red-400);
+  --s-info-solid:     var(--p-blue-500);
+  --s-info-fg:        var(--p-blue-400);
+
+  --s-font-display: var(--p-font-display);
+  --s-font-body:    var(--p-font-sans);
+  --s-font-mono:    var(--p-font-mono);
+
+  /* ─── 3 · LEGACY ALIASES (back-compat with pre-redesign templates) */
+  --slide-primary:             var(--s-brand-solid);
+  --slide-bg:                  var(--s-surface-page);
+  --slide-text:                var(--s-ink-primary);
+  --slide-heading-color:       var(--s-ink-primary);
+  --slide-border:              var(--s-border-subtle);
+  --slide-font-family:         var(--s-font-body);
+  --slide-font-family-heading: var(--s-font-display);
+}
+
+/* ─── Shared slide-chassis utilities (used by new DS templates) ──── */
+.tpl-root .dfl-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--s-font-mono);
+  font-size: var(--p-text-12);
+  letter-spacing: var(--p-tracking-wider);
+  text-transform: uppercase;
+  color: var(--s-ink-muted);
+  font-weight: var(--p-weight-500);
+}
+.tpl-root .dfl-eyebrow::before {
+  content: "";
+  width: 18px;
+  height: 1px;
+  background: var(--s-brand-solid);
+}
+
+.tpl-root .dfl-section-title {
+  font-family: var(--s-font-display);
+  font-weight: var(--p-weight-600);
+  letter-spacing: var(--p-tracking-tight);
+  font-size: 40px;
+  line-height: 1.05;
+  margin: 0;
+  color: var(--s-ink-primary);
+}
+
+.tpl-root .dfl-section-rule {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    var(--s-brand-solid) 0,
+    var(--s-brand-solid) 56px,
+    var(--s-border-subtle) 56px,
+    var(--s-border-subtle) 100%
+  );
+  margin: 18px 0 28px;
+}
+</style>
+<style>
+  :root { --bg:#0a0908; --panel:#141210; --ink:#f6f1e7; --muted:#7d7568; --line:#2a2622; --amber:#E07A4A; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif; }
+  .page-head { padding:56px 48px 24px; max-width:1400px; margin:0 auto; }
+  .page-head h1 { font-family:'Barlow Condensed',sans-serif; font-size:48px;
+    margin:0 0 8px; letter-spacing:-0.5px; }
+  .page-head p { color:var(--muted); margin:0; font-size:16px; max-width:720px; }
+  .page-head .count { color:var(--amber); font-weight:600; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(440px,1fr));
+    gap:28px; padding:24px 48px 80px; max-width:1400px; margin:0 auto; }
+  .card { background:var(--panel); border:1px solid var(--line);
+    border-radius:14px; overflow:hidden; display:flex; flex-direction:column; }
+  .card__head { padding:16px 18px; border-bottom:1px solid var(--line);
+    display:flex; flex-direction:column; gap:8px; }
+  .card__id { font-family:'Barlow Condensed',sans-serif; font-size:22px; }
+  .card__id code { font-family:'JetBrains Mono',monospace; font-size:12px;
+    color:var(--muted); background:#0a0908; padding:2px 7px; border-radius:6px;
+    margin-left:6px; }
+  .card__meta { display:flex; gap:6px; flex-wrap:wrap; }
+  .pill { font-family:'JetBrains Mono',monospace; font-size:10px;
+    text-transform:uppercase; letter-spacing:0.6px; color:var(--muted);
+    border:1px solid var(--line); padding:2px 8px; border-radius:999px; }
+  .pill--cat { color:var(--amber); border-color:var(--amber); }
+  .card__stage { background:#0a0908; display:flex; align-items:center;
+    justify-content:center; height:270px; overflow:hidden; }
+  .card__scale { transform:scale(0.5); transform-origin:center; }
+  .card__foot { padding:14px 18px; border-top:1px solid var(--line); }
+  .card__use { margin:0 0 10px; font-size:13px; line-height:1.5; color:#c9c0b4; }
+  .card__use b { color:var(--ink); }
+  .tags { display:flex; gap:6px; flex-wrap:wrap; }
+  .tag { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted);
+    background:#0a0908; padding:2px 7px; border-radius:6px; }
+</style></head>
+<body>
+  <div class="page-head">
+    <h1>dfl-slide-templates</h1>
+    <p><span class="count">45 templates</span> · DevFellowship theme · minimalist + image-forward. Each card shows the landscape render plus the discoverability metadata an authoring LLM uses to pick it.</p>
+  </div>
+  <div class="grid">
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Title Slide <code>title</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">content</span>
+            <span class="pill">text-heavy</span>
+            <span class="pill">density: low</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>.tpl-root.tpl-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1280px;
+  height: 720px;
+  background: var(--slide-bg, #1a2340);
+  font-family: var(--slide-font-family-heading, var(--slide-font-family, 'Inter', system-ui, -apple-system, sans-serif));
+  box-sizing: border-box;
+  padding: 40px;
+  text-align: center;
+}
+
+.tpl-root.tpl-title .tpl-title__inner {
+  max-width: 880px;
+}
+
+.tpl-root.tpl-title .tpl-title__heading {
+  font-size: 90px;
+  font-weight: 700;
+  color: var(--slide-heading-color, #ffffff);
+  line-height: 1.2;
+  margin: 0 0 24px 0;
+  word-wrap: break-word;
+}
+
+.tpl-root.tpl-title .tpl-title__subtitle {
+  font-size: 42px;
+  font-weight: 400;
+  color: var(--slide-text, #e0e0e0);
+  line-height: 1.4;
+  margin: 0;
+}
+</style><div class="tpl-root tpl-title">
+  <div class="tpl-title__inner">
+    <h1 class="tpl-title__heading">Welcome to the Platform</h1>
+    <p class="tpl-title__subtitle">A modern foundation for your presentations</p>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Open a course, module, or major section. The very first slide; a big statement headline with optional subtitle.</p>
+          <div class="tags"><span class="tag">opening</span><span class="tag">cover</span><span class="tag">intro</span><span class="tag">headline</span><span class="tag">course-start</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Section Header <code>section-header</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">layout</span>
+            <span class="pill">text-heavy</span>
+            <span class="pill">density: low</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-section-header · landscape — 960×540 */
+
+.tpl-root.tpl-section-header {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 56px 72px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  align-items: center;
+  gap: 48px;
+}
+
+.tpl-root.tpl-section-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-section-header > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-section-header .tpl-section-header__chapter {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 200px;
+  line-height: 0.85;
+  font-weight: var(--p-weight-700, 700);
+  color: var(--s-brand-fg, #f0a872);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  font-feature-settings: "tnum" 1;
+}
+
+.tpl-root.tpl-section-header .tpl-section-header__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.tpl-root.tpl-section-header .tpl-section-header__eyebrow {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 14px;
+  letter-spacing: var(--p-tracking-wider, 0.8px);
+  text-transform: uppercase;
+  color: var(--s-ink-muted, #7d7568);
+}
+
+.tpl-root.tpl-section-header .tpl-section-header__title {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 90px;
+  font-weight: var(--p-weight-700, 700);
+  line-height: 0.95;
+  margin: 0;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  text-wrap: balance;
+}
+
+.tpl-root.tpl-section-header .tpl-section-header__description {
+  font-size: 24px;
+  color: var(--s-ink-secondary, #c9c0b4);
+  line-height: 1.5;
+  margin: 0;
+  max-width: 46ch;
+}
+</style><div class="tpl-root tpl-section-header">
+  <div class="tpl-section-header__chapter">03</div>
+  <div class="tpl-section-header__meta">
+    <span class="tpl-section-header__eyebrow">Module · Backend foundations</span>
+    <h2 class="tpl-section-header__title">Designing for failure</h2>
+    <p class="tpl-section-header__description">Distributed systems fail. This chapter walks through the patterns we use at scale — circuit breakers, retries, idempotency keys.</p>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Divider between chapters/modules. Big chapter number + section title; signals 'new part starts here'.</p>
+          <div class="tags"><span class="tag">divider</span><span class="tag">chapter</span><span class="tag">module-break</span><span class="tag">agenda-marker</span><span class="tag">transition</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Bullet List <code>bullet-list</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">content</span>
+            <span class="pill">text-heavy</span>
+            <span class="pill">density: high</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>.tpl-root.tpl-bullet-list {
+  display: flex;
+  flex-direction: column;
+  width: 1280px;
+  height: 720px;
+  background: var(--slide-bg, #ffffff);
+  font-family: var(--slide-font-family, 'Segoe UI', system-ui, -apple-system, sans-serif);
+  box-sizing: border-box;
+  padding: 48px 72px;
+}
+
+.tpl-root.tpl-bullet-list .tpl-bullet-list__title {
+  font-size: 46px;
+  font-weight: 700;
+  color: var(--slide-heading-color, #111827);
+  margin: 0 0 32px 0;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--slide-border, #e5e7eb);
+}
+
+.tpl-root.tpl-bullet-list .tpl-bullet-list__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+  overflow: hidden;
+}
+
+.tpl-root.tpl-bullet-list .tpl-bullet-list__item {
+  display: flex;
+  align-items: flex-start;
+  font-size: 30px;
+  color: var(--slide-text, #1f2937);
+  line-height: 1.4;
+}
+
+.tpl-root.tpl-bullet-list .tpl-bullet-list__item::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--slide-primary, #3b82f6);
+  border-radius: 50%;
+  margin-top: 8px;
+  margin-right: 16px;
+  flex-shrink: 0;
+}
+</style><div class="tpl-root tpl-bullet-list">
+  <h2 class="tpl-bullet-list__title">Key Highlights</h2>
+  <ul class="tpl-bullet-list__list">
+    <li class="tpl-bullet-list__item">Fully customisable slide templates</li>
+    <li class="tpl-bullet-list__item">Mustache-powered token substitution</li>
+    <li class="tpl-bullet-list__item">Landscape and portrait orientations</li>
+    <li class="tpl-bullet-list__item">Automated preview generation</li>
+  </ul>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Enumerate 3-6 discrete points, takeaways, or features. The default 'list of things' slide.</p>
+          <div class="tags"><span class="tag">list</span><span class="tag">points</span><span class="tag">takeaways</span><span class="tag">summary</span><span class="tag">agenda</span><span class="tag">features-text</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Two Column <code>two-column</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">layout</span>
+            <span class="pill">text-heavy</span>
+            <span class="pill">density: high</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>.tpl-root.tpl-two-column {
+  display: flex;
+  flex-direction: column;
+  width: 1280px;
+  height: 720px;
+  background: var(--slide-bg, #ffffff);
+  font-family: var(--slide-font-family, 'Segoe UI', system-ui, -apple-system, sans-serif);
+  box-sizing: border-box;
+  padding: 48px 60px;
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__title {
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--slide-heading-color, #111827);
+  margin: 0 0 28px 0;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__columns {
+  display: flex;
+  flex: 1;
+  gap: 0;
+  overflow: hidden;
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__col {
+  flex: 1;
+  overflow: hidden;
+  font-size: 26px;
+  color: var(--slide-text, #374151);
+  line-height: 1.6;
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__col--left {
+  padding-right: 32px;
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__col--right {
+  padding-left: 32px;
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__divider {
+  width: 1px;
+  background: var(--slide-border, #e5e7eb);
+  flex-shrink: 0;
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__col h3 {
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--slide-heading-color, #111827);
+  margin: 0 0 12px 0;
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__col p {
+  margin: 0 0 12px 0;
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__col ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__col li {
+  margin-bottom: 6px;
+}
+</style><div class="tpl-root tpl-two-column">
+  <h2 class="tpl-two-column__title">Side by Side Comparison</h2>
+  <div class="tpl-two-column__columns">
+    <div class="tpl-two-column__col tpl-two-column__col--left">
+      <h3>Approach A</h3><p>Simple, battle-tested methodology that scales well for small teams and iterative projects.</p><ul><li>Low overhead</li><li>Fast iteration</li></ul>
+    </div>
+    <div class="tpl-two-column__divider"></div>
+    <div class="tpl-two-column__col tpl-two-column__col--right">
+      <h3>Approach B</h3><p>Structured framework designed for large organisations with complex delivery pipelines.</p><ul><li>Strong governance</li><li>Audit trail</li></ul>
+    </div>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Compare two related text blocks side by side, or split a topic into two parallel ideas.</p>
+          <div class="tags"><span class="tag">columns</span><span class="tag">side-by-side</span><span class="tag">split</span><span class="tag">parallel</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Image and Text <code>img-text</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">layout</span>
+            <span class="pill">balanced</span>
+            <span class="pill">density: medium</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>.tpl-root.tpl-img-text {
+  display: flex;
+  flex-direction: row;
+  width: 1280px;
+  height: 720px;
+  background: var(--slide-bg, #ffffff);
+  font-family: var(--slide-font-family, 'Segoe UI', system-ui, -apple-system, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.tpl-root.tpl-img-text .tpl-img-text__image-pane {
+  flex: 0 0 45%;
+  overflow: hidden;
+  background: var(--slide-bg, #f3f4f6);
+}
+
+.tpl-root.tpl-img-text .tpl-img-text__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tpl-root.tpl-img-text .tpl-img-text__text-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 48px 56px;
+  overflow: hidden;
+}
+
+.tpl-root.tpl-img-text .tpl-img-text__title {
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--slide-heading-color, #111827);
+  margin: 0 0 20px 0;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.tpl-root.tpl-img-text .tpl-img-text__body {
+  font-size: 26px;
+  color: var(--slide-text, #374151);
+  line-height: 1.65;
+}
+
+.tpl-root.tpl-img-text .tpl-img-text__body p {
+  margin: 0 0 12px 0;
+}
+
+.tpl-root.tpl-img-text .tpl-img-text__body ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.tpl-root.tpl-img-text .tpl-img-text__body li {
+  margin-bottom: 6px;
+}
+</style><div class="tpl-root tpl-img-text">
+  <div class="tpl-img-text__image-pane">
+    <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1551650975-87deedd944c3?w&#x3D;800&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="Developer working on a laptop" class="tpl-img-text__image" />
+  </div>
+  <div class="tpl-img-text__text-pane">
+    <h2 class="tpl-img-text__title">Built for developers</h2>
+    <div class="tpl-img-text__body"><p>Our template engine integrates seamlessly with your existing workflow. Write HTML once, render everywhere.</p><ul><li>Mustache tokens</li><li>Scoped CSS</li><li>Playwright previews</li></ul></div>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Explain ONE concept with a supporting image beside a short paragraph. The workhorse 'concept + visual' slide.</p>
+          <div class="tags"><span class="tag">concept</span><span class="tag">explain</span><span class="tag">image-and-text</span><span class="tag">feature</span><span class="tag">illustration</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Image Slide <code>image</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">content</span>
+            <span class="pill">image-first</span>
+            <span class="pill">density: low</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>.tpl-root.tpl-image {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 1280px;
+  height: 720px;
+  background: transparent;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  box-sizing: border-box;
+  padding: 40px;
+  gap: 24px;
+}
+
+.tpl-root.tpl-image .tpl-image__img {
+  max-width: 80%;
+  max-height: 60%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.tpl-root.tpl-image .tpl-image__description {
+  font-size: 32px;
+  font-weight: 400;
+  color: #e0e0e0;
+  text-align: center;
+  line-height: 1.5;
+  max-width: 80%;
+  margin: 0;
+}
+</style><div class="tpl-root tpl-image">
+  <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1551650975-87deedd944c3?w&#x3D;800&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="Template image" class="tpl-image__img" />
+  <p class="tpl-image__description">A developer working on the next generation of slide templates</p>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Show one image with a short caption. Screenshot, product shot, single illustrative photo.</p>
+          <div class="tags"><span class="tag">image</span><span class="tag">screenshot</span><span class="tag">photo</span><span class="tag">single-visual</span><span class="tag">caption</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Image Row <code>image-row</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">media</span>
+            <span class="pill">image-only</span>
+            <span class="pill">density: low</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-image-row · landscape — 1280×720 */
+
+.tpl-root.tpl-image-row {
+  position: relative;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 72px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 36px;
+}
+
+.tpl-root.tpl-image-row::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-image-row > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-image-row .tpl-image-row__row {
+  width: 100%;
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.tpl-root.tpl-image-row .tpl-image-row__cell {
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tpl-root.tpl-image-row .tpl-image-row__frame {
+  width: 100%;
+  height: 440px;
+  border-radius: var(--p-radius-xl, 14px);
+  overflow: hidden;
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  background: var(--s-surface-raised, #1a1714);
+}
+
+.tpl-root.tpl-image-row .tpl-image-row__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tpl-root.tpl-image-row .tpl-image-row__credit {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 13px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  color: var(--s-ink-muted, #7d7568);
+  text-align: center;
+  margin: 0;
+}
+
+.tpl-root.tpl-image-row .tpl-image-row__eyebrow {
+  margin: 0;
+}
+
+.tpl-root.tpl-image-row .tpl-image-row__title {
+  text-align: center;
+  margin: 0;
+  font-size: 44px;
+}
+</style><div class="tpl-root tpl-image-row">
+  <div class="tpl-image-row__row">
+    <figure class="tpl-image-row__cell">
+      <div class="tpl-image-row__frame">
+        <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1551650975-87deedd944c3?w&#x3D;800&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="Developer working on a laptop" class="tpl-image-row__img" />
+      </div>
+      <figcaption class="tpl-image-row__credit">Unsplash · Charles Deluvio</figcaption>
+    </figure>
+    <figure class="tpl-image-row__cell">
+      <div class="tpl-image-row__frame">
+        <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1517694712202-14dd9538aa97?w&#x3D;800&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="Code on a screen" class="tpl-image-row__img" />
+      </div>
+      
+    </figure>
+    <figure class="tpl-image-row__cell">
+      <div class="tpl-image-row__frame">
+        <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1555066931-4365d14bab8c?w&#x3D;800&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="Terminal and editor side by side" class="tpl-image-row__img" />
+      </div>
+      <figcaption class="tpl-image-row__credit">Unsplash · Markus Spiske</figcaption>
+    </figure>
+  </div>
+  <span class="dfl-eyebrow tpl-image-row__eyebrow">Claude Code 101</span>
+  <h2 class="dfl-section-title tpl-image-row__title">Three pillars of agentic coding</h2>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Show 2-5 images side by side as equal peers — a set of examples, steps-as-photos, or a gallery strip.</p>
+          <div class="tags"><span class="tag">gallery</span><span class="tag">row</span><span class="tag">images</span><span class="tag">examples</span><span class="tag">peers</span><span class="tag">strip</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Quote <code>quote</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">content</span>
+            <span class="pill">text-heavy</span>
+            <span class="pill">density: medium</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>.tpl-root.tpl-quote {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1280px;
+  height: 720px;
+  background: var(--slide-bg, #f9fafb);
+  font-family: var(--slide-font-family, 'Segoe UI', system-ui, -apple-system, sans-serif);
+  box-sizing: border-box;
+  padding: 60px 100px;
+}
+
+.tpl-root.tpl-quote .tpl-quote__inner {
+  max-width: 720px;
+  text-align: center;
+}
+
+.tpl-root.tpl-quote .tpl-quote__mark {
+  font-size: 96px;
+  line-height: 0.5;
+  color: var(--slide-primary, #3b82f6);
+  font-family: Georgia, 'Times New Roman', serif;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.tpl-root.tpl-quote .tpl-quote__text {
+  font-size: 36px;
+  font-weight: 400;
+  color: var(--slide-heading-color, #111827);
+  line-height: 1.5;
+  margin: 0 0 28px 0;
+  font-style: italic;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+.tpl-root.tpl-quote .tpl-quote__attribution {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.tpl-root.tpl-quote .tpl-quote__author {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--slide-text, #1f2937);
+  display: block;
+}
+
+.tpl-root.tpl-quote .tpl-quote__source {
+  font-size: 20px;
+  color: #6b7280;
+  display: block;
+}
+</style><div class="tpl-root tpl-quote">
+  <div class="tpl-quote__inner">
+    <div class="tpl-quote__mark">&ldquo;</div>
+    <blockquote class="tpl-quote__text">Any sufficiently advanced technology is indistinguishable from magic.</blockquote>
+    <div class="tpl-quote__attribution">
+      <span class="tpl-quote__author">Arthur C. Clarke</span>
+      <span class="tpl-quote__source">Profiles of the Future, 1962</span>
+    </div>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Highlight a memorable quote, principle, or testimonial with attribution.</p>
+          <div class="tags"><span class="tag">quote</span><span class="tag">testimonial</span><span class="tag">principle</span><span class="tag">citation</span><span class="tag">wisdom</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Callout <code>callout</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">content</span>
+            <span class="pill">text-heavy</span>
+            <span class="pill">density: medium</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-callout · landscape — 960×540 */
+
+.tpl-root.tpl-callout {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 56px 72px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tpl-root.tpl-callout::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-callout > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-callout .tpl-callout__card {
+  padding: 48px 56px;
+  border: 1px solid var(--s-brand-border, rgba(224, 122, 74, 0.22));
+  background: var(--s-brand-subtle, rgba(224, 122, 74, 0.10));
+  border-radius: var(--p-radius-xl, 14px);
+  max-width: 700px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tpl-root.tpl-callout .tpl-callout__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--p-radius-md, 6px);
+  background: var(--s-brand-solid, #E07A4A);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--s-ink-inverse, #0a0908);
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 22px;
+  font-weight: var(--p-weight-700, 700);
+}
+
+.tpl-root.tpl-callout .tpl-callout__eyebrow {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 13px;
+  letter-spacing: var(--p-tracking-wider, 0.8px);
+  text-transform: uppercase;
+  color: var(--s-brand-fg, #f0a872);
+}
+
+.tpl-root.tpl-callout .tpl-callout__title {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 50px;
+  font-weight: var(--p-weight-700, 700);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  line-height: 1.05;
+  margin: 0;
+  color: var(--s-ink-primary, #f6f1e7);
+}
+
+.tpl-root.tpl-callout .tpl-callout__body {
+  font-size: 24px;
+  color: var(--s-ink-secondary, #c9c0b4);
+  line-height: 1.5;
+  margin: 0;
+}
+</style><div class="tpl-root tpl-callout">
+  <div class="tpl-callout__card">
+    <div class="tpl-callout__icon">!</div>
+    <span class="tpl-callout__eyebrow">Key takeaway</span>
+    <h3 class="tpl-callout__title">Templates are CSS, not magic.</h3>
+    <p class="tpl-callout__body">Every Lesson Studio template ships as a single HTML&#x2F;CSS file with a documented data contract. Swap themes by swapping one stylesheet.</p>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Draw attention to a key warning, tip, definition, or 'remember this' note with an icon/label.</p>
+          <div class="tags"><span class="tag">callout</span><span class="tag">tip</span><span class="tag">warning</span><span class="tag">note</span><span class="tag">definition</span><span class="tag">important</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Code Block <code>code-block</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">content</span>
+            <span class="pill">code</span>
+            <span class="pill">density: high</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>.tpl-root.tpl-code-block {
+  display: flex;
+  flex-direction: column;
+  width: 1280px;
+  height: 720px;
+  background: var(--slide-bg, #ffffff);
+  font-family: var(--slide-font-family, 'Segoe UI', system-ui, -apple-system, sans-serif);
+  box-sizing: border-box;
+  padding: 48px 60px;
+}
+
+.tpl-root.tpl-code-block .tpl-code-block__title {
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--slide-heading-color, #111827);
+  margin: 0 0 24px 0;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.tpl-root.tpl-code-block .tpl-code-block__container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #1e1e2e;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.tpl-root.tpl-code-block .tpl-code-block__lang-badge {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.tpl-root.tpl-code-block .tpl-code-block__pre {
+  flex: 1;
+  margin: 0;
+  padding: 28px 32px;
+  overflow: auto;
+}
+
+.tpl-root.tpl-code-block .tpl-code-block__code {
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', 'Courier New', monospace;
+  font-size: 20px;
+  line-height: 1.7;
+  color: #cdd6f4;
+  white-space: pre;
+  display: block;
+}
+</style><div class="tpl-root tpl-code-block">
+  <h2 class="tpl-code-block__title">Rendering a Template</h2>
+  <div class="tpl-code-block__container">
+    <div class="tpl-code-block__lang-badge">typescript</div>
+    <pre class="tpl-code-block__pre"><code class="tpl-code-block__code">import Mustache from &#39;mustache&#39;;
+import * as fs from &#39;fs&#39;;
+
+const template &#x3D; fs.readFileSync(&#39;landscape.html&#39;, &#39;utf8&#39;);
+const output &#x3D; Mustache.render(template, {
+  title: &#39;Hello, World!&#39;,
+  subtitle: &#39;My first slide&#39;,
+});
+
+console.log(output);</code></pre>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Show a code snippet, command, or config with syntax styling — programming/technical lessons.</p>
+          <div class="tags"><span class="tag">code</span><span class="tag">snippet</span><span class="tag">command</span><span class="tag">terminal</span><span class="tag">programming</span><span class="tag">syntax</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Steps / Timeline <code>steps</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">layout</span>
+            <span class="pill">text-heavy</span>
+            <span class="pill">density: medium</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-steps · landscape — 1280×720 */
+
+.tpl-root.tpl-steps {
+  position: relative;
+  width: 1280px;
+  height: 720px;
+  padding: 56px 72px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.tpl-root.tpl-steps::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-steps > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-steps .tpl-steps__title { margin-top: 14px; }
+
+.tpl-root.tpl-steps .tpl-steps__rail {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0;
+  position: relative;
+  counter-reset: step-counter;
+}
+
+.tpl-root.tpl-steps .tpl-steps__rail::before {
+  content: "";
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  right: 18px;
+  height: 1px;
+  background: var(--s-border-subtle, #2a2622);
+  z-index: 0;
+}
+
+.tpl-root.tpl-steps .tpl-steps__step {
+  position: relative;
+  padding-right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1;
+  counter-increment: step-counter;
+}
+
+.tpl-root.tpl-steps .tpl-steps__num {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--s-surface-page, #0a0908);
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 16px;
+  font-weight: var(--p-weight-500, 500);
+  color: var(--s-ink-muted, #7d7568);
+  flex-shrink: 0;
+}
+
+.tpl-root.tpl-steps .tpl-steps__num::before {
+  content: counter(step-counter, decimal-leading-zero);
+}
+
+.tpl-root.tpl-steps .tpl-steps__step--active .tpl-steps__num {
+  background: var(--s-brand-solid, #E07A4A);
+  border-color: var(--s-brand-solid, #E07A4A);
+  color: var(--s-ink-inverse, #0a0908);
+}
+
+.tpl-root.tpl-steps .tpl-steps__step--done .tpl-steps__num {
+  background: var(--s-surface-raised, #1a1714);
+  border-color: var(--s-border-strong, #3a3530);
+  color: var(--s-brand-fg, #f0a872);
+}
+
+.tpl-root.tpl-steps .tpl-steps__name {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-weight: var(--p-weight-600, 600);
+  font-size: 28px;
+  margin: 0;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+}
+
+.tpl-root.tpl-steps .tpl-steps__body {
+  font-size: 18px;
+  color: var(--s-ink-muted, #7d7568);
+  margin: 0;
+  line-height: 1.5;
+}
+</style><div class="tpl-root tpl-steps">
+  <span class="dfl-eyebrow">Process</span>
+  <h2 class="dfl-section-title tpl-steps__title">Record &amp; publish flow</h2>
+  <div class="dfl-section-rule"></div>
+  <div class="tpl-steps__rail">
+    <div class="tpl-steps__step">
+      <div class="tpl-steps__num"></div>
+      <h4 class="tpl-steps__name"></h4>
+    </div>
+    <div class="tpl-steps__step">
+      <div class="tpl-steps__num"></div>
+      <h4 class="tpl-steps__name"></h4>
+    </div>
+    <div class="tpl-steps__step">
+      <div class="tpl-steps__num"></div>
+      <h4 class="tpl-steps__name"></h4>
+    </div>
+    <div class="tpl-steps__step">
+      <div class="tpl-steps__num"></div>
+      <h4 class="tpl-steps__name"></h4>
+    </div>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Show an ordered process, sequence, or timeline of 3-5 steps.</p>
+          <div class="tags"><span class="tag">steps</span><span class="tag">process</span><span class="tag">timeline</span><span class="tag">sequence</span><span class="tag">how-to</span><span class="tag">workflow</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">KPI Grid <code>kpi</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">data</span>
+            <span class="pill">data</span>
+            <span class="pill">density: medium</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-kpi · landscape — 960×540 */
+
+.tpl-root.tpl-kpi {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 56px 72px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.tpl-root.tpl-kpi::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-kpi > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-kpi .tpl-kpi__title { margin-top: 14px; }
+
+.tpl-root.tpl-kpi .tpl-kpi__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.tpl-root.tpl-kpi .tpl-kpi__card {
+  padding: 22px 24px;
+  background: var(--s-surface-panel, #141210);
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  border-radius: var(--p-radius-lg, 10px);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+}
+
+.tpl-root.tpl-kpi .tpl-kpi__card.is-brand {
+  background: var(--s-brand-subtle, rgba(224, 122, 74, 0.10));
+  border-color: var(--s-brand-border, rgba(224, 122, 74, 0.22));
+}
+
+.tpl-root.tpl-kpi .tpl-kpi__label {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 13px;
+  letter-spacing: var(--p-tracking-wider, 0.8px);
+  text-transform: uppercase;
+  color: var(--s-ink-muted, #7d7568);
+}
+
+.tpl-root.tpl-kpi .tpl-kpi__value {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 65px;
+  font-weight: var(--p-weight-700, 700);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  line-height: 1;
+  color: var(--s-ink-primary, #f6f1e7);
+  font-feature-settings: "tnum" 1;
+}
+
+.tpl-root.tpl-kpi .tpl-kpi__delta {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 15px;
+  color: var(--s-success-fg, #7ad79a);
+}
+</style><div class="tpl-root tpl-kpi">
+  <span class="dfl-eyebrow">Snapshot</span>
+  <h2 class="dfl-section-title tpl-kpi__title">Cohort 23 · By the numbers</h2>
+  <div class="dfl-section-rule"></div>
+  <div class="tpl-kpi__grid">
+    <div class="tpl-kpi__card is-brand">
+      <span class="tpl-kpi__label">Fellows</span>
+      <span class="tpl-kpi__value">248</span>
+      <span class="tpl-kpi__delta">▲ 32 vs 22</span>
+    </div>
+    <div class="tpl-kpi__card">
+      <span class="tpl-kpi__label">Companies</span>
+      <span class="tpl-kpi__value">17</span>
+      <span class="tpl-kpi__delta">▲ 5 new</span>
+    </div>
+    <div class="tpl-kpi__card">
+      <span class="tpl-kpi__label">Lessons</span>
+      <span class="tpl-kpi__value">94</span>
+      
+    </div>
+    <div class="tpl-kpi__card">
+      <span class="tpl-kpi__label">Avg NPS</span>
+      <span class="tpl-kpi__value">9.2</span>
+      <span class="tpl-kpi__delta">▲ +0.4</span>
+    </div>
+    <div class="tpl-kpi__card">
+      <span class="tpl-kpi__label">Completion</span>
+      <span class="tpl-kpi__value">87%</span>
+      <span class="tpl-kpi__delta">▲ +6 pp</span>
+    </div>
+    <div class="tpl-kpi__card">
+      <span class="tpl-kpi__label">Repos shipped</span>
+      <span class="tpl-kpi__value">1.4k</span>
+      
+    </div>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Show a grid of key numbers/metrics with labels and optional deltas.</p>
+          <div class="tags"><span class="tag">kpi</span><span class="tag">metrics</span><span class="tag">numbers</span><span class="tag">stats</span><span class="tag">dashboard</span><span class="tag">results</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Data Table <code>table</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">data</span>
+            <span class="pill">data</span>
+            <span class="pill">density: high</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>.tpl-root.tpl-table {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 1280px;
+  height: 720px;
+  background: transparent;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  box-sizing: border-box;
+  padding: 40px;
+}
+
+.tpl-root.tpl-table .tpl-table__title {
+  font-size: 40px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 24px 0;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  align-self: flex-start;
+  width: 80%;
+  max-width: 900px;
+}
+
+.tpl-root.tpl-table .tpl-table__wrapper {
+  overflow: auto;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 900px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tpl-root.tpl-table .tpl-table__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 26px;
+  color: #ffffff;
+}
+
+.tpl-root.tpl-table .tpl-table__thead {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.tpl-root.tpl-table .tpl-table__th {
+  padding: 16px 24px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.tpl-root.tpl-table .tpl-table__row {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tpl-root.tpl-table .tpl-table__row:last-child {
+  border-bottom: none;
+}
+
+.tpl-root.tpl-table .tpl-table__td {
+  padding: 16px 24px;
+  line-height: 1.4;
+}
+</style><div class="tpl-root tpl-table">
+  <h2 class="tpl-table__title">Q1 Performance</h2>
+  <div class="tpl-table__wrapper">
+    <table class="tpl-table__table">
+      <thead class="tpl-table__thead">
+        <tr class="tpl-table__header-row">
+          <th class="tpl-table__th">Metric</th>
+          <th class="tpl-table__th">Target</th>
+          <th class="tpl-table__th">Actual</th>
+          <th class="tpl-table__th">Status</th>
+        </tr>
+      </thead>
+      <tbody class="tpl-table__tbody">
+        <tr class="tpl-table__row">
+          <td class="tpl-table__td">Revenue</td>
+          <td class="tpl-table__td">$1.2M</td>
+          <td class="tpl-table__td">$1.35M</td>
+          <td class="tpl-table__td">On track</td>
+        </tr>
+        <tr class="tpl-table__row">
+          <td class="tpl-table__td">Users</td>
+          <td class="tpl-table__td">5,000</td>
+          <td class="tpl-table__td">4,820</td>
+          <td class="tpl-table__td">Near target</td>
+        </tr>
+        <tr class="tpl-table__row">
+          <td class="tpl-table__td">NPS</td>
+          <td class="tpl-table__td">42</td>
+          <td class="tpl-table__td">47</td>
+          <td class="tpl-table__td">Exceeded</td>
+        </tr>
+        <tr class="tpl-table__row">
+          <td class="tpl-table__td">Uptime</td>
+          <td class="tpl-table__td">99.9%</td>
+          <td class="tpl-table__td">99.97%</td>
+          <td class="tpl-table__td">Exceeded</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Present structured tabular data — rows and columns of values.</p>
+          <div class="tags"><span class="tag">table</span><span class="tag">data</span><span class="tag">rows</span><span class="tag">grid</span><span class="tag">matrix</span><span class="tag">spec</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Chart <code>chart</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">data</span>
+            <span class="pill">data</span>
+            <span class="pill">density: low</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>.tpl-root.tpl-chart {
+  display: flex;
+  flex-direction: column;
+  width: 1280px;
+  height: 720px;
+  background: var(--slide-bg, #ffffff);
+  font-family: var(--slide-font-family, 'Segoe UI', system-ui, -apple-system, sans-serif);
+  box-sizing: border-box;
+  padding: 48px 60px;
+}
+
+.tpl-root.tpl-chart .tpl-chart__title {
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--slide-heading-color, #111827);
+  margin: 0 0 24px 0;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.tpl-root.tpl-chart .tpl-chart__area {
+  flex: 1;
+  border-radius: 10px;
+  border: 1px solid var(--slide-border, #e5e7eb);
+  background: var(--slide-bg, #f9fafb);
+  position: relative;
+  overflow: hidden;
+}
+
+.tpl-root.tpl-chart .tpl-chart__canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.tpl-root.tpl-chart .tpl-chart__placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.tpl-root.tpl-chart .tpl-chart__placeholder-icon {
+  width: 64px;
+  height: 64px;
+  opacity: 0.7;
+}
+
+.tpl-root.tpl-chart .tpl-chart__placeholder-label {
+  font-size: 22px;
+  color: #9ca3af;
+  margin: 0;
+  text-transform: capitalize;
+  font-weight: 500;
+}
+</style><div class="tpl-root tpl-chart">
+  <h2 class="tpl-chart__title">Monthly Active Users</h2>
+  <div class="tpl-chart__area">
+    <canvas class="tpl-chart__canvas" id="tpl-chart-canvas" data-type="bar" data-data="{&quot;labels&quot;:[&quot;Jan&quot;,&quot;Feb&quot;,&quot;Mar&quot;,&quot;Apr&quot;,&quot;May&quot;,&quot;Jun&quot;],&quot;datasets&quot;:[{&quot;label&quot;:&quot;MAU&quot;,&quot;data&quot;:[1200,1900,2400,2200,2800,3100]}]}"></canvas>
+    <div class="tpl-chart__placeholder">
+      <div class="tpl-chart__placeholder-icon">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="6" y="28" width="8" height="14" rx="1" fill="#3b82f6"/>
+          <rect x="20" y="18" width="8" height="24" rx="1" fill="#60a5fa"/>
+          <rect x="34" y="10" width="8" height="32" rx="1" fill="#93c5fd"/>
+        </svg>
+      </div>
+      <p class="tpl-chart__placeholder-label">bar chart</p>
+    </div>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Visualize trends/proportions with a chart image or chart spec.</p>
+          <div class="tags"><span class="tag">chart</span><span class="tag">graph</span><span class="tag">trend</span><span class="tag">visualization</span><span class="tag">data-viz</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Blank <code>blank</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">layout</span>
+            <span class="pill">balanced</span>
+            <span class="pill">density: none</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/*
+ * Blank template — intentionally empty canvas.
+ *
+ * Used by Lesson Studio's "screen + webcam only" recording mode (Etapa 2 of
+ * plan 20260501-lesson-studio-record-and-publish-flow), where the slide
+ * surface is just a black backdrop and all visible content comes from the
+ * captured screen + webcam streams composited on top.
+ *
+ * NOTE: width/height are 100% (not hardcoded px) so the canvas fills whatever
+ * container the runtime gives us. This avoids the bug captured in ADR-1 of
+ * plan 20260430-lesson-studio-ai-mode-ux-fixes (px-hardcoded templates that
+ * fail to fill the recorder canvas).
+ */
+.tpl-root.tpl-blank {
+  width: 100%;
+  height: 100%;
+  background: #000000;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+</style><div class="tpl-root tpl-blank"></div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Escape hatch — a blank canvas when no template fits and you need raw HTML control.</p>
+          <div class="tags"><span class="tag">blank</span><span class="tag">custom</span><span class="tag">escape-hatch</span><span class="tag">freeform</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Big Statement <code>big-statement</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">content</span>
+            <span class="pill">text-heavy</span>
+            <span class="pill">density: low</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-big-statement · landscape — 960×540 */
+
+.tpl-root.tpl-big-statement {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 72px 96px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tpl-root.tpl-big-statement::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-big-statement > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-big-statement .tpl-big-statement__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  text-align: center;
+  max-width: 22ch;
+}
+
+.tpl-root.tpl-big-statement .tpl-big-statement__eyebrow {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 14px;
+  letter-spacing: var(--p-tracking-wider, 0.8px);
+  text-transform: uppercase;
+  color: var(--s-ink-muted, #7d7568);
+}
+
+.tpl-root.tpl-big-statement .tpl-big-statement__statement {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 64px;
+  font-weight: var(--p-weight-700, 700);
+  line-height: 1.02;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+  text-wrap: balance;
+}
+</style><div class="tpl-root tpl-big-statement">
+  <div class="tpl-big-statement__inner">
+    <span class="tpl-big-statement__eyebrow">The thesis</span>
+    <p class="tpl-big-statement__statement">AI won&#39;t replace developers — developers using AI will replace those who don&#39;t.</p>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> One short, punchy sentence that should land hard — a thesis, a provocation, a key idea. Minimalist: huge type, almost no other text.</p>
+          <div class="tags"><span class="tag">statement</span><span class="tag">thesis</span><span class="tag">provocation</span><span class="tag">emphasis</span><span class="tag">big-text</span><span class="tag">punchline</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Full-Bleed Image <code>full-bleed</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">media</span>
+            <span class="pill">image-only</span>
+            <span class="pill">density: low</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-full-bleed · landscape — 960×540 */
+
+.tpl-root.tpl-full-bleed {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  background: var(--s-surface-page, #0a0908);
+  color: #ffffff;
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.tpl-root.tpl-full-bleed .tpl-full-bleed__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  z-index: 0;
+}
+
+.tpl-root.tpl-full-bleed .tpl-full-bleed__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 9, 8, 0.10) 0%,
+    rgba(10, 9, 8, 0.35) 45%,
+    rgba(10, 9, 8, 0.88) 100%
+  );
+  z-index: 1;
+}
+
+.tpl-root.tpl-full-bleed .tpl-full-bleed__content {
+  position: absolute;
+  left: 72px;
+  right: 72px;
+  bottom: 64px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tpl-root.tpl-full-bleed .tpl-full-bleed__eyebrow {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 14px;
+  letter-spacing: var(--p-tracking-wider, 0.8px);
+  text-transform: uppercase;
+  color: var(--s-brand-fg, #f0a872);
+}
+
+.tpl-root.tpl-full-bleed .tpl-full-bleed__title {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 96px;
+  font-weight: var(--p-weight-700, 700);
+  line-height: 0.95;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  margin: 0;
+  color: #ffffff;
+  text-wrap: balance;
+}
+</style><div class="tpl-root tpl-full-bleed">
+  <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1451187580459-43490279c0fa?w&#x3D;1600&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="A glowing network of connected nodes" class="tpl-full-bleed__img" />
+  <div class="tpl-full-bleed__scrim"></div>
+  <div class="tpl-full-bleed__content">
+    <span class="tpl-full-bleed__eyebrow">Module 3</span>
+    <h1 class="tpl-full-bleed__title">The Network Era</h1>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Edge-to-edge hero image with an overlaid title — high-impact section opener or mood-setting visual. Maximum image, minimum text.</p>
+          <div class="tags"><span class="tag">hero</span><span class="tag">full-bleed</span><span class="tag">cover</span><span class="tag">background-image</span><span class="tag">impact</span><span class="tag">mood</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Big Image + Label <code>big-image</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">media</span>
+            <span class="pill">image-first</span>
+            <span class="pill">density: low</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-big-image · landscape — 960×540 */
+
+.tpl-root.tpl-big-image {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.tpl-root.tpl-big-image::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-big-image > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-big-image .tpl-big-image__frame {
+  flex: 1 1 auto;
+  min-height: 0;
+  border-radius: var(--p-radius-xl, 14px);
+  overflow: hidden;
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  background: var(--s-surface-raised, #1a1714);
+}
+
+.tpl-root.tpl-big-image .tpl-big-image__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tpl-root.tpl-big-image .tpl-big-image__bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+}
+
+.tpl-root.tpl-big-image .tpl-big-image__title {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 34px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+}
+
+.tpl-root.tpl-big-image .tpl-big-image__caption {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 15px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  color: var(--s-ink-muted, #7d7568);
+}
+</style><div class="tpl-root tpl-big-image">
+  <div class="tpl-big-image__frame">
+    <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1517180102446-f3ece451e9d8?w&#x3D;1400&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="A laptop showing a terminal interface" class="tpl-big-image__img" />
+  </div>
+  <div class="tpl-big-image__bar">
+    <span class="tpl-big-image__title">The Claude Code terminal UI</span>
+    <span class="tpl-big-image__caption">Agentic coding in your terminal</span>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> A large dominant image with a small label/title strip — let the visual carry the slide. Image-first concept reveal.</p>
+          <div class="tags"><span class="tag">big-image</span><span class="tag">visual</span><span class="tag">reveal</span><span class="tag">screenshot-hero</span><span class="tag">showcase</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Image Grid <code>image-grid</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">media</span>
+            <span class="pill">image-only</span>
+            <span class="pill">density: low</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-image-grid · landscape — 960×540 */
+
+.tpl-root.tpl-image-grid {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.tpl-root.tpl-image-grid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-image-grid > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-image-grid .tpl-image-grid__title {
+  flex: 0 0 auto;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 38px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+}
+
+.tpl-root.tpl-image-grid .tpl-image-grid__grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 16px;
+}
+
+.tpl-root.tpl-image-grid .tpl-image-grid__cell {
+  min-width: 0;
+  min-height: 0;
+  border-radius: var(--p-radius-lg, 10px);
+  overflow: hidden;
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  background: var(--s-surface-raised, #1a1714);
+}
+
+.tpl-root.tpl-image-grid .tpl-image-grid__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+</style><div class="tpl-root tpl-image-grid">
+  <h2 class="tpl-image-grid__title">What you&#39;ll build</h2>
+  <div class="tpl-image-grid__grid">
+    <div class="tpl-image-grid__cell">
+      <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1517694712202-14dd9538aa97?w&#x3D;800&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="Code on a screen" class="tpl-image-grid__img" />
+    </div>
+    <div class="tpl-image-grid__cell">
+      <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1555066931-4365d14bab8c?w&#x3D;800&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="Terminal and editor side by side" class="tpl-image-grid__img" />
+    </div>
+    <div class="tpl-image-grid__cell">
+      <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1498050108023-c5249f4df085?w&#x3D;800&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="Developer workstation with code" class="tpl-image-grid__img" />
+    </div>
+    <div class="tpl-image-grid__cell">
+      <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1461749280684-dccba630e2f6?w&#x3D;800&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="Software code on a monitor" class="tpl-image-grid__img" />
+    </div>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Show 4-6 images in a grid (2x2 / 3x2) — a mosaic of examples, a moodboard, or a set of outputs/screenshots.</p>
+          <div class="tags"><span class="tag">grid</span><span class="tag">mosaic</span><span class="tag">gallery</span><span class="tag">moodboard</span><span class="tag">examples</span><span class="tag">outputs</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Comparison (A vs B) <code>comparison</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">layout</span>
+            <span class="pill">balanced</span>
+            <span class="pill">density: high</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-comparison · landscape — 960×540 */
+
+.tpl-root.tpl-comparison {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.tpl-root.tpl-comparison::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-comparison > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-comparison .tpl-comparison__title {
+  flex: 0 0 auto;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 38px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+}
+
+.tpl-root.tpl-comparison .tpl-comparison__panels {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+  gap: 20px;
+}
+
+.tpl-root.tpl-comparison .tpl-comparison__panel {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 28px 30px;
+  border-radius: var(--p-radius-xl, 14px);
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  background: var(--s-surface-panel, #141210);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.tpl-root.tpl-comparison .tpl-comparison__panel--right {
+  background: var(--s-brand-subtle, rgba(224, 122, 74, 0.10));
+  border-color: var(--s-brand-border, rgba(224, 122, 74, 0.22));
+}
+
+.tpl-root.tpl-comparison .tpl-comparison__label {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 14px;
+  letter-spacing: var(--p-tracking-wider, 0.8px);
+  text-transform: uppercase;
+  color: var(--s-ink-muted, #7d7568);
+}
+
+.tpl-root.tpl-comparison .tpl-comparison__panel--right .tpl-comparison__label {
+  color: var(--s-brand-fg, #f0a872);
+}
+
+.tpl-root.tpl-comparison .tpl-comparison__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.tpl-root.tpl-comparison .tpl-comparison__item {
+  position: relative;
+  padding-left: 22px;
+  font-size: 20px;
+  line-height: 1.35;
+  color: var(--s-ink-secondary, #c9c0b4);
+}
+
+.tpl-root.tpl-comparison .tpl-comparison__item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 11px;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--s-ink-muted, #7d7568);
+}
+
+.tpl-root.tpl-comparison .tpl-comparison__panel--right .tpl-comparison__item::before {
+  background: var(--s-brand-solid, #E07A4A);
+}
+
+.tpl-root.tpl-comparison .tpl-comparison__vs {
+  flex: 0 0 auto;
+  align-self: center;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 26px;
+  font-weight: var(--p-weight-700, 700);
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  color: var(--s-ink-muted, #7d7568);
+}
+</style><div class="tpl-root tpl-comparison">
+  <h2 class="tpl-comparison__title">Manual vs Agentic</h2>
+  <div class="tpl-comparison__panels">
+    <div class="tpl-comparison__panel tpl-comparison__panel--left">
+      <span class="tpl-comparison__label">Before</span>
+      <ul class="tpl-comparison__list">
+        <li class="tpl-comparison__item">Copy-paste from docs by hand</li><li class="tpl-comparison__item">Context lives only in your head</li><li class="tpl-comparison__item">Repetitive boilerplate every time</li>
+      </ul>
+    </div>
+    <div class="tpl-comparison__vs">VS</div>
+    <div class="tpl-comparison__panel tpl-comparison__panel--right">
+      <span class="tpl-comparison__label">After</span>
+      <ul class="tpl-comparison__list">
+        <li class="tpl-comparison__item">Agent reads the docs for you</li><li class="tpl-comparison__item">Context persists across sessions</li><li class="tpl-comparison__item">Boilerplate generated on demand</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Contrast two options head-to-head — before/after, old/new, this-vs-that — each with a label and bullet points.</p>
+          <div class="tags"><span class="tag">comparison</span><span class="tag">vs</span><span class="tag">before-after</span><span class="tag">pros-cons</span><span class="tag">old-new</span><span class="tag">contrast</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Stat Number <code>stat-number</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">data</span>
+            <span class="pill">data</span>
+            <span class="pill">density: low</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-stat-number · landscape — 960×540 */
+
+.tpl-root.tpl-stat-number {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 56px 72px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tpl-root.tpl-stat-number::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-stat-number > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-stat-number .tpl-stat-number__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  max-width: 24ch;
+}
+
+.tpl-root.tpl-stat-number .tpl-stat-number__eyebrow {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 14px;
+  letter-spacing: var(--p-tracking-wider, 0.8px);
+  text-transform: uppercase;
+  color: var(--s-ink-muted, #7d7568);
+}
+
+.tpl-root.tpl-stat-number .tpl-stat-number__value {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 280px;
+  font-weight: var(--p-weight-700, 700);
+  line-height: 0.82;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-brand-fg, #f0a872);
+  font-feature-settings: "tnum" 1;
+}
+
+.tpl-root.tpl-stat-number .tpl-stat-number__label {
+  font-size: 26px;
+  line-height: 1.35;
+  color: var(--s-ink-secondary, #c9c0b4);
+  margin: 8px 0 0;
+  text-wrap: balance;
+}
+
+.tpl-root.tpl-stat-number .tpl-stat-number__source {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 13px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  color: var(--s-ink-muted, #7d7568);
+}
+</style><div class="tpl-root tpl-stat-number">
+  <div class="tpl-stat-number__inner">
+    <span class="tpl-stat-number__eyebrow">Stack Overflow 2025</span>
+    <div class="tpl-stat-number__value">73%</div>
+    <p class="tpl-stat-number__label">of developers now use AI tools daily</p>
+    <span class="tpl-stat-number__source">n&#x3D;90,000 respondents</span>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> One giant hero number/percentage with a short label — a single statistic that should shock or anchor.</p>
+          <div class="tags"><span class="tag">stat</span><span class="tag">number</span><span class="tag">percentage</span><span class="tag">hero-metric</span><span class="tag">impact-number</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Feature Cards <code>feature-cards</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">media</span>
+            <span class="pill">balanced</span>
+            <span class="pill">density: medium</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-feature-cards · landscape — 960×540 */
+
+.tpl-root.tpl-feature-cards {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+}
+
+.tpl-root.tpl-feature-cards::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-feature-cards > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-feature-cards .tpl-feature-cards__eyebrow {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 14px;
+  letter-spacing: var(--p-tracking-wider, 0.8px);
+  text-transform: uppercase;
+  color: var(--s-ink-muted, #7d7568);
+}
+
+.tpl-root.tpl-feature-cards .tpl-feature-cards__title {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 38px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0 0 20px;
+}
+
+.tpl-root.tpl-feature-cards .tpl-feature-cards__row {
+  display: flex;
+  gap: 20px;
+  align-items: stretch;
+}
+
+.tpl-root.tpl-feature-cards .tpl-feature-cards__card {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 24px;
+  border-radius: var(--p-radius-xl, 14px);
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  background: var(--s-surface-panel, #141210);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.tpl-root.tpl-feature-cards .tpl-feature-cards__icon {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--p-radius-lg, 10px);
+  overflow: hidden;
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  background: var(--s-surface-raised, #1a1714);
+}
+
+.tpl-root.tpl-feature-cards .tpl-feature-cards__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tpl-root.tpl-feature-cards .tpl-feature-cards__card-title {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 28px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+}
+
+.tpl-root.tpl-feature-cards .tpl-feature-cards__card-caption {
+  font-size: 17px;
+  line-height: 1.4;
+  color: var(--s-ink-secondary, #c9c0b4);
+}
+</style><div class="tpl-root tpl-feature-cards">
+  <span class="tpl-feature-cards__eyebrow">Claude Code 101</span>
+  <h2 class="tpl-feature-cards__title">Three pillars</h2>
+  <div class="tpl-feature-cards__row">
+    <div class="tpl-feature-cards__card">
+      <div class="tpl-feature-cards__icon"><img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1517694712202-14dd9538aa97?w&#x3D;400&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="" class="tpl-feature-cards__img" /></div>
+      <span class="tpl-feature-cards__card-title">Read</span>
+      <span class="tpl-feature-cards__card-caption">Understands your whole codebase</span>
+    </div>
+    <div class="tpl-feature-cards__card">
+      <div class="tpl-feature-cards__icon"><img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1555066931-4365d14bab8c?w&#x3D;400&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="" class="tpl-feature-cards__img" /></div>
+      <span class="tpl-feature-cards__card-title">Plan</span>
+      <span class="tpl-feature-cards__card-caption">Breaks work into clear steps</span>
+    </div>
+    <div class="tpl-feature-cards__card">
+      <div class="tpl-feature-cards__icon"><img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1498050108023-c5249f4df085?w&#x3D;400&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="" class="tpl-feature-cards__img" /></div>
+      <span class="tpl-feature-cards__card-title">Ship</span>
+      <span class="tpl-feature-cards__card-caption">Writes, tests, and opens the PR</span>
+    </div>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Show 3-4 features/concepts each as a card with an icon or image + short title + one line. Minimalist, image-forward feature overview.</p>
+          <div class="tags"><span class="tag">features</span><span class="tag">cards</span><span class="tag">icons</span><span class="tag">overview</span><span class="tag">pillars</span><span class="tag">capabilities</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Image + Quote <code>image-quote</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">media</span>
+            <span class="pill">image-first</span>
+            <span class="pill">density: medium</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-image-quote · landscape — 960×540 */
+
+.tpl-root.tpl-image-quote {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 380px 1fr;
+}
+
+.tpl-root.tpl-image-quote .tpl-image-quote__media {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: var(--s-surface-raised, #1a1714);
+}
+
+.tpl-root.tpl-image-quote .tpl-image-quote__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tpl-root.tpl-image-quote .tpl-image-quote__body {
+  padding: 64px 72px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 28px;
+}
+
+.tpl-root.tpl-image-quote .tpl-image-quote__quote {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 52px;
+  font-weight: var(--p-weight-600, 600);
+  line-height: 1.08;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+  text-wrap: balance;
+}
+
+.tpl-root.tpl-image-quote .tpl-image-quote__quote::before {
+  content: "\201C";
+  color: var(--s-brand-fg, #f0a872);
+}
+
+.tpl-root.tpl-image-quote .tpl-image-quote__attribution {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tpl-root.tpl-image-quote .tpl-image-quote__author {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 16px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  color: var(--s-brand-fg, #f0a872);
+}
+
+.tpl-root.tpl-image-quote .tpl-image-quote__role {
+  font-size: 15px;
+  color: var(--s-ink-muted, #7d7568);
+}
+</style><div class="tpl-root tpl-image-quote">
+  <div class="tpl-image-quote__media">
+    <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1500648767791-00dcc994a43e?w&#x3D;800&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="Portrait of a person" class="tpl-image-quote__img" />
+  </div>
+  <div class="tpl-image-quote__body">
+    <blockquote class="tpl-image-quote__quote">The best way to predict the future is to invent it.</blockquote>
+    <div class="tpl-image-quote__attribution">
+      <span class="tpl-image-quote__author">Alan Kay</span>
+      <span class="tpl-image-quote__role">Computer scientist</span>
+    </div>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> A portrait/photo beside a quote with attribution — testimonial with a face, or a person + their words.</p>
+          <div class="tags"><span class="tag">testimonial</span><span class="tag">quote</span><span class="tag">portrait</span><span class="tag">person</span><span class="tag">endorsement</span><span class="tag">voice</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Title over Image <code>title-image</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">media</span>
+            <span class="pill">image-first</span>
+            <span class="pill">density: low</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-title-image · landscape — 960×540 */
+
+.tpl-root.tpl-title-image {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 1fr 420px;
+}
+
+.tpl-root.tpl-title-image .tpl-title-image__panel {
+  padding: 64px 64px 64px 72px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+}
+
+.tpl-root.tpl-title-image .tpl-title-image__eyebrow {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 14px;
+  letter-spacing: var(--p-tracking-wider, 0.8px);
+  text-transform: uppercase;
+  color: var(--s-brand-fg, #f0a872);
+}
+
+.tpl-root.tpl-title-image .tpl-title-image__title {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 84px;
+  font-weight: var(--p-weight-700, 700);
+  line-height: 0.95;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+  text-wrap: balance;
+}
+
+.tpl-root.tpl-title-image .tpl-title-image__subtitle {
+  font-size: 24px;
+  line-height: 1.45;
+  color: var(--s-ink-secondary, #c9c0b4);
+  margin: 0;
+  max-width: 32ch;
+}
+
+.tpl-root.tpl-title-image .tpl-title-image__media {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: var(--s-surface-raised, #1a1714);
+}
+
+.tpl-root.tpl-title-image .tpl-title-image__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+</style><div class="tpl-root tpl-title-image">
+  <div class="tpl-title-image__panel">
+    <span class="tpl-title-image__eyebrow">DevFellowship</span>
+    <h1 class="tpl-title-image__title">Claude Code 101</h1>
+    <p class="tpl-title-image__subtitle">From zero to agentic coding</p>
+  </div>
+  <div class="tpl-title-image__media">
+    <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1555066931-4365d14bab8c?w&#x3D;1000&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="A terminal and code editor side by side" class="tpl-title-image__img" />
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Course/module opener that pairs a headline with a strong supporting image in a split layout — warmer than the text-only title.</p>
+          <div class="tags"><span class="tag">opening</span><span class="tag">cover</span><span class="tag">title-with-image</span><span class="tag">module-start</span><span class="tag">split-cover</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Screenshot Frame <code>screenshot-frame</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">media</span>
+            <span class="pill">image-first</span>
+            <span class="pill">density: low</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-screenshot-frame · landscape — 960×540 */
+
+.tpl-root.tpl-screenshot-frame {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+}
+
+.tpl-root.tpl-screenshot-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-screenshot-frame > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-screenshot-frame .tpl-screenshot-frame__window {
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  border-radius: var(--p-radius-xl, 14px);
+  overflow: hidden;
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  background: var(--s-surface-raised, #1a1714);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+}
+
+.tpl-root.tpl-screenshot-frame .tpl-screenshot-frame__chrome {
+  flex: 0 0 auto;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  background: var(--s-surface-sunken, #141210);
+  border-bottom: 1px solid var(--s-border-subtle, #2a2622);
+}
+
+.tpl-root.tpl-screenshot-frame .tpl-screenshot-frame__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--p-sand-500, #5a5249);
+}
+
+.tpl-root.tpl-screenshot-frame .tpl-screenshot-frame__url {
+  margin-left: 14px;
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 13px;
+  color: var(--s-ink-muted, #7d7568);
+  letter-spacing: var(--p-tracking-wide, 0.4px);
+}
+
+.tpl-root.tpl-screenshot-frame .tpl-screenshot-frame__shot {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.tpl-root.tpl-screenshot-frame .tpl-screenshot-frame__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tpl-root.tpl-screenshot-frame .tpl-screenshot-frame__caption {
+  flex: 0 0 auto;
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 15px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  color: var(--s-ink-muted, #7d7568);
+  text-align: center;
+}
+</style><div class="tpl-root tpl-screenshot-frame">
+  <div class="tpl-screenshot-frame__window">
+    <div class="tpl-screenshot-frame__chrome">
+      <span class="tpl-screenshot-frame__dot"></span>
+      <span class="tpl-screenshot-frame__dot"></span>
+      <span class="tpl-screenshot-frame__dot"></span>
+      <span class="tpl-screenshot-frame__url">app.devfellowship.com</span>
+    </div>
+    <div class="tpl-screenshot-frame__shot">
+      <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1551288049-bebda4e38f71?w&#x3D;1400&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="A dashboard interface" class="tpl-screenshot-frame__img" />
+    </div>
+  </div>
+  <div class="tpl-screenshot-frame__caption">The new dashboard, end to end</div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Present a UI screenshot inside a browser/app window chrome (dots + address bar) so it reads as a real product surface. Use for product demos, dashboard reveals, feature tours, or any 'here's the actual screen' moment.</p>
+          <div class="tags"><span class="tag">screenshot</span><span class="tag">ui</span><span class="tag">mockup</span><span class="tag">browser</span><span class="tag">product</span><span class="tag">demo</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Annotated Image <code>annotated-image</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">media</span>
+            <span class="pill">image-first</span>
+            <span class="pill">density: low</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-annotated-image · landscape — 960×540 */
+
+.tpl-root.tpl-annotated-image {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+}
+
+.tpl-root.tpl-annotated-image::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-annotated-image > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-annotated-image .tpl-annotated-image__title {
+  position: absolute;
+  top: 48px;
+  left: 64px;
+  right: 64px;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+  z-index: 2;
+}
+
+.tpl-root.tpl-annotated-image .tpl-annotated-image__stage {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  border-radius: var(--p-radius-xl, 14px);
+  overflow: hidden;
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  background: var(--s-surface-raised, #1a1714);
+}
+
+.tpl-root.tpl-annotated-image .tpl-annotated-image__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tpl-root.tpl-annotated-image .tpl-annotated-image__pin {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+}
+
+.tpl-root.tpl-annotated-image .tpl-annotated-image__badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--s-brand-solid, #E07A4A);
+  color: #fff;
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 0 0 3px rgba(224, 122, 74, 0.3), 0 2px 8px rgba(0,0,0,0.5);
+  cursor: default;
+}
+
+.tpl-root.tpl-annotated-image .tpl-annotated-image__rail {
+  flex: 0 0 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+}
+
+.tpl-root.tpl-annotated-image .tpl-annotated-image__callout {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.tpl-root.tpl-annotated-image .tpl-annotated-image__callout-num {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--s-brand-solid, #E07A4A);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  margin-top: 1px;
+}
+
+.tpl-root.tpl-annotated-image .tpl-annotated-image__callout-label {
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--s-ink-secondary, #c9c0b4);
+}
+</style><div class="tpl-root tpl-annotated-image">
+  <h2 class="tpl-annotated-image__title">Key areas to note</h2>
+  <div class="tpl-annotated-image__stage">
+    <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1551288049-bebda4e38f71?w&#x3D;1200&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="A dashboard interface with analytics charts" class="tpl-annotated-image__img" />
+    <div class="tpl-annotated-image__pin" style="left:22%;top:35%">
+      <span class="tpl-annotated-image__badge">1</span>
+    </div>
+    <div class="tpl-annotated-image__pin" style="left:55%;top:60%">
+      <span class="tpl-annotated-image__badge">2</span>
+    </div>
+    <div class="tpl-annotated-image__pin" style="left:78%;top:25%">
+      <span class="tpl-annotated-image__badge">3</span>
+    </div>
+  </div>
+  <div class="tpl-annotated-image__rail">
+    <div class="tpl-annotated-image__callout">
+      <span class="tpl-annotated-image__callout-num">1</span>
+      <span class="tpl-annotated-image__callout-label">Conversion funnel entry</span>
+    </div>
+    <div class="tpl-annotated-image__callout">
+      <span class="tpl-annotated-image__callout-num">2</span>
+      <span class="tpl-annotated-image__callout-label">Drop-off spike</span>
+    </div>
+    <div class="tpl-annotated-image__callout">
+      <span class="tpl-annotated-image__callout-num">3</span>
+      <span class="tpl-annotated-image__callout-label">Re-engagement zone</span>
+    </div>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Highlight specific areas of a screenshot, diagram, or photo with numbered callout pins. Ideal for product walkthroughs, UX critique, architecture diagrams, or any 'look here' moment where the image is primary and labels provide structured commentary.</p>
+          <div class="tags"><span class="tag">annotation</span><span class="tag">callout</span><span class="tag">diagram</span><span class="tag">screenshot</span><span class="tag">walkthrough</span><span class="tag">numbered</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Image Caption Grid <code>image-caption-grid</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">media</span>
+            <span class="pill">image-first</span>
+            <span class="pill">density: low</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-image-caption-grid · landscape — 960×540 */
+
+.tpl-root.tpl-image-caption-grid {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tpl-root.tpl-image-caption-grid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-image-caption-grid > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-image-caption-grid .tpl-image-caption-grid__title {
+  flex: 0 0 auto;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 36px;
+  font-weight: 600;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+}
+
+.tpl-root.tpl-image-caption-grid .tpl-image-caption-grid__grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 16px;
+}
+
+.tpl-root.tpl-image-caption-grid .tpl-image-caption-grid__cell {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tpl-root.tpl-image-caption-grid .tpl-image-caption-grid__frame {
+  flex: 1 1 auto;
+  min-height: 0;
+  border-radius: var(--p-radius-lg, 10px);
+  overflow: hidden;
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  background: var(--s-surface-raised, #1a1714);
+}
+
+.tpl-root.tpl-image-caption-grid .tpl-image-caption-grid__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tpl-root.tpl-image-caption-grid .tpl-image-caption-grid__caption {
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  color: var(--s-ink-muted, #7d7568);
+  margin: 0;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+</style><div class="tpl-root tpl-image-caption-grid">
+  <h2 class="tpl-image-caption-grid__title">Our stack in action</h2>
+  <div class="tpl-image-caption-grid__grid">
+    <div class="tpl-image-caption-grid__cell">
+      <div class="tpl-image-caption-grid__frame">
+        <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1517694712202-14dd9538aa97?w&#x3D;800&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="Code on screen" class="tpl-image-caption-grid__img" />
+      </div>
+      <p class="tpl-image-caption-grid__caption">Write less, ship more</p>
+    </div>
+    <div class="tpl-image-caption-grid__cell">
+      <div class="tpl-image-caption-grid__frame">
+        <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1498050108023-c5249f4df085?w&#x3D;800&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="Developer workstation" class="tpl-image-caption-grid__img" />
+      </div>
+      <p class="tpl-image-caption-grid__caption">Built for real workflows</p>
+    </div>
+    <div class="tpl-image-caption-grid__cell">
+      <div class="tpl-image-caption-grid__frame">
+        <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1461749280684-dccba630e2f6?w&#x3D;800&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="Software code on monitor" class="tpl-image-caption-grid__img" />
+      </div>
+      <p class="tpl-image-caption-grid__caption">Readable at every scale</p>
+    </div>
+    <div class="tpl-image-caption-grid__cell">
+      <div class="tpl-image-caption-grid__frame">
+        <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1551288049-bebda4e38f71?w&#x3D;800&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="Dashboard analytics" class="tpl-image-caption-grid__img" />
+      </div>
+      <p class="tpl-image-caption-grid__caption">Data you can act on</p>
+    </div>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> 2-4 images that each need their own caption — a feature comparison, a step-by-step visual sequence, a before/during/after series, or a portfolio grid. Per-cell context is the point.</p>
+          <div class="tags"><span class="tag">grid</span><span class="tag">caption</span><span class="tag">images</span><span class="tag">comparison</span><span class="tag">portfolio</span><span class="tag">labeled</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Before / After Image <code>before-after-image</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">media</span>
+            <span class="pill">image-first</span>
+            <span class="pill">density: none</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-before-after-image · landscape — 960×540 */
+
+.tpl-root.tpl-before-after-image {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tpl-root.tpl-before-after-image::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-before-after-image > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-before-after-image .tpl-before-after-image__title {
+  flex: 0 0 auto;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 36px;
+  font-weight: 600;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+}
+
+.tpl-root.tpl-before-after-image .tpl-before-after-image__row {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+  align-items: stretch;
+}
+
+.tpl-root.tpl-before-after-image .tpl-before-after-image__panel {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tpl-root.tpl-before-after-image .tpl-before-after-image__panel--before {
+  padding-right: 12px;
+}
+
+.tpl-root.tpl-before-after-image .tpl-before-after-image__panel--after {
+  padding-left: 12px;
+}
+
+.tpl-root.tpl-before-after-image .tpl-before-after-image__frame {
+  flex: 1 1 auto;
+  min-height: 0;
+  border-radius: var(--p-radius-lg, 10px);
+  overflow: hidden;
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  background: var(--s-surface-raised, #1a1714);
+}
+
+.tpl-root.tpl-before-after-image .tpl-before-after-image__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tpl-root.tpl-before-after-image .tpl-before-after-image__divider {
+  flex: 0 0 1px;
+  align-self: stretch;
+  background: var(--s-border-strong, #3a3530);
+}
+
+.tpl-root.tpl-before-after-image .tpl-before-after-image__label {
+  flex: 0 0 auto;
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 13px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  text-transform: uppercase;
+}
+
+.tpl-root.tpl-before-after-image .tpl-before-after-image__label--before {
+  color: var(--s-ink-muted, #7d7568);
+  text-align: left;
+}
+
+.tpl-root.tpl-before-after-image .tpl-before-after-image__label--after {
+  color: var(--s-brand-solid, #E07A4A);
+  text-align: left;
+}
+</style><div class="tpl-root tpl-before-after-image">
+  <h2 class="tpl-before-after-image__title">The redesign</h2>
+  <div class="tpl-before-after-image__row">
+    <div class="tpl-before-after-image__panel tpl-before-after-image__panel--before">
+      <div class="tpl-before-after-image__frame">
+        <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1461749280684-dccba630e2f6?w&#x3D;1200&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="Old interface with cluttered layout" class="tpl-before-after-image__img" />
+      </div>
+      <span class="tpl-before-after-image__label tpl-before-after-image__label--before">Before</span>
+    </div>
+    <div class="tpl-before-after-image__divider"></div>
+    <div class="tpl-before-after-image__panel tpl-before-after-image__panel--after">
+      <div class="tpl-before-after-image__frame">
+        <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1551288049-bebda4e38f71?w&#x3D;1200&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="New clean dashboard interface" class="tpl-before-after-image__img" />
+      </div>
+      <span class="tpl-before-after-image__label tpl-before-after-image__label--after">After</span>
+    </div>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Contrast two states of the same subject — a redesign reveal, a refactor diff, a feature improvement. Side-by-side framing makes the delta obvious. Labels are customizable (Old/New, v1/v2, Problem/Solution).</p>
+          <div class="tags"><span class="tag">before-after</span><span class="tag">comparison</span><span class="tag">redesign</span><span class="tag">contrast</span><span class="tag">dual-image</span><span class="tag">reveal</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Polaroid Stack <code>polaroid-stack</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">media</span>
+            <span class="pill">image-only</span>
+            <span class="pill">density: low</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-polaroid-stack · landscape — 960×540 */
+
+.tpl-root.tpl-polaroid-stack {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tpl-root.tpl-polaroid-stack::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-polaroid-stack > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__title {
+  flex: 0 0 auto;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 36px;
+  font-weight: 600;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+}
+
+.tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__fan {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+}
+
+.tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__card {
+  flex: 0 0 auto;
+  width: 200px;
+  background: var(--s-surface-raised, #1a1714);
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  border-radius: var(--p-radius-md, 8px);
+  padding: 10px 10px 16px 10px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__fan .tpl-polaroid-stack__card:nth-child(1) {
+  transform: rotate(-4deg) translateY(6px);
+}
+
+.tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__fan .tpl-polaroid-stack__card:nth-child(2) {
+  transform: rotate(1deg) translateY(-4px);
+  z-index: 2;
+}
+
+.tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__fan .tpl-polaroid-stack__card:nth-child(3) {
+  transform: rotate(5deg) translateY(8px);
+}
+
+.tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__photo {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--s-surface-sunken, #141210);
+}
+
+.tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__strip {
+  text-align: center;
+}
+
+.tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__caption {
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  font-size: 13px;
+  font-style: italic;
+  color: var(--s-ink-secondary, #c9c0b4);
+  letter-spacing: 0.2px;
+}
+</style><div class="tpl-root tpl-polaroid-stack">
+  <h2 class="tpl-polaroid-stack__title">Moments from the sprint</h2>
+  <div class="tpl-polaroid-stack__fan">
+    <div class="tpl-polaroid-stack__card">
+      <div class="tpl-polaroid-stack__photo">
+        <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1522071820081-009f0129c71c?w&#x3D;800&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="Team working together" class="tpl-polaroid-stack__img" />
+      </div>
+      <div class="tpl-polaroid-stack__strip">
+        <span class="tpl-polaroid-stack__caption">kickoff day</span>
+      </div>
+    </div>
+    <div class="tpl-polaroid-stack__card">
+      <div class="tpl-polaroid-stack__photo">
+        <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1498050108023-c5249f4df085?w&#x3D;800&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="Laptop with code" class="tpl-polaroid-stack__img" />
+      </div>
+      <div class="tpl-polaroid-stack__strip">
+        <span class="tpl-polaroid-stack__caption">deep work</span>
+      </div>
+    </div>
+    <div class="tpl-polaroid-stack__card">
+      <div class="tpl-polaroid-stack__photo">
+        <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1517694712202-14dd9538aa97?w&#x3D;800&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="Code on bright screen" class="tpl-polaroid-stack__img" />
+      </div>
+      <div class="tpl-polaroid-stack__strip">
+        <span class="tpl-polaroid-stack__caption">shipped it</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> A playful, human-touch moment — team photo highlights, retro memories, event coverage, any 3-photo collage where a loose casual feel is intentional. Slight rotation signals storytelling over analysis.</p>
+          <div class="tags"><span class="tag">photos</span><span class="tag">polaroid</span><span class="tag">stack</span><span class="tag">collage</span><span class="tag">team</span><span class="tag">playful</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Logo Wall <code>logo-wall</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">media</span>
+            <span class="pill">image-only</span>
+            <span class="pill">density: low</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-logo-wall · landscape — 960×540 */
+
+.tpl-root.tpl-logo-wall {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.tpl-root.tpl-logo-wall::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-logo-wall > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-logo-wall .tpl-logo-wall__header {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tpl-root.tpl-logo-wall .tpl-logo-wall__eyebrow {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 11px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  text-transform: uppercase;
+  color: var(--s-brand-solid, #E07A4A);
+}
+
+.tpl-root.tpl-logo-wall .tpl-logo-wall__title {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 36px;
+  font-weight: 600;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+}
+
+.tpl-root.tpl-logo-wall .tpl-logo-wall__grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 12px;
+}
+
+.tpl-root.tpl-logo-wall .tpl-logo-wall__cell {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  border-radius: var(--p-radius-md, 8px);
+  background: var(--s-surface-raised, #1a1714);
+  padding: 10px 8px;
+}
+
+.tpl-root.tpl-logo-wall .tpl-logo-wall__logo {
+  width: 100%;
+  max-width: 48px;
+  height: 32px;
+  object-fit: contain;
+  display: block;
+  filter: grayscale(1) brightness(0.8);
+}
+
+.tpl-root.tpl-logo-wall .tpl-logo-wall__name {
+  font-size: 10px;
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  color: var(--s-ink-muted, #7d7568);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+</style><div class="tpl-root tpl-logo-wall">
+  <div class="tpl-logo-wall__header">
+    <span class="tpl-logo-wall__eyebrow">Our stack</span>
+    <h2 class="tpl-logo-wall__title">Tools we use</h2>
+  </div>
+  <div class="tpl-logo-wall__grid">
+    <div class="tpl-logo-wall__cell">
+      <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1518770660439-4636190af475?w&#x3D;200&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="TypeScript" class="tpl-logo-wall__logo" />
+      <span class="tpl-logo-wall__name">TypeScript</span>
+    </div>
+    <div class="tpl-logo-wall__cell">
+      <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1461749280684-dccba630e2f6?w&#x3D;200&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="React" class="tpl-logo-wall__logo" />
+      <span class="tpl-logo-wall__name">React</span>
+    </div>
+    <div class="tpl-logo-wall__cell">
+      <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1498050108023-c5249f4df085?w&#x3D;200&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="Node.js" class="tpl-logo-wall__logo" />
+      <span class="tpl-logo-wall__name">Node.js</span>
+    </div>
+    <div class="tpl-logo-wall__cell">
+      <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1517694712202-14dd9538aa97?w&#x3D;200&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="Supabase" class="tpl-logo-wall__logo" />
+      <span class="tpl-logo-wall__name">Supabase</span>
+    </div>
+    <div class="tpl-logo-wall__cell">
+      <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1551288049-bebda4e38f71?w&#x3D;200&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="Grafana" class="tpl-logo-wall__logo" />
+      <span class="tpl-logo-wall__name">Grafana</span>
+    </div>
+    <div class="tpl-logo-wall__cell">
+      <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1522071820081-009f0129c71c?w&#x3D;200&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="Docker" class="tpl-logo-wall__logo" />
+      <span class="tpl-logo-wall__name">Docker</span>
+    </div>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> A collection of partner logos, tech-stack icons, or 'trusted by' marks. Each logo in its own bordered cell with an optional name. Credibility slides, technology overviews, integration ecosystems, sponsors.</p>
+          <div class="tags"><span class="tag">logos</span><span class="tag">brands</span><span class="tag">partners</span><span class="tag">stack</span><span class="tag">trusted-by</span><span class="tag">grid</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Video Poster <code>video</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">media</span>
+            <span class="pill">video</span>
+            <span class="pill">density: low</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-video · landscape — 960×540 */
+
+.tpl-root.tpl-video {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tpl-root.tpl-video::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-video > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-video .tpl-video__frame {
+  flex: 1 1 auto;
+  min-height: 0;
+  position: relative;
+  border-radius: var(--p-radius-xl, 14px);
+  overflow: hidden;
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  background: var(--s-surface-raised, #1a1714);
+}
+
+.tpl-root.tpl-video .tpl-video__poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tpl-root.tpl-video .tpl-video__play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.tpl-root.tpl-video .tpl-video__play-icon {
+  width: 72px;
+  height: 72px;
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.6));
+}
+
+.tpl-root.tpl-video .tpl-video__bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+}
+
+.tpl-root.tpl-video .tpl-video__title {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 32px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+}
+
+.tpl-root.tpl-video .tpl-video__caption {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 14px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  color: var(--s-brand-solid, #E07A4A);
+}
+</style><div class="tpl-root tpl-video">
+  <div class="tpl-video__frame">
+    <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1461749280684-dccba630e2f6?w&#x3D;1200&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="Developer working at a workstation" class="tpl-video__poster" />
+    <div class="tpl-video__play">
+      <svg class="tpl-video__play-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="24" fill="rgba(10,9,8,0.72)" />
+        <polygon points="19,14 37,24 19,34" fill="#f6f1e7" />
+      </svg>
+    </div>
+  </div>
+  <div class="tpl-video__bar">
+    <span class="tpl-video__title">Building with Claude Code — Live Demo</span>
+    <span class="tpl-video__caption">12 min</span>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Introduce or link a recorded demo, tutorial, or walkthrough — a strong poster image with a centered play-button overlay makes the video intent obvious without playing inline.</p>
+          <div class="tags"><span class="tag">video</span><span class="tag">demo</span><span class="tag">poster</span><span class="tag">media</span><span class="tag">tutorial</span><span class="tag">preview</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Split Media <code>split-media</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">media</span>
+            <span class="pill">image-first</span>
+            <span class="pill">density: none</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-split-media · landscape — 960×540 */
+
+.tpl-root.tpl-split-media {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.tpl-root.tpl-split-media::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-split-media > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-split-media .tpl-split-media__title {
+  flex: 0 0 auto;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 36px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+}
+
+.tpl-root.tpl-split-media .tpl-split-media__panels {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+
+.tpl-root.tpl-split-media .tpl-split-media__panel {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tpl-root.tpl-split-media .tpl-split-media__frame {
+  flex: 1 1 auto;
+  min-height: 0;
+  border-radius: var(--p-radius-xl, 14px);
+  overflow: hidden;
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  background: var(--s-surface-raised, #1a1714);
+}
+
+.tpl-root.tpl-split-media .tpl-split-media__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tpl-root.tpl-split-media .tpl-split-media__label {
+  flex: 0 0 auto;
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 13px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  text-transform: uppercase;
+  color: var(--s-ink-muted, #7d7568);
+  text-align: center;
+}
+
+.tpl-root.tpl-split-media .tpl-split-media__divider {
+  flex: 0 0 1px;
+  align-self: stretch;
+  margin: 0 20px;
+  background: var(--s-border-strong, #3a3530);
+}
+</style><div class="tpl-root tpl-split-media">
+  <h2 class="tpl-split-media__title">Mobile vs Desktop Experience</h2>
+  <div class="tpl-split-media__panels">
+    <div class="tpl-split-media__panel">
+      <div class="tpl-split-media__frame">
+        <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1551288049-bebda4e38f71?w&#x3D;1200&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="Dashboard on desktop browser" class="tpl-split-media__img" />
+      </div>
+      <span class="tpl-split-media__label">Desktop</span>
+    </div>
+    <div class="tpl-split-media__divider"></div>
+    <div class="tpl-split-media__panel">
+      <div class="tpl-split-media__frame">
+        <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1498050108023-c5249f4df085?w&#x3D;1200&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="Dashboard on mobile device" class="tpl-split-media__img" />
+      </div>
+      <span class="tpl-split-media__label">Mobile</span>
+    </div>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Two distinct images or video posters side-by-side (landscape) or stacked (portrait) with optional per-side labels — compare two products, a mobile vs desktop variant, or any pair where the media itself carries the story.</p>
+          <div class="tags"><span class="tag">split</span><span class="tag">side-by-side</span><span class="tag">media</span><span class="tag">comparison</span><span class="tag">two-up</span><span class="tag">visual</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Code + Output <code>code-output</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">code</span>
+            <span class="pill">code</span>
+            <span class="pill">density: medium</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-code-output · landscape — 960×540 */
+
+.tpl-root.tpl-code-output {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tpl-root.tpl-code-output::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-code-output > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-code-output .tpl-code-output__title {
+  flex: 0 0 auto;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 34px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+}
+
+.tpl-root.tpl-code-output .tpl-code-output__panels {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+
+.tpl-root.tpl-code-output .tpl-code-output__pane {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--p-radius-xl, 14px);
+  overflow: hidden;
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  background: var(--s-surface-sunken, #141210);
+}
+
+.tpl-root.tpl-code-output .tpl-code-output__pane--output {
+  background: #0d1117;
+  border-color: var(--s-border-strong, #3a3530);
+}
+
+.tpl-root.tpl-code-output .tpl-code-output__pane-header {
+  flex: 0 0 auto;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 16px;
+  background: var(--s-surface-raised, #1a1714);
+  border-bottom: 1px solid var(--s-border-subtle, #2a2622);
+}
+
+.tpl-root.tpl-code-output .tpl-code-output__pane-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--p-sand-500, #5a5249);
+}
+
+.tpl-root.tpl-code-output .tpl-code-output__lang {
+  margin-left: auto;
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 12px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  text-transform: uppercase;
+  color: var(--s-brand-solid, #E07A4A);
+}
+
+.tpl-root.tpl-code-output .tpl-code-output__output-label {
+  margin-left: auto;
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 12px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  text-transform: uppercase;
+  color: var(--s-success-solid, #5ec27e);
+}
+
+.tpl-root.tpl-code-output .tpl-code-output__pre {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 0;
+  padding: 20px 22px;
+  overflow: hidden;
+}
+
+.tpl-root.tpl-code-output .tpl-code-output__code {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--s-ink-primary, #f6f1e7);
+  white-space: pre;
+  display: block;
+}
+
+.tpl-root.tpl-code-output .tpl-code-output__output-text {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--s-success-solid, #5ec27e);
+  white-space: pre;
+  display: block;
+}
+
+.tpl-root.tpl-code-output .tpl-code-output__arrow {
+  flex: 0 0 auto;
+  align-self: center;
+  padding: 0 16px;
+  font-size: 22px;
+  color: var(--s-ink-muted, #7d7568);
+}
+</style><div class="tpl-root tpl-code-output">
+  <h2 class="tpl-code-output__title">Running the deploy script</h2>
+  <div class="tpl-code-output__panels">
+    <div class="tpl-code-output__pane tpl-code-output__pane--code">
+      <div class="tpl-code-output__pane-header">
+        <span class="tpl-code-output__pane-dot"></span>
+        <span class="tpl-code-output__pane-dot"></span>
+        <span class="tpl-code-output__pane-dot"></span>
+        <span class="tpl-code-output__lang">bash</span>
+      </div>
+      <pre class="tpl-code-output__pre"><code class="tpl-code-output__code">git add .
+git commit -m &quot;feat: add auth&quot;
+git push origin main</code></pre>
+    </div>
+    <div class="tpl-code-output__arrow">→</div>
+    <div class="tpl-code-output__pane tpl-code-output__pane--output">
+      <div class="tpl-code-output__pane-header">
+        <span class="tpl-code-output__pane-dot"></span>
+        <span class="tpl-code-output__pane-dot"></span>
+        <span class="tpl-code-output__pane-dot"></span>
+        <span class="tpl-code-output__output-label">output</span>
+      </div>
+      <pre class="tpl-code-output__pre"><code class="tpl-code-output__output-text">[main 3f8a2c1] feat: add auth
+ 3 files changed, 42 insertions(+)
+Branch &#39;main&#39; set up to track remote.
+To github.com:devfellowship&#x2F;app.git
+   a1b2c3d..3f8a2c1  main -&gt; main</code></pre>
+    </div>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Show a code snippet alongside its terminal result/stdout — CLI demos, API call + response pairs, script invocations, test run output. Left = mono code pane, right = terminal output box.</p>
+          <div class="tags"><span class="tag">code</span><span class="tag">terminal</span><span class="tag">output</span><span class="tag">cli</span><span class="tag">demo</span><span class="tag">monospace</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Definition <code>definition</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">content</span>
+            <span class="pill">text-heavy</span>
+            <span class="pill">density: low</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-definition · landscape — 960×540 */
+
+.tpl-root.tpl-definition {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tpl-root.tpl-definition::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-definition > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-definition .tpl-definition__body {
+  max-width: 680px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.tpl-root.tpl-definition .tpl-definition__eyebrow {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 14px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  text-transform: uppercase;
+  color: var(--s-brand-solid, #E07A4A);
+}
+
+.tpl-root.tpl-definition .tpl-definition__term {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 76px;
+  font-weight: var(--p-weight-700, 700);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+  line-height: 0.95;
+}
+
+.tpl-root.tpl-definition .tpl-definition__rule {
+  width: 48px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--s-brand-solid, #E07A4A);
+}
+
+.tpl-root.tpl-definition .tpl-definition__def {
+  font-size: 22px;
+  line-height: 1.5;
+  color: var(--s-ink-secondary, #c9c0b4);
+  margin: 0;
+}
+</style><div class="tpl-root tpl-definition">
+  <div class="tpl-definition__body">
+    <span class="tpl-definition__eyebrow">noun · AI&#x2F;ML</span>
+    <h2 class="tpl-definition__term">Agentic Loop</h2>
+    <div class="tpl-definition__rule"></div>
+    <p class="tpl-definition__def">A cycle in which an AI model plans, executes, observes the result, and iterates — without human intervention between steps.</p>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Introduce a key term, concept, or piece of jargon — the dictionary-entry layout (eyebrow, giant term, accent rule, definition sentence) creates a pause that makes vocabulary stick. Great as a concept opener.</p>
+          <div class="tags"><span class="tag">definition</span><span class="tag">term</span><span class="tag">vocabulary</span><span class="tag">concept</span><span class="tag">glossary</span><span class="tag">text</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">2x2 Matrix <code>matrix-2x2</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">data</span>
+            <span class="pill">diagram</span>
+            <span class="pill">density: low</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-matrix-2x2 · landscape — 960×540 */
+
+.tpl-root.tpl-matrix-2x2 {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tpl-root.tpl-matrix-2x2::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-matrix-2x2 > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-matrix-2x2 .tpl-matrix-2x2__title {
+  flex: 0 0 auto;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 36px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+}
+
+.tpl-root.tpl-matrix-2x2 .tpl-matrix-2x2__wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.tpl-root.tpl-matrix-2x2 .tpl-matrix-2x2__y-label {
+  flex: 0 0 auto;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 13px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  color: var(--s-ink-muted, #7d7568);
+  align-self: center;
+  text-align: center;
+}
+
+.tpl-root.tpl-matrix-2x2 .tpl-matrix-2x2__content {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tpl-root.tpl-matrix-2x2 .tpl-matrix-2x2__grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 6px;
+  border: 1px solid var(--s-border-strong, #3a3530);
+  border-radius: var(--p-radius-xl, 14px);
+  overflow: hidden;
+  background: var(--s-border-strong, #3a3530);
+}
+
+.tpl-root.tpl-matrix-2x2 .tpl-matrix-2x2__cell {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 18px 22px;
+  background: var(--s-surface-raised, #1a1714);
+}
+
+.tpl-root.tpl-matrix-2x2 .tpl-matrix-2x2__cell:nth-child(1) {
+  border-bottom-right-radius: 0;
+}
+
+.tpl-root.tpl-matrix-2x2 .tpl-matrix-2x2__cell:nth-child(2) {
+  background: var(--s-surface-panel, #1f1c18);
+}
+
+.tpl-root.tpl-matrix-2x2 .tpl-matrix-2x2__cell-label {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 26px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+}
+
+.tpl-root.tpl-matrix-2x2 .tpl-matrix-2x2__cell-note {
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--s-ink-muted, #7d7568);
+}
+
+.tpl-root.tpl-matrix-2x2 .tpl-matrix-2x2__x-label {
+  flex: 0 0 auto;
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 13px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  color: var(--s-ink-muted, #7d7568);
+  text-align: right;
+}
+</style><div class="tpl-root tpl-matrix-2x2">
+  <h2 class="tpl-matrix-2x2__title">Effort vs. Impact</h2>
+  <div class="tpl-matrix-2x2__wrap">
+    <span class="tpl-matrix-2x2__y-label">Impact →</span>
+    <div class="tpl-matrix-2x2__content">
+      <div class="tpl-matrix-2x2__grid">
+        <div class="tpl-matrix-2x2__cell">
+          <span class="tpl-matrix-2x2__cell-label">Quick Wins</span>
+          <span class="tpl-matrix-2x2__cell-note">High impact, low effort</span>
+        </div>
+        <div class="tpl-matrix-2x2__cell">
+          <span class="tpl-matrix-2x2__cell-label">Major Projects</span>
+          <span class="tpl-matrix-2x2__cell-note">High impact, high effort</span>
+        </div>
+        <div class="tpl-matrix-2x2__cell">
+          <span class="tpl-matrix-2x2__cell-label">Fill-ins</span>
+          <span class="tpl-matrix-2x2__cell-note">Low impact, low effort</span>
+        </div>
+        <div class="tpl-matrix-2x2__cell">
+          <span class="tpl-matrix-2x2__cell-label">Thankless Tasks</span>
+          <span class="tpl-matrix-2x2__cell-note">Low impact, high effort</span>
+        </div>
+      </div>
+      <span class="tpl-matrix-2x2__x-label">Effort →</span>
+    </div>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> A classic quadrant / prioritization grid with two axes (effort vs impact, urgency vs importance). Each quadrant gets a label + optional note. Strategic planning, backlog prioritization, risk assessment.</p>
+          <div class="tags"><span class="tag">matrix</span><span class="tag">quadrant</span><span class="tag">diagram</span><span class="tag">prioritization</span><span class="tag">axes</span><span class="tag">strategy</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Timeline <code>timeline</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">data</span>
+            <span class="pill">diagram</span>
+            <span class="pill">density: low</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-timeline · landscape — 960×540 */
+
+.tpl-root.tpl-timeline {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 32px;
+}
+
+.tpl-root.tpl-timeline::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-timeline > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-timeline .tpl-timeline__title {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 40px;
+  font-weight: var(--p-weight-700, 700);
+  line-height: 1;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+}
+
+.tpl-root.tpl-timeline .tpl-timeline__track {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 0;
+  flex: 1 1 auto;
+  align-items: center;
+}
+
+.tpl-root.tpl-timeline .tpl-timeline__line {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  right: 18px;
+  height: 1px;
+  background: var(--s-border-strong, #3a3530);
+  z-index: 0;
+}
+
+.tpl-root.tpl-timeline .tpl-timeline__node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1 1 0;
+  z-index: 1;
+  padding-top: 0;
+}
+
+.tpl-root.tpl-timeline .tpl-timeline__dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--s-brand-solid, #E07A4A);
+  border: 2px solid var(--s-surface-page, #0a0908);
+  box-shadow: 0 0 0 1px var(--s-brand-solid, #E07A4A);
+  flex-shrink: 0;
+  margin-top: 11px;
+}
+
+.tpl-root.tpl-timeline .tpl-timeline__date {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 11px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  text-transform: uppercase;
+  color: var(--s-ink-muted, #7d7568);
+  margin-top: 14px;
+}
+
+.tpl-root.tpl-timeline .tpl-timeline__label {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 22px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.tpl-root.tpl-timeline .tpl-timeline__note {
+  font-size: 14px;
+  color: var(--s-ink-muted, #7d7568);
+  line-height: 1.4;
+  margin: 0;
+}
+</style><div class="tpl-root tpl-timeline">
+  <h2 class="tpl-timeline__title">Product Milestones</h2>
+  <div class="tpl-timeline__track">
+    <div class="tpl-timeline__line"></div>
+    <div class="tpl-timeline__node">
+      <div class="tpl-timeline__dot"></div>
+      <div class="tpl-timeline__date">Q1 2024</div>
+      <div class="tpl-timeline__label">Alpha launch</div>
+      <div class="tpl-timeline__note">Internal beta with 50 fellows</div>
+    </div>
+    <div class="tpl-timeline__node">
+      <div class="tpl-timeline__dot"></div>
+      <div class="tpl-timeline__date">Q2 2024</div>
+      <div class="tpl-timeline__label">Partner onboarding</div>
+      <div class="tpl-timeline__note">First 3 companies integrated</div>
+    </div>
+    <div class="tpl-timeline__node">
+      <div class="tpl-timeline__dot"></div>
+      <div class="tpl-timeline__date">Q3 2024</div>
+      <div class="tpl-timeline__label">Public beta</div>
+      <div class="tpl-timeline__note">Open access, 1,000 users</div>
+    </div>
+    <div class="tpl-timeline__node">
+      <div class="tpl-timeline__dot"></div>
+      <div class="tpl-timeline__date">Q4 2024</div>
+      <div class="tpl-timeline__label">v1.0 release</div>
+      <div class="tpl-timeline__note">Full feature parity</div>
+    </div>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Show a sequence of dated milestones, product history, or roadmap phases. Horizontal connected dots (landscape) / vertical left-spine (portrait). Use when dates/order along a line matter.</p>
+          <div class="tags"><span class="tag">timeline</span><span class="tag">milestones</span><span class="tag">roadmap</span><span class="tag">history</span><span class="tag">dates</span><span class="tag">progress</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Process Flow <code>process-flow</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">data</span>
+            <span class="pill">diagram</span>
+            <span class="pill">density: low</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-process-flow · landscape — 960×540 */
+
+.tpl-root.tpl-process-flow {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 36px;
+}
+
+.tpl-root.tpl-process-flow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-process-flow > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-process-flow .tpl-process-flow__title {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 40px;
+  font-weight: var(--p-weight-700, 700);
+  line-height: 1;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+}
+
+.tpl-root.tpl-process-flow .tpl-process-flow__track {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0;
+  flex: 1 1 auto;
+  align-items: stretch;
+}
+
+.tpl-root.tpl-process-flow .tpl-process-flow__item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.tpl-root.tpl-process-flow .tpl-process-flow__item:last-child .tpl-process-flow__arrow {
+  display: none;
+}
+
+.tpl-root.tpl-process-flow .tpl-process-flow__box {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px 18px;
+  background: var(--s-surface-raised, #1a1714);
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  border-radius: var(--p-radius-lg, 10px);
+  align-items: flex-start;
+}
+
+.tpl-root.tpl-process-flow .tpl-process-flow__label {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 24px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  line-height: 1.1;
+}
+
+.tpl-root.tpl-process-flow .tpl-process-flow__note {
+  font-size: 14px;
+  color: var(--s-ink-muted, #7d7568);
+  line-height: 1.4;
+}
+
+.tpl-root.tpl-process-flow .tpl-process-flow__arrow {
+  flex-shrink: 0;
+  font-size: 22px;
+  color: var(--s-brand-solid, #E07A4A);
+  padding: 0 10px;
+  line-height: 1;
+  align-self: center;
+}
+</style><div class="tpl-root tpl-process-flow">
+  <h2 class="tpl-process-flow__title">Onboarding Flow</h2>
+  <div class="tpl-process-flow__track">
+    <div class="tpl-process-flow__item">
+      <div class="tpl-process-flow__box">
+        <span class="tpl-process-flow__label">Sign up</span>
+        <span class="tpl-process-flow__note">Email + password</span>
+      </div>
+      <span class="tpl-process-flow__arrow">&#8594;</span>
+    </div>
+    <div class="tpl-process-flow__item">
+      <div class="tpl-process-flow__box">
+        <span class="tpl-process-flow__label">Profile setup</span>
+        <span class="tpl-process-flow__note">Role, skills, goals</span>
+      </div>
+      <span class="tpl-process-flow__arrow">&#8594;</span>
+    </div>
+    <div class="tpl-process-flow__item">
+      <div class="tpl-process-flow__box">
+        <span class="tpl-process-flow__label">Course match</span>
+        <span class="tpl-process-flow__note">AI recommendation</span>
+      </div>
+      <span class="tpl-process-flow__arrow">&#8594;</span>
+    </div>
+    <div class="tpl-process-flow__item">
+      <div class="tpl-process-flow__box">
+        <span class="tpl-process-flow__label">First lesson</span>
+        <span class="tpl-process-flow__note">Watch &amp; complete</span>
+      </div>
+      <span class="tpl-process-flow__arrow">&#8594;</span>
+    </div>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Linear, step-by-step processes where order matters — onboarding flows, deployment pipelines, sign-up funnels. Boxes connected by arrow glyphs, no diagram tool needed.</p>
+          <div class="tags"><span class="tag">process</span><span class="tag">flow</span><span class="tag">steps</span><span class="tag">pipeline</span><span class="tag">sequence</span><span class="tag">funnel</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Hierarchy Tree <code>hierarchy-tree</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">data</span>
+            <span class="pill">diagram</span>
+            <span class="pill">density: none</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-hierarchy-tree · landscape — 960×540 */
+
+.tpl-root.tpl-hierarchy-tree {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 24px;
+}
+
+.tpl-root.tpl-hierarchy-tree::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-hierarchy-tree > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__title {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 40px;
+  font-weight: var(--p-weight-700, 700);
+  line-height: 1;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+  text-align: center;
+}
+
+.tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__diagram {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  flex: 1 1 auto;
+  justify-content: center;
+}
+
+.tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__root-row {
+  display: flex;
+  justify-content: center;
+}
+
+.tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 22px;
+  background: var(--s-surface-raised, #1a1714);
+  border: 1px solid var(--s-border-strong, #3a3530);
+  border-radius: var(--p-radius-lg, 10px);
+  min-width: 90px;
+}
+
+.tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__node--root {
+  background: var(--s-brand-subtle, #783e25);
+  border-color: var(--s-brand-solid, #E07A4A);
+}
+
+.tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__node--root .tpl-hierarchy-tree__node-label {
+  color: var(--s-ink-primary, #f6f1e7);
+}
+
+.tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__node-label {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 22px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__node-note {
+  font-size: 13px;
+  color: var(--s-ink-muted, #7d7568);
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__connector-row {
+  position: relative;
+  height: 40px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__trunk {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 20px;
+  background: var(--s-border-strong, #3a3530);
+  transform: translateX(-50%);
+}
+
+.tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__crossbar {
+  position: absolute;
+  top: 20px;
+  left: 12%;
+  right: 12%;
+  height: 1px;
+  background: var(--s-border-strong, #3a3530);
+}
+
+.tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__children-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: flex-start;
+  width: 100%;
+  gap: 16px;
+}
+
+.tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__child-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  flex: 1 1 0;
+}
+
+.tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__branch-tick {
+  width: 1px;
+  height: 20px;
+  background: var(--s-border-strong, #3a3530);
+}
+</style><div class="tpl-root tpl-hierarchy-tree">
+  <h2 class="tpl-hierarchy-tree__title">Team Structure</h2>
+  <div class="tpl-hierarchy-tree__diagram">
+    <div class="tpl-hierarchy-tree__root-row">
+      <div class="tpl-hierarchy-tree__node tpl-hierarchy-tree__node--root">
+        <span class="tpl-hierarchy-tree__node-label">CTO</span>
+      </div>
+    </div>
+    <div class="tpl-hierarchy-tree__connector-row">
+      <div class="tpl-hierarchy-tree__trunk"></div>
+      <div class="tpl-hierarchy-tree__crossbar"></div>
+    </div>
+    <div class="tpl-hierarchy-tree__children-row">
+      <div class="tpl-hierarchy-tree__child-col">
+        <div class="tpl-hierarchy-tree__branch-tick"></div>
+        <div class="tpl-hierarchy-tree__node">
+          <span class="tpl-hierarchy-tree__node-label">Frontend</span>
+          <span class="tpl-hierarchy-tree__node-note">3 engineers</span>
+        </div>
+      </div>
+      <div class="tpl-hierarchy-tree__child-col">
+        <div class="tpl-hierarchy-tree__branch-tick"></div>
+        <div class="tpl-hierarchy-tree__node">
+          <span class="tpl-hierarchy-tree__node-label">Backend</span>
+          <span class="tpl-hierarchy-tree__node-note">4 engineers</span>
+        </div>
+      </div>
+      <div class="tpl-hierarchy-tree__child-col">
+        <div class="tpl-hierarchy-tree__branch-tick"></div>
+        <div class="tpl-hierarchy-tree__node">
+          <span class="tpl-hierarchy-tree__node-label">Design</span>
+          <span class="tpl-hierarchy-tree__node-note">2 designers</span>
+        </div>
+      </div>
+      <div class="tpl-hierarchy-tree__child-col">
+        <div class="tpl-hierarchy-tree__branch-tick"></div>
+        <div class="tpl-hierarchy-tree__node">
+          <span class="tpl-hierarchy-tree__node-label">DevOps</span>
+          <span class="tpl-hierarchy-tree__node-note">1 engineer</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> An org chart, reporting structure, component hierarchy, or category breakdown with one parent and 2-4 children. Brand-colored root on top, children below via crossbar connector.</p>
+          <div class="tags"><span class="tag">org-chart</span><span class="tag">hierarchy</span><span class="tag">tree</span><span class="tag">structure</span><span class="tag">reporting</span><span class="tag">breakdown</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Agenda <code>agenda</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">content</span>
+            <span class="pill">text-heavy</span>
+            <span class="pill">density: medium</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-agenda · landscape — 960×540 */
+
+.tpl-root.tpl-agenda {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tpl-root.tpl-agenda::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-agenda > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-agenda .tpl-agenda__header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tpl-root.tpl-agenda .tpl-agenda__eyebrow {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 13px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  text-transform: uppercase;
+  color: var(--s-ink-muted, #7d7568);
+}
+
+.tpl-root.tpl-agenda .tpl-agenda__title {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 52px;
+  font-weight: var(--p-weight-700, 700);
+  line-height: 1;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+}
+
+.tpl-root.tpl-agenda .tpl-agenda__rule {
+  height: 1px;
+  background: var(--s-border-subtle, #2a2622);
+  flex-shrink: 0;
+}
+
+.tpl-root.tpl-agenda .tpl-agenda__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1 1 auto;
+  counter-reset: agenda-counter;
+  justify-content: space-evenly;
+}
+
+.tpl-root.tpl-agenda .tpl-agenda__item {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 20px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--s-border-subtle, #2a2622);
+  counter-increment: agenda-counter;
+}
+
+.tpl-root.tpl-agenda .tpl-agenda__item:last-child {
+  border-bottom: none;
+}
+
+.tpl-root.tpl-agenda .tpl-agenda__item::before {
+  content: counter(agenda-counter, decimal-leading-zero);
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 14px;
+  color: var(--s-brand-solid, #E07A4A);
+  flex-shrink: 0;
+  min-width: 28px;
+}
+
+.tpl-root.tpl-agenda .tpl-agenda__label {
+  font-size: 22px;
+  font-weight: var(--p-weight-500, 500);
+  color: var(--s-ink-primary, #f6f1e7);
+  flex: 1 1 auto;
+  line-height: 1.3;
+}
+
+.tpl-root.tpl-agenda .tpl-agenda__note {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 13px;
+  color: var(--s-ink-muted, #7d7568);
+  flex-shrink: 0;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+}
+</style><div class="tpl-root tpl-agenda">
+  <div class="tpl-agenda__header">
+    <span class="tpl-agenda__eyebrow">Module 2</span>
+    <h2 class="tpl-agenda__title">Today&#39;s Agenda</h2>
+  </div>
+  <div class="tpl-agenda__rule"></div>
+  <ol class="tpl-agenda__list">
+    <li class="tpl-agenda__item">
+      <span class="tpl-agenda__label">Intro &amp; context</span>
+      <span class="tpl-agenda__note">5 min</span>
+    </li>
+    <li class="tpl-agenda__item">
+      <span class="tpl-agenda__label">Core concept walkthrough</span>
+      <span class="tpl-agenda__note">15 min</span>
+    </li>
+    <li class="tpl-agenda__item">
+      <span class="tpl-agenda__label">Live demo</span>
+      <span class="tpl-agenda__note">10 min</span>
+    </li>
+    <li class="tpl-agenda__item">
+      <span class="tpl-agenda__label">Q&amp;A</span>
+      <span class="tpl-agenda__note">10 min</span>
+    </li>
+  </ol>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Open a lesson, module, or presentation by setting expectations — numbered rows of topics, with optional time annotations doubling as a schedule.</p>
+          <div class="tags"><span class="tag">agenda</span><span class="tag">table-of-contents</span><span class="tag">schedule</span><span class="tag">numbered</span><span class="tag">topics</span><span class="tag">session</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Checklist <code>checklist</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">content</span>
+            <span class="pill">text-heavy</span>
+            <span class="pill">density: medium</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-checklist · landscape — 960×540 */
+
+.tpl-root.tpl-checklist {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.tpl-root.tpl-checklist::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-checklist > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-checklist .tpl-checklist__title {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 52px;
+  font-weight: var(--p-weight-700, 700);
+  line-height: 1;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+}
+
+.tpl-root.tpl-checklist .tpl-checklist__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1 1 auto;
+  justify-content: space-evenly;
+}
+
+.tpl-root.tpl-checklist .tpl-checklist__item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--s-border-subtle, #2a2622);
+}
+
+.tpl-root.tpl-checklist .tpl-checklist__item:last-child {
+  border-bottom: none;
+}
+
+.tpl-root.tpl-checklist .tpl-checklist__glyph {
+  font-size: 22px;
+  flex-shrink: 0;
+  width: 28px;
+  text-align: center;
+  color: var(--s-ink-muted, #7d7568);
+  line-height: 1;
+}
+
+.tpl-root.tpl-checklist .tpl-checklist__item--done .tpl-checklist__glyph {
+  color: var(--s-success-solid, #5ec27e);
+}
+
+.tpl-root.tpl-checklist .tpl-checklist__text {
+  font-size: 22px;
+  font-weight: var(--p-weight-400, 400);
+  color: var(--s-ink-secondary, #c9c0b4);
+  line-height: 1.3;
+  flex: 1 1 auto;
+}
+
+.tpl-root.tpl-checklist .tpl-checklist__item--done .tpl-checklist__text {
+  color: var(--s-ink-primary, #f6f1e7);
+}
+</style><div class="tpl-root tpl-checklist">
+  <h2 class="tpl-checklist__title">Launch Checklist</h2>
+  <ul class="tpl-checklist__list">
+    <li class="tpl-checklist__item tpl-checklist__item--done">
+      <span class="tpl-checklist__glyph">&#10003;</span>
+      <span class="tpl-checklist__text">CI pipeline passing</span>
+    </li>
+    <li class="tpl-checklist__item tpl-checklist__item--done">
+      <span class="tpl-checklist__glyph">&#10003;</span>
+      <span class="tpl-checklist__text">Staging deploy verified</span>
+    </li>
+    <li class="tpl-checklist__item tpl-checklist__item--done">
+      <span class="tpl-checklist__glyph">&#10003;</span>
+      <span class="tpl-checklist__text">Feature flags enabled</span>
+    </li>
+    <li class="tpl-checklist__item">
+      <span class="tpl-checklist__glyph">&#9744;</span>
+      <span class="tpl-checklist__text">Rollback plan documented</span>
+    </li>
+    <li class="tpl-checklist__item">
+      <span class="tpl-checklist__glyph">&#9744;</span>
+      <span class="tpl-checklist__text">On-call notified</span>
+    </li>
+  </ul>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> A list of items with explicit done/not-done state — launch checklists, pre-flight requirements, completion criteria. Done items show a green check, pending an empty box.</p>
+          <div class="tags"><span class="tag">checklist</span><span class="tag">done</span><span class="tag">tasks</span><span class="tag">requirements</span><span class="tag">status</span><span class="tag">review</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Pros & Cons <code>pros-cons</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">content</span>
+            <span class="pill">text-heavy</span>
+            <span class="pill">density: high</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-pros-cons · landscape — 960×540 */
+
+.tpl-root.tpl-pros-cons {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.tpl-root.tpl-pros-cons::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-pros-cons > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-pros-cons .tpl-pros-cons__title {
+  flex: 0 0 auto;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 38px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+}
+
+.tpl-root.tpl-pros-cons .tpl-pros-cons__columns {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+  gap: 20px;
+}
+
+.tpl-root.tpl-pros-cons .tpl-pros-cons__column {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 28px 30px;
+  border-radius: var(--p-radius-xl, 14px);
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  background: var(--s-surface-panel, #1f1c18);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.tpl-root.tpl-pros-cons .tpl-pros-cons__column--pros {
+  background: rgba(94, 194, 126, 0.07);
+  border-color: rgba(94, 194, 126, 0.20);
+}
+
+.tpl-root.tpl-pros-cons .tpl-pros-cons__column--cons {
+  background: rgba(224, 122, 122, 0.07);
+  border-color: rgba(224, 122, 122, 0.20);
+}
+
+.tpl-root.tpl-pros-cons .tpl-pros-cons__heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 13px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  text-transform: uppercase;
+  color: var(--s-ink-muted, #7d7568);
+}
+
+.tpl-root.tpl-pros-cons .tpl-pros-cons__column--pros .tpl-pros-cons__heading {
+  color: var(--s-success-solid, #5ec27e);
+}
+
+.tpl-root.tpl-pros-cons .tpl-pros-cons__column--cons .tpl-pros-cons__heading {
+  color: var(--s-danger-solid, #e07a7a);
+}
+
+.tpl-root.tpl-pros-cons .tpl-pros-cons__icon {
+  font-size: 16px;
+  font-style: normal;
+}
+
+.tpl-root.tpl-pros-cons .tpl-pros-cons__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.tpl-root.tpl-pros-cons .tpl-pros-cons__item {
+  position: relative;
+  padding-left: 20px;
+  font-size: 19px;
+  line-height: 1.35;
+  color: var(--s-ink-secondary, #c9c0b4);
+}
+
+.tpl-root.tpl-pros-cons .tpl-pros-cons__item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--s-ink-muted, #7d7568);
+}
+
+.tpl-root.tpl-pros-cons .tpl-pros-cons__column--pros .tpl-pros-cons__item::before {
+  background: var(--s-success-solid, #5ec27e);
+}
+
+.tpl-root.tpl-pros-cons .tpl-pros-cons__column--cons .tpl-pros-cons__item::before {
+  background: var(--s-danger-solid, #e07a7a);
+}
+</style><div class="tpl-root tpl-pros-cons">
+  <h2 class="tpl-pros-cons__title">Should we migrate to a monorepo?</h2>
+  <div class="tpl-pros-cons__columns">
+    <div class="tpl-pros-cons__column tpl-pros-cons__column--pros">
+      <span class="tpl-pros-cons__heading">
+        <span class="tpl-pros-cons__icon">✓</span> Pros
+      </span>
+      <ul class="tpl-pros-cons__list">
+        <li class="tpl-pros-cons__item">Unified dependency management across all services</li><li class="tpl-pros-cons__item">Easier cross-package refactoring and code sharing</li><li class="tpl-pros-cons__item">Single CI pipeline reduces configuration overhead</li><li class="tpl-pros-cons__item">Atomic commits spanning multiple packages</li>
+      </ul>
+    </div>
+    <div class="tpl-pros-cons__column tpl-pros-cons__column--cons">
+      <span class="tpl-pros-cons__heading">
+        <span class="tpl-pros-cons__icon">✗</span> Cons
+      </span>
+      <ul class="tpl-pros-cons__list">
+        <li class="tpl-pros-cons__item">Initial migration effort is significant</li><li class="tpl-pros-cons__item">Build times increase without granular caching</li><li class="tpl-pros-cons__item">Requires tooling discipline (Turborepo &#x2F; Nx)</li><li class="tpl-pros-cons__item">Harder to enforce team boundaries</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> A balanced evaluation of a decision, technology, or approach — 'should we adopt X?', trade-offs of Y. Positive vs negative with check/cross semantic coloring (success green / danger red).</p>
+          <div class="tags"><span class="tag">pros</span><span class="tag">cons</span><span class="tag">trade-offs</span><span class="tag">decision</span><span class="tag">evaluation</span><span class="tag">two-column</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Roadmap (Phase Columns) <code>roadmap</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">layout</span>
+            <span class="pill">diagram</span>
+            <span class="pill">density: medium</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-roadmap · landscape — 960×540 */
+
+.tpl-root.tpl-roadmap {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.tpl-root.tpl-roadmap::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-roadmap > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-roadmap .tpl-roadmap__title {
+  flex: 0 0 auto;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 38px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+}
+
+.tpl-root.tpl-roadmap .tpl-roadmap__track {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.tpl-root.tpl-roadmap .tpl-roadmap__phase {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px 22px 24px;
+  border-radius: var(--p-radius-xl, 14px);
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  background: var(--s-surface-panel, #1f1c18);
+}
+
+.tpl-root.tpl-roadmap .tpl-roadmap__phase:first-child {
+  background: rgba(224, 122, 74, 0.08);
+  border-color: rgba(224, 122, 74, 0.22);
+}
+
+.tpl-root.tpl-roadmap .tpl-roadmap__phase-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tpl-root.tpl-roadmap .tpl-roadmap__phase-label {
+  flex: 0 0 auto;
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 12px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  text-transform: uppercase;
+  color: var(--s-ink-muted, #7d7568);
+  white-space: nowrap;
+}
+
+.tpl-root.tpl-roadmap .tpl-roadmap__phase:first-child .tpl-roadmap__phase-label {
+  color: var(--s-brand-solid, #E07A4A);
+}
+
+.tpl-root.tpl-roadmap .tpl-roadmap__phase-line {
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--s-border-subtle, #2a2622);
+}
+
+.tpl-root.tpl-roadmap .tpl-roadmap__phase:first-child .tpl-roadmap__phase-line {
+  background: rgba(224, 122, 74, 0.30);
+}
+
+.tpl-root.tpl-roadmap .tpl-roadmap__bullets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tpl-root.tpl-roadmap .tpl-roadmap__bullet {
+  position: relative;
+  padding-left: 18px;
+  font-size: 18px;
+  line-height: 1.35;
+  color: var(--s-ink-secondary, #c9c0b4);
+}
+
+.tpl-root.tpl-roadmap .tpl-roadmap__bullet::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--s-ink-muted, #7d7568);
+}
+
+.tpl-root.tpl-roadmap .tpl-roadmap__phase:first-child .tpl-roadmap__bullet::before {
+  background: var(--s-brand-solid, #E07A4A);
+}
+</style><div class="tpl-root tpl-roadmap">
+  <h2 class="tpl-roadmap__title">Product Roadmap</h2>
+  <div class="tpl-roadmap__track">
+    <div class="tpl-roadmap__phase">
+      <div class="tpl-roadmap__phase-header">
+        <span class="tpl-roadmap__phase-label">Now</span>
+        <div class="tpl-roadmap__phase-line"></div>
+      </div>
+      <ul class="tpl-roadmap__bullets">
+        <li class="tpl-roadmap__bullet">Ship onboarding v2</li><li class="tpl-roadmap__bullet">Fix auth edge cases</li><li class="tpl-roadmap__bullet">Mobile responsive pass</li>
+      </ul>
+    </div>
+    <div class="tpl-roadmap__phase">
+      <div class="tpl-roadmap__phase-header">
+        <span class="tpl-roadmap__phase-label">Next</span>
+        <div class="tpl-roadmap__phase-line"></div>
+      </div>
+      <ul class="tpl-roadmap__bullets">
+        <li class="tpl-roadmap__bullet">Payments integration</li><li class="tpl-roadmap__bullet">Team workspaces</li><li class="tpl-roadmap__bullet">Advanced analytics</li>
+      </ul>
+    </div>
+    <div class="tpl-roadmap__phase">
+      <div class="tpl-roadmap__phase-header">
+        <span class="tpl-roadmap__phase-label">Later</span>
+        <div class="tpl-roadmap__phase-line"></div>
+      </div>
+      <ul class="tpl-roadmap__bullets">
+        <li class="tpl-roadmap__bullet">Native mobile apps</li><li class="tpl-roadmap__bullet">API v2 public beta</li><li class="tpl-roadmap__bullet">White-label offering</li>
+      </ul>
+    </div>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> A phased product/project roadmap with columns for time horizons — Now/Next/Later, Q1/Q2/Q3, Sprint/Backlog/Future. Each column holds a short list; the current column is brand-highlighted.</p>
+          <div class="tags"><span class="tag">roadmap</span><span class="tag">phases</span><span class="tag">planning</span><span class="tag">now-next-later</span><span class="tag">quarters</span><span class="tag">strategy</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Cycle / Loop Diagram <code>cycle</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">layout</span>
+            <span class="pill">diagram</span>
+            <span class="pill">density: low</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-cycle · landscape — 960×540 */
+
+.tpl-root.tpl-cycle {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 32px;
+}
+
+.tpl-root.tpl-cycle::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-cycle > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-cycle .tpl-cycle__title {
+  flex: 0 0 auto;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 36px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+  text-align: center;
+}
+
+.tpl-root.tpl-cycle .tpl-cycle__diagram {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.tpl-root.tpl-cycle .tpl-cycle__loop-indicator {
+  font-size: 48px;
+  line-height: 1;
+  color: var(--s-brand-solid, #E07A4A);
+  opacity: 0.7;
+}
+
+.tpl-root.tpl-cycle .tpl-cycle__stages {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 0;
+}
+
+.tpl-root.tpl-cycle .tpl-cycle__stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.tpl-root.tpl-cycle .tpl-cycle__stage-node {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  border: 2px solid var(--s-border-strong, #3a3530);
+  background: var(--s-surface-panel, #1f1c18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.tpl-root.tpl-cycle .tpl-cycle__stage:first-child .tpl-cycle__stage-node {
+  border-color: var(--s-brand-solid, #E07A4A);
+  background: rgba(224, 122, 74, 0.10);
+  box-shadow: 0 0 24px rgba(224, 122, 74, 0.15);
+}
+
+.tpl-root.tpl-cycle .tpl-cycle__stage-label {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 22px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  text-align: center;
+  line-height: 1.1;
+}
+
+.tpl-root.tpl-cycle .tpl-cycle__stage:first-child .tpl-cycle__stage-label {
+  color: var(--s-brand-solid, #E07A4A);
+}
+
+.tpl-root.tpl-cycle .tpl-cycle__stage-note {
+  font-size: 13px;
+  color: var(--s-ink-muted, #7d7568);
+  text-align: center;
+  max-width: 110px;
+  line-height: 1.3;
+}
+
+.tpl-root.tpl-cycle .tpl-cycle__arrow {
+  flex: 0 0 auto;
+  align-self: center;
+  font-size: 28px;
+  color: var(--s-ink-muted, #7d7568);
+  padding: 0 8px;
+  margin-bottom: 48px;
+}
+</style><div class="tpl-root tpl-cycle">
+  <h2 class="tpl-cycle__title">The Continuous Improvement Loop</h2>
+  <div class="tpl-cycle__diagram">
+    <div class="tpl-cycle__loop-indicator">&#x21BB;</div>
+    <div class="tpl-cycle__stages">
+      <div class="tpl-cycle__stage">
+        <div class="tpl-cycle__stage-node">
+          <span class="tpl-cycle__stage-label">Plan</span>
+        </div>
+        <span class="tpl-cycle__stage-note">Define goals and scope</span>
+      </div>
+      <div class="tpl-cycle__arrow">&#8594;</div>
+      <div class="tpl-cycle__stage">
+        <div class="tpl-cycle__stage-node">
+          <span class="tpl-cycle__stage-label">Build</span>
+        </div>
+        <span class="tpl-cycle__stage-note">Develop and integrate</span>
+      </div>
+      <div class="tpl-cycle__arrow">&#8594;</div>
+      <div class="tpl-cycle__stage">
+        <div class="tpl-cycle__stage-node">
+          <span class="tpl-cycle__stage-label">Ship</span>
+        </div>
+        <span class="tpl-cycle__stage-note">Deploy to production</span>
+      </div>
+      <div class="tpl-cycle__arrow">&#8594;</div>
+      <div class="tpl-cycle__stage">
+        <div class="tpl-cycle__stage-node">
+          <span class="tpl-cycle__stage-label">Learn</span>
+        </div>
+        <span class="tpl-cycle__stage-note">Measure and analyse</span>
+      </div>
+      <div class="tpl-cycle__arrow">&#8594;</div>
+    </div>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> A repeating circular process — Plan-Build-Ship-Learn, PDCA, an Agile sprint cycle, any feedback loop. The loop indicator + arrows make cyclicality explicit. Best with 3-5 stages.</p>
+          <div class="tags"><span class="tag">cycle</span><span class="tag">loop</span><span class="tag">process</span><span class="tag">iterative</span><span class="tag">feedback</span><span class="tag">agile</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Chapter Image Divider <code>chapter-image</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">media</span>
+            <span class="pill">image-first</span>
+            <span class="pill">density: low</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-chapter-image · landscape — 960×540 */
+
+.tpl-root.tpl-chapter-image {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  background: var(--s-surface-page, #0a0908);
+  color: #ffffff;
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.tpl-root.tpl-chapter-image .tpl-chapter-image__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  z-index: 0;
+}
+
+.tpl-root.tpl-chapter-image .tpl-chapter-image__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    rgba(10, 9, 8, 0.92) 0%,
+    rgba(10, 9, 8, 0.72) 50%,
+    rgba(10, 9, 8, 0.30) 100%
+  );
+  z-index: 1;
+}
+
+.tpl-root.tpl-chapter-image .tpl-chapter-image__content {
+  position: absolute;
+  left: 72px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 520px;
+}
+
+.tpl-root.tpl-chapter-image .tpl-chapter-image__number {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 120px;
+  font-weight: var(--p-weight-700, 700);
+  line-height: 0.85;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-brand-solid, #E07A4A);
+  opacity: 0.55;
+  display: block;
+}
+
+.tpl-root.tpl-chapter-image .tpl-chapter-image__title {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 72px;
+  font-weight: var(--p-weight-700, 700);
+  line-height: 0.95;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  margin: 0;
+  color: #ffffff;
+  text-wrap: balance;
+}
+
+.tpl-root.tpl-chapter-image .tpl-chapter-image__subtitle {
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.70);
+  margin: 0;
+  margin-top: 4px;
+}
+</style><div class="tpl-root tpl-chapter-image">
+  <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1461749280684-dccba630e2f6?w&#x3D;1200&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="A developer workstation with multiple monitors" class="tpl-chapter-image__bg" />
+  <div class="tpl-chapter-image__scrim"></div>
+  <div class="tpl-chapter-image__content">
+    <span class="tpl-chapter-image__number">03</span>
+    <h1 class="tpl-chapter-image__title">Building for Scale</h1>
+    <p class="tpl-chapter-image__subtitle">Architecture decisions that compound</p>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> A section divider that introduces a new chapter/module with visual impact — full-bleed background image with a dark scrim, a large chapter number, and the section title. The image-backed counterpart to section-header.</p>
+          <div class="tags"><span class="tag">chapter</span><span class="tag">section-divider</span><span class="tag">image</span><span class="tag">module</span><span class="tag">transition</span><span class="tag">hero</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Stat Grid <code>stat-grid</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">data</span>
+            <span class="pill">data</span>
+            <span class="pill">density: low</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-stat-grid · landscape — 960×540 */
+
+.tpl-root.tpl-stat-grid {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.tpl-root.tpl-stat-grid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-stat-grid > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-stat-grid .tpl-stat-grid__title {
+  flex: 0 0 auto;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 34px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-secondary, #c9c0b4);
+  margin: 0;
+}
+
+.tpl-root.tpl-stat-grid .tpl-stat-grid__grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.tpl-root.tpl-stat-grid .tpl-stat-grid__cell {
+  padding: 28px 24px;
+  border-radius: var(--p-radius-xl, 14px);
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  background: var(--s-surface-panel, #1f1c18);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.tpl-root.tpl-stat-grid .tpl-stat-grid__cell:first-child {
+  background: rgba(224, 122, 74, 0.08);
+  border-color: rgba(224, 122, 74, 0.22);
+}
+
+.tpl-root.tpl-stat-grid .tpl-stat-grid__value {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 72px;
+  font-weight: var(--p-weight-700, 700);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  line-height: 1;
+  color: var(--s-ink-primary, #f6f1e7);
+  font-feature-settings: "tnum" 1;
+}
+
+.tpl-root.tpl-stat-grid .tpl-stat-grid__cell:first-child .tpl-stat-grid__value {
+  color: var(--s-brand-solid, #E07A4A);
+}
+
+.tpl-root.tpl-stat-grid .tpl-stat-grid__label {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 13px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  text-transform: uppercase;
+  color: var(--s-ink-muted, #7d7568);
+}
+
+.tpl-root.tpl-stat-grid .tpl-stat-grid__caption {
+  font-size: 14px;
+  color: var(--s-ink-muted, #7d7568);
+  line-height: 1.3;
+}
+</style><div class="tpl-root tpl-stat-grid">
+  <h2 class="tpl-stat-grid__title">Q2 Metrics at a Glance</h2>
+  <div class="tpl-stat-grid__grid">
+    <div class="tpl-stat-grid__cell">
+      <span class="tpl-stat-grid__value">1,248</span>
+      <span class="tpl-stat-grid__label">Active Fellows</span>
+      <span class="tpl-stat-grid__caption">+18% vs last quarter</span>
+    </div>
+    <div class="tpl-stat-grid__cell">
+      <span class="tpl-stat-grid__value">94%</span>
+      <span class="tpl-stat-grid__label">Completion Rate</span>
+      <span class="tpl-stat-grid__caption">Avg across all cohorts</span>
+    </div>
+    <div class="tpl-stat-grid__cell">
+      <span class="tpl-stat-grid__value">9.4</span>
+      <span class="tpl-stat-grid__label">Avg NPS Score</span>
+      <span class="tpl-stat-grid__caption">Target: 9.0</span>
+    </div>
+    <div class="tpl-stat-grid__cell">
+      <span class="tpl-stat-grid__value">38</span>
+      <span class="tpl-stat-grid__label">Partner Companies</span>
+      <span class="tpl-stat-grid__caption">5 new this quarter</span>
+    </div>
+  </div>
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Showcase 3-4 key metrics at once — 'Q2 at a glance', cohort numbers, a dashboard snapshot. Each cell: giant number + label + optional caption. Between stat-number (single) and kpi (6+ dense cards).</p>
+          <div class="tags"><span class="tag">stats</span><span class="tag">metrics</span><span class="tag">numbers</span><span class="tag">dashboard</span><span class="tag">kpi</span><span class="tag">data</span></div>
+        </footer>
+      </section>
+  </div>
+</body></html>

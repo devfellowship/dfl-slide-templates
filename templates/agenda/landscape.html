@@ -1,0 +1,15 @@
+<div class="tpl-root tpl-agenda">
+  <div class="tpl-agenda__header">
+    {{#eyebrow}}<span class="tpl-agenda__eyebrow">{{eyebrow}}</span>{{/eyebrow}}
+    {{#title}}<h2 class="tpl-agenda__title">{{title}}</h2>{{/title}}
+  </div>
+  <div class="tpl-agenda__rule"></div>
+  <ol class="tpl-agenda__list">
+    {{#items}}
+    <li class="tpl-agenda__item">
+      <span class="tpl-agenda__label">{{label}}</span>
+      {{#note}}<span class="tpl-agenda__note">{{note}}</span>{{/note}}
+    </li>
+    {{/items}}
+  </ol>
+</div>

@@ -1,0 +1,19 @@
+<div class="tpl-root tpl-annotated-image tpl-annotated-image--portrait">
+  {{#title}}<h2 class="tpl-annotated-image__title">{{title}}</h2>{{/title}}
+  <div class="tpl-annotated-image__stage">
+    <img src="{{imageUrl}}" alt="{{imageAlt}}" class="tpl-annotated-image__img" />
+    {{#pins}}
+    <div class="tpl-annotated-image__pin" style="left:{{x}}%;top:{{y}}%">
+      <span class="tpl-annotated-image__badge">{{number}}</span>
+    </div>
+    {{/pins}}
+  </div>
+  <div class="tpl-annotated-image__rail">
+    {{#pins}}
+    <div class="tpl-annotated-image__callout">
+      <span class="tpl-annotated-image__callout-num">{{number}}</span>
+      <span class="tpl-annotated-image__callout-label">{{label}}</span>
+    </div>
+    {{/pins}}
+  </div>
+</div>

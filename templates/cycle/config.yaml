@@ -1,0 +1,26 @@
+id: cycle
+name: Cycle / Loop Diagram
+version: "1.0.0"
+category: layout
+slots:
+  - name: title
+    type: text
+    required: false
+    description: "Optional title above the cycle diagram"
+    sample: "The Continuous Improvement Loop"
+  - name: stages
+    type: items
+    required: true
+    description: |
+      Array of 3–5 stages in the cycle. Each item:
+        label — short stage name (required)
+        note  — optional one-line description beneath the label
+    sample:
+      - label: "Plan"
+        note: "Define goals and scope"
+      - label: "Build"
+        note: "Develop and integrate"
+      - label: "Ship"
+        note: "Deploy to production"
+      - label: "Learn"
+        note: "Measure and analyse"

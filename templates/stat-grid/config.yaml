@@ -1,0 +1,31 @@
+id: stat-grid
+name: Stat Grid
+version: "1.0.0"
+category: data
+slots:
+  - name: title
+    type: text
+    required: false
+    description: "Optional heading above the stat grid"
+    sample: "Q2 Metrics at a Glance"
+  - name: stats
+    type: items
+    required: true
+    description: |
+      Array of 3–4 big stat cells. Each item:
+        value   — the large headline number or text (required)
+        label   — metric name shown below the value (required)
+        caption — optional small explanatory note below the label
+    sample:
+      - value: "1,248"
+        label: "Active Fellows"
+        caption: "+18% vs last quarter"
+      - value: "94%"
+        label: "Completion Rate"
+        caption: "Avg across all cohorts"
+      - value: "9.4"
+        label: "Avg NPS Score"
+        caption: "Target: 9.0"
+      - value: "38"
+        label: "Partner Companies"
+        caption: "5 new this quarter"

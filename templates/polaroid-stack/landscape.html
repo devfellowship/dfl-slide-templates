@@ -1,0 +1,15 @@
+<div class="tpl-root tpl-polaroid-stack">
+  {{#title}}<h2 class="tpl-polaroid-stack__title">{{title}}</h2>{{/title}}
+  <div class="tpl-polaroid-stack__fan">
+    {{#photos}}
+    <div class="tpl-polaroid-stack__card">
+      <div class="tpl-polaroid-stack__photo">
+        <img src="{{url}}" alt="{{alt}}" class="tpl-polaroid-stack__img" />
+      </div>
+      <div class="tpl-polaroid-stack__strip">
+        <span class="tpl-polaroid-stack__caption">{{caption}}</span>
+      </div>
+    </div>
+    {{/photos}}
+  </div>
+</div>

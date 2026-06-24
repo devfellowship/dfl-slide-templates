@@ -1,0 +1,37 @@
+id: matrix-2x2
+name: 2×2 Matrix
+version: "1.0.0"
+category: data
+slots:
+  - name: title
+    type: text
+    required: false
+    description: "Optional heading above the matrix"
+    sample: "Effort vs. Impact"
+  - name: xAxisLabel
+    type: text
+    required: true
+    description: "Label for the horizontal (X) axis — shown along the bottom"
+    sample: "Effort →"
+  - name: yAxisLabel
+    type: text
+    required: true
+    description: "Label for the vertical (Y) axis — shown along the left side"
+    sample: "Impact →"
+  - name: quadrants
+    type: items
+    required: true
+    description: |
+      Exactly 4 quadrant cells in reading order (top-left, top-right, bottom-left, bottom-right).
+      Each item:
+        label — short quadrant name (required)
+        note  — one-line description (optional)
+    sample:
+      - label: "Quick Wins"
+        note: "High impact, low effort"
+      - label: "Major Projects"
+        note: "High impact, high effort"
+      - label: "Fill-ins"
+        note: "Low impact, low effort"
+      - label: "Thankless Tasks"
+        note: "Low impact, high effort"

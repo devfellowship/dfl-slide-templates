@@ -1,0 +1,77 @@
+/* tpl-chapter-image · portrait — 540×960 */
+
+.tpl-root.tpl-chapter-image.tpl-chapter-image--portrait {
+  position: relative;
+  width: 540px;
+  height: 960px;
+  background: var(--s-surface-page, #0a0908);
+  color: #ffffff;
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.tpl-root.tpl-chapter-image.tpl-chapter-image--portrait .tpl-chapter-image__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  z-index: 0;
+}
+
+.tpl-root.tpl-chapter-image.tpl-chapter-image--portrait .tpl-chapter-image__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 9, 8, 0.35) 0%,
+    rgba(10, 9, 8, 0.70) 50%,
+    rgba(10, 9, 8, 0.95) 100%
+  );
+  z-index: 1;
+}
+
+.tpl-root.tpl-chapter-image.tpl-chapter-image--portrait .tpl-chapter-image__content {
+  position: absolute;
+  left: 56px;
+  right: 56px;
+  bottom: 80px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tpl-root.tpl-chapter-image.tpl-chapter-image--portrait .tpl-chapter-image__number {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 130px;
+  font-weight: var(--p-weight-700, 700);
+  line-height: 0.85;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-brand-solid, #E07A4A);
+  opacity: 0.55;
+  display: block;
+}
+
+.tpl-root.tpl-chapter-image.tpl-chapter-image--portrait .tpl-chapter-image__title {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 68px;
+  font-weight: var(--p-weight-700, 700);
+  line-height: 0.95;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  margin: 0;
+  color: #ffffff;
+  text-wrap: balance;
+}
+
+.tpl-root.tpl-chapter-image.tpl-chapter-image--portrait .tpl-chapter-image__subtitle {
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.70);
+  margin: 0;
+  margin-top: 4px;
+}

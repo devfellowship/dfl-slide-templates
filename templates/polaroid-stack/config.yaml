@@ -1,0 +1,29 @@
+id: polaroid-stack
+name: Polaroid Stack
+version: "1.0.0"
+category: media
+slots:
+  - name: title
+    type: text
+    required: false
+    description: "Optional title shown above or beside the stack"
+    sample: "Moments from the sprint"
+  - name: photos
+    type: items
+    required: true
+    description: |
+      Array of 3 photos rendered as slightly-rotated polaroid cards in a fan/stack.
+      Each item:
+        url     — photo URL (required)
+        alt     — alt text for accessibility (optional)
+        caption — short handwritten-feel caption in the polaroid strip (required)
+    sample:
+      - url: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&auto=format&fit=crop"
+        alt: "Team working together at a table"
+        caption: "kickoff day"
+      - url: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop"
+        alt: "Laptop open with code"
+        caption: "deep work"
+      - url: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&auto=format&fit=crop"
+        alt: "Code on a bright screen"
+        caption: "shipped it"

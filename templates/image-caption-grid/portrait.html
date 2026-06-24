@@ -1,0 +1,13 @@
+<div class="tpl-root tpl-image-caption-grid tpl-image-caption-grid--portrait">
+  {{#title}}<h2 class="tpl-image-caption-grid__title">{{title}}</h2>{{/title}}
+  <div class="tpl-image-caption-grid__grid">
+    {{#images}}
+    <div class="tpl-image-caption-grid__cell">
+      <div class="tpl-image-caption-grid__frame">
+        <img src="{{url}}" alt="{{alt}}" class="tpl-image-caption-grid__img" />
+      </div>
+      <p class="tpl-image-caption-grid__caption">{{caption}}</p>
+    </div>
+    {{/images}}
+  </div>
+</div>

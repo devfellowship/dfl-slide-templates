@@ -1,0 +1,28 @@
+id: checklist
+name: Checklist
+version: "1.0.0"
+category: content
+slots:
+  - name: title
+    type: text
+    required: false
+    description: "Optional heading above the checklist"
+    sample: "Launch Checklist"
+  - name: items
+    type: items
+    required: true
+    description: |
+      List of checklist items. Each item has:
+        text — the checklist item description
+        done — optional boolean; true = renders a ✓ checkmark, false or omitted = renders an empty ☐ box
+    sample:
+      - text: "CI pipeline passing"
+        done: true
+      - text: "Staging deploy verified"
+        done: true
+      - text: "Feature flags enabled"
+        done: true
+      - text: "Rollback plan documented"
+        done: false
+      - text: "On-call notified"
+        done: false

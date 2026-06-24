@@ -1,0 +1,40 @@
+id: split-media
+name: Split Media
+version: "1.0.0"
+category: media
+slots:
+  - name: title
+    type: text
+    required: false
+    description: "Optional heading above the two media panels"
+    sample: "Mobile vs Desktop Experience"
+  - name: leftUrl
+    type: image
+    required: true
+    description: "URL of the left media (image or video poster)"
+    sample: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&auto=format&fit=crop"
+  - name: leftAlt
+    type: text
+    required: false
+    description: "Alt text for the left media"
+    sample: "Dashboard on desktop browser"
+  - name: leftLabel
+    type: text
+    required: false
+    description: "Small label shown below the left panel"
+    sample: "Desktop"
+  - name: rightUrl
+    type: image
+    required: true
+    description: "URL of the right media (image or video poster)"
+    sample: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&auto=format&fit=crop"
+  - name: rightAlt
+    type: text
+    required: false
+    description: "Alt text for the right media"
+    sample: "Dashboard on mobile device"
+  - name: rightLabel
+    type: text
+    required: false
+    description: "Small label shown below the right panel"
+    sample: "Mobile"

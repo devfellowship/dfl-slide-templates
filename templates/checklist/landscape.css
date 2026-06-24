@@ -1,0 +1,88 @@
+/* tpl-checklist · landscape — 960×540 */
+
+.tpl-root.tpl-checklist {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.tpl-root.tpl-checklist::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-checklist > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-checklist .tpl-checklist__title {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 52px;
+  font-weight: var(--p-weight-700, 700);
+  line-height: 1;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+}
+
+.tpl-root.tpl-checklist .tpl-checklist__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1 1 auto;
+  justify-content: space-evenly;
+}
+
+.tpl-root.tpl-checklist .tpl-checklist__item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--s-border-subtle, #2a2622);
+}
+
+.tpl-root.tpl-checklist .tpl-checklist__item:last-child {
+  border-bottom: none;
+}
+
+.tpl-root.tpl-checklist .tpl-checklist__glyph {
+  font-size: 22px;
+  flex-shrink: 0;
+  width: 28px;
+  text-align: center;
+  color: var(--s-ink-muted, #7d7568);
+  line-height: 1;
+}
+
+.tpl-root.tpl-checklist .tpl-checklist__item--done .tpl-checklist__glyph {
+  color: var(--s-success-solid, #5ec27e);
+}
+
+.tpl-root.tpl-checklist .tpl-checklist__text {
+  font-size: 22px;
+  font-weight: var(--p-weight-400, 400);
+  color: var(--s-ink-secondary, #c9c0b4);
+  line-height: 1.3;
+  flex: 1 1 auto;
+}
+
+.tpl-root.tpl-checklist .tpl-checklist__item--done .tpl-checklist__text {
+  color: var(--s-ink-primary, #f6f1e7);
+}

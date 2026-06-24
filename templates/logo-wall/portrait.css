@@ -1,0 +1,98 @@
+/* tpl-logo-wall · portrait — 540×960 */
+
+.tpl-root.tpl-logo-wall.tpl-logo-wall--portrait {
+  position: relative;
+  width: 540px;
+  height: 960px;
+  padding: 64px 48px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.tpl-root.tpl-logo-wall.tpl-logo-wall--portrait::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-logo-wall.tpl-logo-wall--portrait > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-logo-wall.tpl-logo-wall--portrait .tpl-logo-wall__header {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tpl-root.tpl-logo-wall.tpl-logo-wall--portrait .tpl-logo-wall__eyebrow {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 12px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  text-transform: uppercase;
+  color: var(--s-brand-solid, #E07A4A);
+}
+
+.tpl-root.tpl-logo-wall.tpl-logo-wall--portrait .tpl-logo-wall__title {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 42px;
+  font-weight: 600;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+  line-height: 1.05;
+}
+
+.tpl-root.tpl-logo-wall.tpl-logo-wall--portrait .tpl-logo-wall__grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 14px;
+}
+
+.tpl-root.tpl-logo-wall.tpl-logo-wall--portrait .tpl-logo-wall__cell {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  border-radius: var(--p-radius-md, 8px);
+  background: var(--s-surface-raised, #1a1714);
+  padding: 14px 10px;
+}
+
+.tpl-root.tpl-logo-wall.tpl-logo-wall--portrait .tpl-logo-wall__logo {
+  width: 100%;
+  max-width: 56px;
+  height: 36px;
+  object-fit: contain;
+  display: block;
+  filter: grayscale(1) brightness(0.8);
+}
+
+.tpl-root.tpl-logo-wall.tpl-logo-wall--portrait .tpl-logo-wall__name {
+  font-size: 11px;
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  color: var(--s-ink-muted, #7d7568);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}

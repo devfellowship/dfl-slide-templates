@@ -1,0 +1,24 @@
+<div class="tpl-root tpl-code-output">
+  {{#title}}<h2 class="tpl-code-output__title">{{title}}</h2>{{/title}}
+  <div class="tpl-code-output__panels">
+    <div class="tpl-code-output__pane tpl-code-output__pane--code">
+      <div class="tpl-code-output__pane-header">
+        <span class="tpl-code-output__pane-dot"></span>
+        <span class="tpl-code-output__pane-dot"></span>
+        <span class="tpl-code-output__pane-dot"></span>
+        {{#language}}<span class="tpl-code-output__lang">{{language}}</span>{{/language}}
+      </div>
+      <pre class="tpl-code-output__pre"><code class="tpl-code-output__code">{{code}}</code></pre>
+    </div>
+    <div class="tpl-code-output__arrow">→</div>
+    <div class="tpl-code-output__pane tpl-code-output__pane--output">
+      <div class="tpl-code-output__pane-header">
+        <span class="tpl-code-output__pane-dot"></span>
+        <span class="tpl-code-output__pane-dot"></span>
+        <span class="tpl-code-output__pane-dot"></span>
+        <span class="tpl-code-output__output-label">output</span>
+      </div>
+      <pre class="tpl-code-output__pre"><code class="tpl-code-output__output-text">{{output}}</code></pre>
+    </div>
+  </div>
+</div>

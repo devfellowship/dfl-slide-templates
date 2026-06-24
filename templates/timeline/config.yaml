@@ -1,0 +1,31 @@
+id: timeline
+name: Timeline
+version: "1.0.0"
+category: data
+slots:
+  - name: title
+    type: text
+    required: false
+    description: "Optional heading for the timeline slide"
+    sample: "Product Milestones"
+  - name: milestones
+    type: items
+    required: true
+    description: |
+      Array of milestone entries along the timeline. Each item has:
+        date  — short date or period label (e.g. "Q1 2024", "Jan", "2023")
+        label — milestone name or event title
+        note  — optional one-line detail or outcome
+    sample:
+      - date: "Q1 2024"
+        label: "Alpha launch"
+        note: "Internal beta with 50 fellows"
+      - date: "Q2 2024"
+        label: "Partner onboarding"
+        note: "First 3 companies integrated"
+      - date: "Q3 2024"
+        label: "Public beta"
+        note: "Open access, 1 000 users"
+      - date: "Q4 2024"
+        label: "v1.0 release"
+        note: "Full feature parity"

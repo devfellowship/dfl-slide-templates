@@ -1,0 +1,40 @@
+id: before-after-image
+name: Before / After Image
+version: "1.0.0"
+category: media
+slots:
+  - name: title
+    type: text
+    required: false
+    description: "Optional title shown above the comparison"
+    sample: "The redesign"
+  - name: beforeUrl
+    type: image
+    required: true
+    description: "Image representing the 'before' state"
+    sample: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&auto=format&fit=crop"
+  - name: beforeAlt
+    type: text
+    required: false
+    description: "Alt text for the before image"
+    sample: "Old interface with cluttered layout"
+  - name: beforeLabel
+    type: text
+    required: false
+    description: "Label text on the before panel (default: Before)"
+    sample: "Before"
+  - name: afterUrl
+    type: image
+    required: true
+    description: "Image representing the 'after' state"
+    sample: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&auto=format&fit=crop"
+  - name: afterAlt
+    type: text
+    required: false
+    description: "Alt text for the after image"
+    sample: "New clean dashboard interface"
+  - name: afterLabel
+    type: text
+    required: false
+    description: "Label text on the after panel (default: After)"
+    sample: "After"

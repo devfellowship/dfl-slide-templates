@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "preview": "ts-node scripts/preview-gen.ts",
+    "showcase": "ts-node scripts/showcase-gen.ts",
     "lint:css": "node scripts/lint-css.mjs"
   },
   "devDependencies": {

@@ -1,0 +1,16 @@
+<div class="tpl-root tpl-timeline tpl-timeline--portrait">
+  {{#title}}<h2 class="tpl-timeline__title">{{title}}</h2>{{/title}}
+  <div class="tpl-timeline__track">
+    <div class="tpl-timeline__line"></div>
+    {{#milestones}}
+    <div class="tpl-timeline__node">
+      <div class="tpl-timeline__dot"></div>
+      <div class="tpl-timeline__content">
+        <div class="tpl-timeline__date">{{date}}</div>
+        <div class="tpl-timeline__label">{{label}}</div>
+        {{#note}}<div class="tpl-timeline__note">{{note}}</div>{{/note}}
+      </div>
+    </div>
+    {{/milestones}}
+  </div>
+</div>

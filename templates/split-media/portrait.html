@@ -1,0 +1,18 @@
+<div class="tpl-root tpl-split-media tpl-split-media--portrait">
+  {{#title}}<h2 class="tpl-split-media__title">{{title}}</h2>{{/title}}
+  <div class="tpl-split-media__panels">
+    <div class="tpl-split-media__panel">
+      <div class="tpl-split-media__frame">
+        <img src="{{leftUrl}}" alt="{{leftAlt}}" class="tpl-split-media__img" />
+      </div>
+      {{#leftLabel}}<span class="tpl-split-media__label">{{leftLabel}}</span>{{/leftLabel}}
+    </div>
+    <div class="tpl-split-media__divider"></div>
+    <div class="tpl-split-media__panel">
+      <div class="tpl-split-media__frame">
+        <img src="{{rightUrl}}" alt="{{rightAlt}}" class="tpl-split-media__img" />
+      </div>
+      {{#rightLabel}}<span class="tpl-split-media__label">{{rightLabel}}</span>{{/rightLabel}}
+    </div>
+  </div>
+</div>

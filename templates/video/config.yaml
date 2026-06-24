@@ -1,0 +1,25 @@
+id: video
+name: Video Poster
+version: "1.0.0"
+category: media
+slots:
+  - name: posterUrl
+    type: image
+    required: true
+    description: "Large 16:9 poster image representing the video"
+    sample: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&auto=format&fit=crop"
+  - name: posterAlt
+    type: text
+    required: false
+    description: "Alt text for the poster image"
+    sample: "Developer working at a workstation"
+  - name: title
+    type: text
+    required: false
+    description: "Video title shown below the poster"
+    sample: "Building with Claude Code — Live Demo"
+  - name: caption
+    type: text
+    required: false
+    description: "Short caption or duration shown beside the title"
+    sample: "12 min"

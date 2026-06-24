@@ -1,0 +1,31 @@
+id: agenda
+name: Agenda
+version: "1.0.0"
+category: content
+slots:
+  - name: title
+    type: text
+    required: false
+    description: "Heading above the agenda list; defaults to 'Agenda' in intent. Leave empty to show no heading."
+    sample: "Today's Agenda"
+  - name: eyebrow
+    type: text
+    required: false
+    description: "Small uppercase label above the title (e.g. 'Module 2')"
+    sample: "Module 2"
+  - name: items
+    type: items
+    required: true
+    description: |
+      Ordered list of agenda items shown as numbered rows. Each item has:
+        label — agenda topic or section name
+        note  — optional short annotation or time estimate
+    sample:
+      - label: "Intro & context"
+        note: "5 min"
+      - label: "Core concept walkthrough"
+        note: "15 min"
+      - label: "Live demo"
+        note: "10 min"
+      - label: "Q&A"
+        note: "10 min"

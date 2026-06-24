@@ -1,0 +1,102 @@
+/* tpl-polaroid-stack · landscape — 960×540 */
+
+.tpl-root.tpl-polaroid-stack {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tpl-root.tpl-polaroid-stack::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-polaroid-stack > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__title {
+  flex: 0 0 auto;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 36px;
+  font-weight: 600;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+}
+
+.tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__fan {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+}
+
+.tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__card {
+  flex: 0 0 auto;
+  width: 200px;
+  background: var(--s-surface-raised, #1a1714);
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  border-radius: var(--p-radius-md, 8px);
+  padding: 10px 10px 16px 10px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__fan .tpl-polaroid-stack__card:nth-child(1) {
+  transform: rotate(-4deg) translateY(6px);
+}
+
+.tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__fan .tpl-polaroid-stack__card:nth-child(2) {
+  transform: rotate(1deg) translateY(-4px);
+  z-index: 2;
+}
+
+.tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__fan .tpl-polaroid-stack__card:nth-child(3) {
+  transform: rotate(5deg) translateY(8px);
+}
+
+.tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__photo {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--s-surface-sunken, #141210);
+}
+
+.tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__strip {
+  text-align: center;
+}
+
+.tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__caption {
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  font-size: 13px;
+  font-style: italic;
+  color: var(--s-ink-secondary, #c9c0b4);
+  letter-spacing: 0.2px;
+}

@@ -1,0 +1,123 @@
+/* tpl-cycle · portrait — 540×960 */
+
+.tpl-root.tpl-cycle.tpl-cycle--portrait {
+  position: relative;
+  width: 540px;
+  height: 960px;
+  padding: 64px 48px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 32px;
+}
+
+.tpl-root.tpl-cycle.tpl-cycle--portrait::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-cycle.tpl-cycle--portrait > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-cycle.tpl-cycle--portrait .tpl-cycle__title {
+  flex: 0 0 auto;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 40px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+  text-align: center;
+}
+
+.tpl-root.tpl-cycle.tpl-cycle--portrait .tpl-cycle__diagram {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.tpl-root.tpl-cycle.tpl-cycle--portrait .tpl-cycle__loop-indicator {
+  font-size: 52px;
+  line-height: 1;
+  color: var(--s-brand-solid, #E07A4A);
+  opacity: 0.7;
+}
+
+.tpl-root.tpl-cycle.tpl-cycle--portrait .tpl-cycle__stages {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+.tpl-root.tpl-cycle.tpl-cycle--portrait .tpl-cycle__stage {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.tpl-root.tpl-cycle.tpl-cycle--portrait .tpl-cycle__stage-node {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 2px solid var(--s-border-strong, #3a3530);
+  background: var(--s-surface-panel, #1f1c18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.tpl-root.tpl-cycle.tpl-cycle--portrait .tpl-cycle__stage:first-child .tpl-cycle__stage-node {
+  border-color: var(--s-brand-solid, #E07A4A);
+  background: rgba(224, 122, 74, 0.10);
+  box-shadow: 0 0 24px rgba(224, 122, 74, 0.15);
+}
+
+.tpl-root.tpl-cycle.tpl-cycle--portrait .tpl-cycle__stage-label {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 22px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  text-align: center;
+  line-height: 1.1;
+}
+
+.tpl-root.tpl-cycle.tpl-cycle--portrait .tpl-cycle__stage:first-child .tpl-cycle__stage-label {
+  color: var(--s-brand-solid, #E07A4A);
+}
+
+.tpl-root.tpl-cycle.tpl-cycle--portrait .tpl-cycle__stage-note {
+  font-size: 15px;
+  color: var(--s-ink-muted, #7d7568);
+  line-height: 1.3;
+}
+
+.tpl-root.tpl-cycle.tpl-cycle--portrait .tpl-cycle__arrow {
+  flex: 0 0 auto;
+  font-size: 26px;
+  color: var(--s-ink-muted, #7d7568);
+  padding: 4px 0;
+  align-self: center;
+  margin-left: 50px;
+}

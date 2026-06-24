@@ -1,0 +1,17 @@
+<div class="tpl-root tpl-matrix-2x2">
+  {{#title}}<h2 class="tpl-matrix-2x2__title">{{title}}</h2>{{/title}}
+  <div class="tpl-matrix-2x2__wrap">
+    <span class="tpl-matrix-2x2__y-label">{{yAxisLabel}}</span>
+    <div class="tpl-matrix-2x2__content">
+      <div class="tpl-matrix-2x2__grid">
+        {{#quadrants}}
+        <div class="tpl-matrix-2x2__cell">
+          <span class="tpl-matrix-2x2__cell-label">{{label}}</span>
+          {{#note}}<span class="tpl-matrix-2x2__cell-note">{{note}}</span>{{/note}}
+        </div>
+        {{/quadrants}}
+      </div>
+      <span class="tpl-matrix-2x2__x-label">{{xAxisLabel}}</span>
+    </div>
+  </div>
+</div>

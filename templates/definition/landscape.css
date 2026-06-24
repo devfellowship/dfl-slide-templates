@@ -1,0 +1,68 @@
+/* tpl-definition · landscape — 960×540 */
+
+.tpl-root.tpl-definition {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tpl-root.tpl-definition::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-definition > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-definition .tpl-definition__body {
+  max-width: 680px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.tpl-root.tpl-definition .tpl-definition__eyebrow {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 14px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  text-transform: uppercase;
+  color: var(--s-brand-solid, #E07A4A);
+}
+
+.tpl-root.tpl-definition .tpl-definition__term {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 76px;
+  font-weight: var(--p-weight-700, 700);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+  line-height: 0.95;
+}
+
+.tpl-root.tpl-definition .tpl-definition__rule {
+  width: 48px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--s-brand-solid, #E07A4A);
+}
+
+.tpl-root.tpl-definition .tpl-definition__def {
+  font-size: 22px;
+  line-height: 1.5;
+  color: var(--s-ink-secondary, #c9c0b4);
+  margin: 0;
+}

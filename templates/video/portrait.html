@@ -1,0 +1,17 @@
+<div class="tpl-root tpl-video tpl-video--portrait">
+  <div class="tpl-video__frame">
+    <img src="{{posterUrl}}" alt="{{posterAlt}}" class="tpl-video__poster" />
+    <div class="tpl-video__play">
+      <svg class="tpl-video__play-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="24" fill="rgba(10,9,8,0.72)" />
+        <polygon points="19,14 37,24 19,34" fill="#f6f1e7" />
+      </svg>
+    </div>
+  </div>
+  {{#title}}
+  <div class="tpl-video__bar">
+    <span class="tpl-video__title">{{title}}</span>
+    {{#caption}}<span class="tpl-video__caption">{{caption}}</span>{{/caption}}
+  </div>
+  {{/title}}
+</div>

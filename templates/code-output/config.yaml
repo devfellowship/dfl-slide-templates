@@ -1,0 +1,25 @@
+id: code-output
+name: Code + Output
+version: "1.0.0"
+category: code
+slots:
+  - name: title
+    type: text
+    required: false
+    description: "Optional heading above the split panels"
+    sample: "Running the deploy script"
+  - name: code
+    type: text
+    required: true
+    description: "The code snippet to display on the left panel (monospace, pre-formatted)"
+    sample: "git add .\ngit commit -m \"feat: add auth\"\ngit push origin main"
+  - name: language
+    type: text
+    required: false
+    description: "Language badge shown in the top-right of the code panel (e.g. bash, python, ts)"
+    sample: "bash"
+  - name: output
+    type: text
+    required: true
+    description: "The terminal output or result shown on the right panel"
+    sample: "[main 3f8a2c1] feat: add auth\n 3 files changed, 42 insertions(+)\nBranch 'main' set up to track remote.\nTo github.com:devfellowship/app.git\n   a1b2c3d..3f8a2c1  main -> main"

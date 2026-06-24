@@ -1,0 +1,12 @@
+<div class="tpl-root tpl-stat-grid tpl-stat-grid--portrait">
+  {{#title}}<h2 class="tpl-stat-grid__title">{{title}}</h2>{{/title}}
+  <div class="tpl-stat-grid__grid">
+    {{#stats}}
+    <div class="tpl-stat-grid__cell">
+      <span class="tpl-stat-grid__value">{{value}}</span>
+      <span class="tpl-stat-grid__label">{{label}}</span>
+      {{#caption}}<span class="tpl-stat-grid__caption">{{caption}}</span>{{/caption}}
+    </div>
+    {{/stats}}
+  </div>
+</div>

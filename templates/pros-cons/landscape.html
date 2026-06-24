@@ -1,0 +1,21 @@
+<div class="tpl-root tpl-pros-cons">
+  {{#title}}<h2 class="tpl-pros-cons__title">{{title}}</h2>{{/title}}
+  <div class="tpl-pros-cons__columns">
+    <div class="tpl-pros-cons__column tpl-pros-cons__column--pros">
+      <span class="tpl-pros-cons__heading">
+        <span class="tpl-pros-cons__icon">✓</span> Pros
+      </span>
+      <ul class="tpl-pros-cons__list">
+        {{#pros}}<li class="tpl-pros-cons__item">{{text}}</li>{{/pros}}
+      </ul>
+    </div>
+    <div class="tpl-pros-cons__column tpl-pros-cons__column--cons">
+      <span class="tpl-pros-cons__heading">
+        <span class="tpl-pros-cons__icon">✗</span> Cons
+      </span>
+      <ul class="tpl-pros-cons__list">
+        {{#cons}}<li class="tpl-pros-cons__item">{{text}}</li>{{/cons}}
+      </ul>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,26 @@
+id: process-flow
+name: Process Flow
+version: "1.0.0"
+category: data
+slots:
+  - name: title
+    type: text
+    required: false
+    description: "Optional heading for the process slide"
+    sample: "Onboarding Flow"
+  - name: steps
+    type: items
+    required: true
+    description: |
+      Array of process step boxes connected left-to-right (landscape) or top-to-bottom (portrait). Each item has:
+        label — short step name displayed in the box
+        note  — optional one-line description shown beneath the label
+    sample:
+      - label: "Sign up"
+        note: "Email + password"
+      - label: "Profile setup"
+        note: "Role, skills, goals"
+      - label: "Course match"
+        note: "AI recommendation"
+      - label: "First lesson"
+        note: "Watch & complete"

@@ -1,0 +1,32 @@
+id: image-caption-grid
+name: Image Caption Grid
+version: "1.0.0"
+category: media
+slots:
+  - name: title
+    type: text
+    required: false
+    description: "Optional title shown above the grid"
+    sample: "Our stack in action"
+  - name: images
+    type: items
+    required: true
+    description: |
+      Array of images with per-cell captions, rendered in a 2×2 (or 3-col) grid.
+      Each item:
+        url     — image URL (required)
+        alt     — alt text for accessibility (optional)
+        caption — short caption below the image (required)
+    sample:
+      - url: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&auto=format&fit=crop"
+        alt: "Code on screen"
+        caption: "Write less, ship more"
+      - url: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop"
+        alt: "Developer workstation"
+        caption: "Built for real workflows"
+      - url: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&auto=format&fit=crop"
+        alt: "Software code on monitor"
+        caption: "Readable at every scale"
+      - url: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop"
+        alt: "Dashboard analytics"
+        caption: "Data you can act on"

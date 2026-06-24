@@ -1,0 +1,14 @@
+<div class="tpl-root tpl-process-flow">
+  {{#title}}<h2 class="tpl-process-flow__title">{{title}}</h2>{{/title}}
+  <div class="tpl-process-flow__track">
+    {{#steps}}
+    <div class="tpl-process-flow__item">
+      <div class="tpl-process-flow__box">
+        <span class="tpl-process-flow__label">{{label}}</span>
+        {{#note}}<span class="tpl-process-flow__note">{{note}}</span>{{/note}}
+      </div>
+      <span class="tpl-process-flow__arrow">&#8594;</span>
+    </div>
+    {{/steps}}
+  </div>
+</div>

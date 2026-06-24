@@ -1,0 +1,99 @@
+/* tpl-process-flow · landscape — 960×540 */
+
+.tpl-root.tpl-process-flow {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  padding: 48px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 36px;
+}
+
+.tpl-root.tpl-process-flow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-process-flow > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-process-flow .tpl-process-flow__title {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 40px;
+  font-weight: var(--p-weight-700, 700);
+  line-height: 1;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+}
+
+.tpl-root.tpl-process-flow .tpl-process-flow__track {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0;
+  flex: 1 1 auto;
+  align-items: stretch;
+}
+
+.tpl-root.tpl-process-flow .tpl-process-flow__item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.tpl-root.tpl-process-flow .tpl-process-flow__item:last-child .tpl-process-flow__arrow {
+  display: none;
+}
+
+.tpl-root.tpl-process-flow .tpl-process-flow__box {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px 18px;
+  background: var(--s-surface-raised, #1a1714);
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  border-radius: var(--p-radius-lg, 10px);
+  align-items: flex-start;
+}
+
+.tpl-root.tpl-process-flow .tpl-process-flow__label {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 24px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  line-height: 1.1;
+}
+
+.tpl-root.tpl-process-flow .tpl-process-flow__note {
+  font-size: 14px;
+  color: var(--s-ink-muted, #7d7568);
+  line-height: 1.4;
+}
+
+.tpl-root.tpl-process-flow .tpl-process-flow__arrow {
+  flex-shrink: 0;
+  font-size: 22px;
+  color: var(--s-brand-solid, #E07A4A);
+  padding: 0 10px;
+  line-height: 1;
+  align-self: center;
+}

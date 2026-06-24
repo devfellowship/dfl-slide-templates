@@ -1,0 +1,17 @@
+<div class="tpl-root tpl-cycle">
+  {{#title}}<h2 class="tpl-cycle__title">{{title}}</h2>{{/title}}
+  <div class="tpl-cycle__diagram">
+    <div class="tpl-cycle__loop-indicator">&#x21BB;</div>
+    <div class="tpl-cycle__stages">
+      {{#stages}}
+      <div class="tpl-cycle__stage">
+        <div class="tpl-cycle__stage-node">
+          <span class="tpl-cycle__stage-label">{{label}}</span>
+        </div>
+        {{#note}}<span class="tpl-cycle__stage-note">{{note}}</span>{{/note}}
+      </div>
+      <div class="tpl-cycle__arrow">&#8594;</div>
+      {{/stages}}
+    </div>
+  </div>
+</div>

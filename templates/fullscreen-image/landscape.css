@@ -1,12 +1,4 @@
-/* tpl-fullscreen-image · landscape — 1280×720
- *
- * A single image filling the ENTIRE slide canvas. No padding, no caption.
- * Defaults are safe when the optional slots are empty:
- *   - empty `style="background:"` is invalid CSS and ignored → falls back to
- *     the `background: #000000` declared here.
- *   - `tpl-fsimg--{{fit}}` with an empty `fit` resolves to the no-op class
- *     `tpl-fsimg--` → the base `object-fit: cover` applies as the default.
- */
+/* fullscreen-image landscape 1280x720 - single image filling the whole slide */
 .tpl-root.tpl-fullscreen-image {
   width: 1280px;
   height: 720px;

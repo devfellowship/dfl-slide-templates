@@ -111,6 +111,28 @@
       ]
     },
     {
+      "id": "fullscreen-image",
+      "version": "1.0.0",
+      "category": "media",
+      "name": "Full-screen Image",
+      "when_to_use": "Display ONE image filling the entire slide canvas with no caption or overlay text. Use 'contain' fit for pre-made slides/diagrams/screenshots that must be shown whole; 'cover' fit for photos/backgrounds that may crop.",
+      "avoid_when": "You need overlaid title/eyebrow text on the image (use full-bleed) or a caption beside/below it (use image / img-text).",
+      "media_profile": "image-only",
+      "text_density": "none",
+      "layout": "single image filling the whole canvas, configurable cover/contain fit + letterbox bg",
+      "tags": [
+        "full-screen",
+        "fullscreen",
+        "image-only",
+        "contain",
+        "cover",
+        "diagram",
+        "screenshot",
+        "pre-made-slide",
+        "letterbox"
+      ]
+    },
+    {
       "id": "image-row",
       "version": "1.0.0",
       "category": "media",

@@ -1,0 +1,26 @@
+id: fullscreen-image
+name: Full-screen Image
+version: "1.0.0"
+category: media
+slots:
+  - name: imageUrl
+    type: image
+    required: true
+    description: "URL of the image to display full-screen (fills the entire slide)"
+    sample: "https://placehold.co/1920x1080/0A0908/E07A4A?text=Full-screen+Image"
+  - name: fit
+    type: select
+    required: false
+    description: "How the image fills the slide: 'cover' (fill, may crop edges — good for photos/backgrounds) or 'contain' (whole image visible, letterboxed with bg color — good for pre-made slides/diagrams)"
+    options: ["cover", "contain"]
+    sample: "cover"
+  - name: bg
+    type: text
+    required: false
+    description: "Letterbox/background color shown around the image in 'contain' mode (hex). Default #000000."
+    sample: "#0A0908"
+  - name: imageAlt
+    type: text
+    required: false
+    description: "Accessible alt text for the image"
+    sample: "Slide image"

@@ -134,6 +134,13 @@ export const SAMPLE_DATA: Record<string, Record<string, unknown>> = {
     title: "The Network Era",
     eyebrow: "Module 3",
   },
+  "fullscreen-image": {
+    imageUrl:
+      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1600&auto=format&fit=crop",
+    fit: "cover",
+    bg: "#0A0908",
+    imageAlt: "A glowing network of connected nodes filling the slide",
+  },
   "big-image": {
     imageUrl:
       "https://images.unsplash.com/photo-1517180102446-f3ece451e9d8?w=1400&auto=format&fit=crop",

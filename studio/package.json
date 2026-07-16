@@ -21,7 +21,7 @@
     "clsx": "^2.1.1",
     "codemirror": "^6.0.2",
     "js-yaml": "^4.2.0",
-    "lucide-react": "^0.468.0",
+    "lucide-react": "^0.577.0",
     "mustache": "^4.2.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

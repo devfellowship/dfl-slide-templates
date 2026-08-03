@@ -57,71 +57,25 @@ export function readRegistry(): Registry {
   return JSON.parse(fs.readFileSync(REGISTRY_PATH, "utf8"));
 }
 
-export const DARK_TEMPLATES = new Set([
-  "title",
-  "image",
-  "table",
-  "kpi",
-  "section-header",
-  "steps",
-  "callout",
-  "image-row",
-  "screenshot-frame",
-  "annotated-image",
-  "image-caption-grid",
-  "before-after-image",
-  "polaroid-stack",
-  "logo-wall",
-  "video",
-  "split-media",
-  "code-output",
-  "definition",
-  "matrix-2x2",
-  "timeline",
-  "process-flow",
-  "hierarchy-tree",
-  "agenda",
-  "checklist",
-  "pros-cons",
-  "roadmap",
-  "cycle",
-  "chapter-image",
-  "stat-grid",
-]);
-
-// Templates that render under the DFL Design System (DS Redesign v0).
-// These get the devfellowship theme CSS (tokens + shared chassis utilities)
-// injected before the template's own CSS so that --s-*/--p-* tokens resolve
-// and shared classes (.dfl-eyebrow, .dfl-section-title, .dfl-section-rule)
-// render correctly. Older templates keep their plain hard-coded fallbacks.
-export const DS_REDESIGN_TEMPLATES = new Set([
-  "kpi",
-  "section-header",
-  "steps",
-  "callout",
-  "image-row",
-  "screenshot-frame",
-  "annotated-image",
-  "image-caption-grid",
-  "before-after-image",
-  "polaroid-stack",
-  "logo-wall",
-  "video",
-  "split-media",
-  "code-output",
-  "definition",
-  "matrix-2x2",
-  "timeline",
-  "process-flow",
-  "hierarchy-tree",
-  "agenda",
-  "checklist",
-  "pros-cons",
-  "roadmap",
-  "cycle",
-  "chapter-image",
-  "stat-grid",
-]);
+/**
+ * Themes live in `themes/<id>.css` and are what makes a template look like a
+ * DFL slide. They are pure token definitions plus three shared chassis classes
+ * (.dfl-eyebrow / .dfl-section-title / .dfl-section-rule), all scoped under
+ * `.tpl-root`, so injecting one is always safe and never styles anything on
+ * its own.
+ *
+ * The preview/guard pipeline therefore injects the theme for EVERY template,
+ * exactly like the deck runtime does (dfl-lesson-studio fetches
+ * `themes/<themeId>.css` and prepends it — see `fetchTemplateAssets.ts`).
+ *
+ * History: this used to be gated by two hand-maintained allowlists
+ * (DARK_TEMPLATES / DS_REDESIGN_TEMPLATES). They went stale — nine templates
+ * added in the 2026-06-24 batch consumed `--s-*` tokens but were never added
+ * to DS_REDESIGN_TEMPLATES, so previews rendered them on their inline
+ * fallbacks instead of the theme. The allowlists are gone: there is nothing
+ * left to forget to update.
+ */
+export const THEME_ID = "devfellowship";
 
 export function buildHtmlPage(
   templateId: string,
@@ -135,14 +89,15 @@ export function buildHtmlPage(
   const css = fs.readFileSync(path.join(dir, `${orientation}.css`), "utf8");
   const data = SAMPLE_DATA[templateId] ?? {};
   const renderedHtml = Mustache.render(htmlTemplate, data);
-  const bgColor = DARK_TEMPLATES.has(templateId) ? "#0a0908" : "#ffffff";
+  const themeCss = fs.readFileSync(
+    path.join(REPO_ROOT, "themes", `${THEME_ID}.css`),
+    "utf8"
+  );
 
-  const themeCss = DS_REDESIGN_TEMPLATES.has(templateId)
-    ? fs.readFileSync(
-        path.join(REPO_ROOT, "themes", "devfellowship.css"),
-        "utf8"
-      )
-    : "";
+  // The page behind the slide. Templates must paint their own opaque themed
+  // surface, so this only ever shows through a bug — which is precisely what
+  // `check-theme.ts` asserts against, using a deliberately hostile colour.
+  const bgColor = "#0a0908";
 
   return `<!DOCTYPE html>
 <html lang="en">

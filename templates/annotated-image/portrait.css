@@ -70,7 +70,7 @@
   height: 37px;
   border-radius: 50%;
   background: var(--s-brand-solid, #E07A4A);
-  color: #fff;
+  color: var(--s-ink-inverse, #0a0908);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
   font-size: 17px;
   font-weight: 700;
@@ -99,7 +99,7 @@
   height: 29px;
   border-radius: 50%;
   background: var(--s-brand-solid, #E07A4A);
-  color: #fff;
+  color: var(--s-ink-inverse, #0a0908);
   font-size: 15px;
   font-weight: 700;
   margin-top: 1px;

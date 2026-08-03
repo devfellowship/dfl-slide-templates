@@ -5,7 +5,7 @@
   width: 720px;
   height: 1280px;
   background: var(--s-surface-page, #0a0908);
-  color: #ffffff;
+  color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
   box-sizing: border-box;
   overflow: hidden;
@@ -60,6 +60,6 @@
   line-height: 0.95;
   letter-spacing: var(--p-tracking-tight, -0.4px);
   margin: 0;
-  color: #ffffff;
+  color: var(--s-ink-primary, #f6f1e7);
   text-wrap: balance;
 }

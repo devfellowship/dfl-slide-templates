@@ -54,11 +54,11 @@
   border-radius: var(--p-radius-xl, 14px);
   overflow: hidden;
   border: 1px solid var(--s-border-subtle, #2a2622);
-  background: var(--s-surface-sunken, #141210);
+  background: var(--s-surface-panel, #141210);
 }
 
 .tpl-root.tpl-code-output .tpl-code-output__pane--output {
-  background: #0d1117;
+  background: var(--s-surface-page, #0a0908);
   border-color: var(--s-border-strong, #3a3530);
 }
 

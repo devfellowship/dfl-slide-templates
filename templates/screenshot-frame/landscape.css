@@ -50,7 +50,7 @@
   align-items: center;
   gap: 11px;
   padding: 0 21px;
-  background: var(--s-surface-sunken, #141210);
+  background: var(--s-surface-panel, #141210);
   border-bottom: 1px solid var(--s-border-subtle, #2a2622);
 }
 

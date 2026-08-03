@@ -1,33 +1,63 @@
+/* tpl-title · portrait — 720×1280 · DFL DS tokens */
+
 .tpl-root.tpl-title {
+  position: relative;
+  width: 720px;
+  height: 1280px;
+  padding: 85px 64px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 720px;
-  height: 1280px;
-  background: var(--slide-bg, #1a2340);
-  font-family: var(--slide-font-family-heading, var(--slide-font-family, 'Inter', system-ui, -apple-system, sans-serif));
-  box-sizing: border-box;
-  padding: 40px;
   text-align: center;
 }
 
+.tpl-root.tpl-title::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: var(--s-texture-dot-size, 32px) var(--s-texture-dot-size, 32px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-title > * { position: relative; z-index: 1; }
+
 .tpl-root.tpl-title .tpl-title__inner {
-  max-width: 460px;
+  max-width: 560px;
 }
 
 .tpl-root.tpl-title .tpl-title__heading {
-  font-size: 72px;
-  font-weight: 700;
-  color: var(--slide-heading-color, #ffffff);
-  line-height: 1.2;
-  margin: 0 0 24px 0;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 76px;
+  font-weight: var(--p-weight-700, 700);
+  letter-spacing: -2px;
+  line-height: 1.02;
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
   word-wrap: break-word;
 }
 
+.tpl-root.tpl-title .tpl-title__heading::after {
+  content: "";
+  display: block;
+  width: 96px;
+  height: 2px;
+  margin: 32px auto 0;
+  background: var(--s-brand-solid, #E07A4A);
+}
+
 .tpl-root.tpl-title .tpl-title__subtitle {
-  font-size: 36px;
-  font-weight: 400;
-  color: var(--slide-text, #e0e0e0);
-  line-height: 1.5;
-  margin: 0;
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  font-size: 30px;
+  font-weight: var(--p-weight-400, 400);
+  color: var(--s-ink-secondary, #c9c0b4);
+  line-height: 1.45;
+  margin: 32px 0 0 0;
 }

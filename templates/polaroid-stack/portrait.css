@@ -83,7 +83,7 @@
   aspect-ratio: 1 / 1;
   overflow: hidden;
   border-radius: 5px;
-  background: var(--s-surface-sunken, #141210);
+  background: var(--s-surface-panel, #141210);
 }
 
 .tpl-root.tpl-polaroid-stack.tpl-polaroid-stack--portrait .tpl-polaroid-stack__img {

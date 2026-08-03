@@ -1,4 +1,8 @@
-/* fullscreen-image portrait 720x1280 - single image filling the whole slide */
+/* fullscreen-image portrait 720x1280 — single image filling the whole slide.
+ * No dotted texture / padding chassis here on purpose: the image IS the slide.
+ * The root still paints an opaque themed surface so the letterbox band in
+ * 'contain' mode (and any transparent PNG) reads as DFL sand-950, never as
+ * whatever colour the host deck happens to have behind the slide. */
 .tpl-root.tpl-fullscreen-image {
   width: 720px;
   height: 1280px;
@@ -6,7 +10,7 @@
   padding: 0;
   overflow: hidden;
   position: relative;
-  background: #000000;
+  background: var(--s-surface-page, #0a0908);
   box-sizing: border-box;
 }
 

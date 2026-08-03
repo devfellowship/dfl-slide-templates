@@ -6,16 +6,37 @@
  *  2. No :host pseudo-class.
  *  3. Every rule-set selector must be scoped under .tpl-root (i.e. every
  *     top-level selector must start with or include `.tpl-root`).
+ *  4. The .tpl-root box must declare the canonical design canvas — 1280x720
+ *     landscape / 720x1280 portrait. See CANVAS_NOTE below.
  *
  * Usage: node scripts/lint-css.mjs
  */
 
 import { readFileSync, readdirSync, statSync } from "fs";
-import { join, relative } from "path";
+import { join, relative, basename, dirname } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const REPO_ROOT = join(__dirname, "..");
+
+const CANVAS = JSON.parse(
+  readFileSync(join(__dirname, "canvas.config.json"), "utf8")
+);
+const FLUID = new Set(CANVAS.fluidTemplates);
+
+const CANVAS_NOTE = `
+  The design canvas is ${CANVAS.landscape.width}x${CANVAS.landscape.height} (landscape) and ${CANVAS.portrait.width}x${CANVAS.portrait.height} (portrait).
+  A template that declares anything smaller renders into the top-left corner of
+  the slide and leaves a dead band of page background down the right edge and
+  along the bottom. 33 of 46 templates shipped at 960x540 (75% linear, ~56% of
+  the area) and it went unnoticed for months — hence this rule.
+
+  Fix: scale the template up to the canonical canvas. 960x540 -> 1280x720 is
+  exactly 4/3, so multiplying every raw px value by 4/3 reproduces the design
+  pixel-for-pixel at 133% with no layout change.
+
+  If a template genuinely must size to its container, add it to
+  "fluidTemplates" in scripts/canvas.config.json with a written rationale.`;
 
 function findCssFiles(dir) {
   const results = [];
@@ -28,6 +49,62 @@ function findCssFiles(dir) {
     }
   }
   return results;
+}
+
+/**
+ * A ".tpl-root box" selector: only chained classes on .tpl-root, no descendant,
+ * child, pseudo-class or pseudo-element part. `.tpl-root.tpl-kpi` counts;
+ * `.tpl-root.tpl-kpi .card`, `.tpl-root.tpl-kpi::before` and
+ * `.tpl-root.tpl-kpi > *` do not.
+ */
+const ROOT_BOX_SELECTOR = /^\.tpl-root(?:\.[A-Za-z0-9_-]+)*$/;
+
+/** Rule 4 — the .tpl-root box must be exactly the canonical canvas. */
+function lintCanvas(filePath, strippedSrc, rel, errors) {
+  const orientation = basename(filePath, ".css");
+  if (orientation !== "landscape" && orientation !== "portrait") return;
+
+  const templateId = basename(dirname(filePath));
+  if (FLUID.has(templateId)) return;
+
+  const expected = CANVAS[orientation];
+
+  // Walk every rule block; the cascade means a later declaration wins.
+  let declaredWidth = null;
+  let declaredHeight = null;
+  let sawRootBox = false;
+
+  for (const m of strippedSrc.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+    const selectors = m[1].split(",").map((s) => s.trim().replace(/\s+/g, " "));
+    if (!selectors.some((s) => ROOT_BOX_SELECTOR.test(s))) continue;
+    sawRootBox = true;
+    const body = m[2];
+    const w = body.match(/(?:^|;)\s*width:\s*([^;]+)/);
+    const h = body.match(/(?:^|;)\s*height:\s*([^;]+)/);
+    if (w) declaredWidth = w[1].trim();
+    if (h) declaredHeight = h[1].trim();
+  }
+
+  if (!sawRootBox) {
+    errors.push(`${rel}: no .tpl-root box rule found (expected a rule like ".tpl-root.tpl-${templateId}")`);
+    return;
+  }
+
+  const want = { width: `${expected.width}px`, height: `${expected.height}px` };
+  for (const [prop, actual] of [
+    ["width", declaredWidth],
+    ["height", declaredHeight],
+  ]) {
+    if (actual === null) {
+      errors.push(
+        `${rel}: .tpl-root box does not declare a ${prop} — it must be ${want[prop]} to fill the ${orientation} canvas.${CANVAS_NOTE}`
+      );
+    } else if (actual !== want[prop]) {
+      errors.push(
+        `${rel}: .tpl-root box declares ${prop}: ${actual} — expected ${want[prop]} for the ${orientation} canvas.${CANVAS_NOTE}`
+      );
+    }
+  }
 }
 
 function lintFile(filePath) {
@@ -80,6 +157,9 @@ function lintFile(filePath) {
       }
     }
   }
+
+  // 4. The .tpl-root box must fill the canonical design canvas.
+  lintCanvas(filePath, stripped, rel, errors);
 
   return errors;
 }

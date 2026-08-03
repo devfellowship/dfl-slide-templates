@@ -1,9 +1,9 @@
-/* tpl-chapter-image · portrait — 540×960 */
+/* tpl-chapter-image · portrait — 720×1280 */
 
 .tpl-root.tpl-chapter-image.tpl-chapter-image--portrait {
   position: relative;
-  width: 540px;
-  height: 960px;
+  width: 720px;
+  height: 1280px;
   background: var(--s-surface-page, #0a0908);
   color: #ffffff;
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -36,18 +36,18 @@
 
 .tpl-root.tpl-chapter-image.tpl-chapter-image--portrait .tpl-chapter-image__content {
   position: absolute;
-  left: 56px;
-  right: 56px;
-  bottom: 80px;
+  left: 75px;
+  right: 75px;
+  bottom: 107px;
   z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 .tpl-root.tpl-chapter-image.tpl-chapter-image--portrait .tpl-chapter-image__number {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 130px;
+  font-size: 173px;
   font-weight: var(--p-weight-700, 700);
   line-height: 0.85;
   letter-spacing: var(--p-tracking-tight, -0.4px);
@@ -58,7 +58,7 @@
 
 .tpl-root.tpl-chapter-image.tpl-chapter-image--portrait .tpl-chapter-image__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 68px;
+  font-size: 91px;
   font-weight: var(--p-weight-700, 700);
   line-height: 0.95;
   letter-spacing: var(--p-tracking-tight, -0.4px);
@@ -68,10 +68,10 @@
 }
 
 .tpl-root.tpl-chapter-image.tpl-chapter-image--portrait .tpl-chapter-image__subtitle {
-  font-size: 24px;
+  font-size: 32px;
   font-weight: 400;
   line-height: 1.4;
   color: rgba(255, 255, 255, 0.70);
   margin: 0;
-  margin-top: 4px;
+  margin-top: 5px;
 }

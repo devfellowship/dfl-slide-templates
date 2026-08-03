@@ -1,10 +1,10 @@
-/* tpl-polaroid-stack · portrait — 540×960 */
+/* tpl-polaroid-stack · portrait — 720×1280 */
 
 .tpl-root.tpl-polaroid-stack.tpl-polaroid-stack--portrait {
   position: relative;
-  width: 540px;
-  height: 960px;
-  padding: 64px 48px;
+  width: 720px;
+  height: 1280px;
+  padding: 85px 64px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -13,7 +13,7 @@
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 43px;
 }
 
 .tpl-root.tpl-polaroid-stack.tpl-polaroid-stack--portrait::before {
@@ -21,7 +21,7 @@
   position: absolute;
   inset: 0;
   background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -31,7 +31,7 @@
 .tpl-root.tpl-polaroid-stack.tpl-polaroid-stack--portrait .tpl-polaroid-stack__title {
   flex: 0 0 auto;
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 42px;
+  font-size: 56px;
   font-weight: 600;
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -52,19 +52,19 @@
 
 .tpl-root.tpl-polaroid-stack.tpl-polaroid-stack--portrait .tpl-polaroid-stack__card {
   position: absolute;
-  width: 240px;
+  width: 320px;
   background: var(--s-surface-raised, #1a1714);
   border: 1px solid var(--s-border-subtle, #2a2622);
   border-radius: var(--p-radius-md, 8px);
-  padding: 12px 12px 18px 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
+  padding: 16px 16px 24px 16px;
+  box-shadow: 0 11px 43px rgba(0, 0, 0, 0.55);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 13px;
 }
 
 .tpl-root.tpl-polaroid-stack.tpl-polaroid-stack--portrait .tpl-polaroid-stack__fan .tpl-polaroid-stack__card:nth-child(1) {
-  transform: rotate(-5deg) translate(-60px, -40px);
+  transform: rotate(-5deg) translate(-80px, -53px);
   z-index: 1;
 }
 
@@ -74,7 +74,7 @@
 }
 
 .tpl-root.tpl-polaroid-stack.tpl-polaroid-stack--portrait .tpl-polaroid-stack__fan .tpl-polaroid-stack__card:nth-child(3) {
-  transform: rotate(6deg) translate(50px, 50px);
+  transform: rotate(6deg) translate(67px, 67px);
   z-index: 2;
 }
 
@@ -82,7 +82,7 @@
   width: 100%;
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  border-radius: 4px;
+  border-radius: 5px;
   background: var(--s-surface-sunken, #141210);
 }
 
@@ -99,8 +99,8 @@
 
 .tpl-root.tpl-polaroid-stack.tpl-polaroid-stack--portrait .tpl-polaroid-stack__caption {
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
-  font-size: 14px;
+  font-size: 19px;
   font-style: italic;
   color: var(--s-ink-secondary, #c9c0b4);
-  letter-spacing: 0.2px;
+  letter-spacing: 0.27px;
 }

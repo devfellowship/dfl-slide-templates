@@ -1,10 +1,10 @@
-/* tpl-feature-cards · landscape — 960×540 */
+/* tpl-feature-cards · landscape — 1280×720 */
 
 .tpl-root.tpl-feature-cards {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -14,7 +14,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 12px;
+  gap: 16px;
 }
 
 .tpl-root.tpl-feature-cards::before {
@@ -22,7 +22,7 @@
   position: absolute;
   inset: 0;
   background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -31,7 +31,7 @@
 
 .tpl-root.tpl-feature-cards .tpl-feature-cards__eyebrow {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 14px;
+  font-size: 19px;
   letter-spacing: var(--p-tracking-wider, 0.8px);
   text-transform: uppercase;
   color: var(--s-ink-muted, #7d7568);
@@ -39,34 +39,34 @@
 
 .tpl-root.tpl-feature-cards .tpl-feature-cards__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 38px;
+  font-size: 51px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
-  margin: 0 0 20px;
+  margin: 0 0 27px;
 }
 
 .tpl-root.tpl-feature-cards .tpl-feature-cards__row {
   display: flex;
-  gap: 20px;
+  gap: 27px;
   align-items: stretch;
 }
 
 .tpl-root.tpl-feature-cards .tpl-feature-cards__card {
   flex: 1 1 0;
   min-width: 0;
-  padding: 24px;
+  padding: 32px;
   border-radius: var(--p-radius-xl, 14px);
   border: 1px solid var(--s-border-subtle, #2a2622);
   background: var(--s-surface-panel, #141210);
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 19px;
 }
 
 .tpl-root.tpl-feature-cards .tpl-feature-cards__icon {
-  width: 64px;
-  height: 64px;
+  width: 85px;
+  height: 85px;
   border-radius: var(--p-radius-lg, 10px);
   overflow: hidden;
   border: 1px solid var(--s-border-subtle, #2a2622);
@@ -82,14 +82,14 @@
 
 .tpl-root.tpl-feature-cards .tpl-feature-cards__card-title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 28px;
+  font-size: 37px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
 }
 
 .tpl-root.tpl-feature-cards .tpl-feature-cards__card-caption {
-  font-size: 17px;
+  font-size: 23px;
   line-height: 1.4;
   color: var(--s-ink-secondary, #c9c0b4);
 }

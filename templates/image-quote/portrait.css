@@ -1,9 +1,9 @@
-/* tpl-image-quote · portrait — 540×960 */
+/* tpl-image-quote · portrait — 720×1280 */
 
 .tpl-root.tpl-image-quote.tpl-image-quote--portrait {
   position: relative;
-  width: 540px;
-  height: 960px;
+  width: 720px;
+  height: 1280px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -11,7 +11,7 @@
   overflow: hidden;
   isolation: isolate;
   display: grid;
-  grid-template-rows: 460px 1fr;
+  grid-template-rows: 613px 1fr;
 }
 
 .tpl-root.tpl-image-quote.tpl-image-quote--portrait .tpl-image-quote__media {
@@ -29,16 +29,16 @@
 }
 
 .tpl-root.tpl-image-quote.tpl-image-quote--portrait .tpl-image-quote__body {
-  padding: 56px 56px;
+  padding: 75px 75px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 24px;
+  gap: 32px;
 }
 
 .tpl-root.tpl-image-quote.tpl-image-quote--portrait .tpl-image-quote__quote {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 48px;
+  font-size: 64px;
   font-weight: var(--p-weight-600, 600);
   line-height: 1.08;
   letter-spacing: var(--p-tracking-tight, -0.4px);
@@ -55,17 +55,17 @@
 .tpl-root.tpl-image-quote.tpl-image-quote--portrait .tpl-image-quote__attribution {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
 }
 
 .tpl-root.tpl-image-quote.tpl-image-quote--portrait .tpl-image-quote__author {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 16px;
+  font-size: 21px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   color: var(--s-brand-fg, #f0a872);
 }
 
 .tpl-root.tpl-image-quote.tpl-image-quote--portrait .tpl-image-quote__role {
-  font-size: 15px;
+  font-size: 20px;
   color: var(--s-ink-muted, #7d7568);
 }

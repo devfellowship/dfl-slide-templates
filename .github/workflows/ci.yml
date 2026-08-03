@@ -31,7 +31,7 @@ jobs:
         run: npm run lint:css
 
   preview-regen:
-    name: Regenerate previews
+    name: Canvas fill + previews
     runs-on: ubuntu-latest
     needs: lint-css
     steps:
@@ -49,6 +49,12 @@ jobs:
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
+
+      # Measures the real laid-out box of .tpl-root for every template in both
+      # orientations. Catches canvas-fill regressions that the static rule in
+      # lint-css.mjs cannot see (overrides behind :not(), transforms, ...).
+      - name: Check canvas fill
+        run: npm run check:canvas
 
       - name: Generate previews
         run: npm run preview

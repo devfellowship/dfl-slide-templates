@@ -1,10 +1,10 @@
-/* tpl-hierarchy-tree · portrait — 540×960 */
+/* tpl-hierarchy-tree · portrait — 720×1280 */
 
 .tpl-root.tpl-hierarchy-tree.tpl-hierarchy-tree--portrait {
   position: relative;
-  width: 540px;
-  height: 960px;
-  padding: 64px 48px;
+  width: 720px;
+  height: 1280px;
+  padding: 85px 64px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -14,7 +14,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 28px;
+  gap: 37px;
 }
 
 .tpl-root.tpl-hierarchy-tree.tpl-hierarchy-tree--portrait::before {
@@ -22,7 +22,7 @@
   position: absolute;
   inset: 0;
   background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -31,7 +31,7 @@
 
 .tpl-root.tpl-hierarchy-tree.tpl-hierarchy-tree--portrait .tpl-hierarchy-tree__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 48px;
+  font-size: 64px;
   font-weight: var(--p-weight-700, 700);
   line-height: 1;
   letter-spacing: var(--p-tracking-tight, -0.4px);
@@ -58,12 +58,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
-  padding: 16px 26px;
+  gap: 7px;
+  padding: 21px 35px;
   background: var(--s-surface-raised, #1a1714);
   border: 1px solid var(--s-border-strong, #3a3530);
   border-radius: var(--p-radius-lg, 10px);
-  min-width: 100px;
+  min-width: 133px;
 }
 
 .tpl-root.tpl-hierarchy-tree.tpl-hierarchy-tree--portrait .tpl-hierarchy-tree__node--root {
@@ -77,7 +77,7 @@
 
 .tpl-root.tpl-hierarchy-tree.tpl-hierarchy-tree--portrait .tpl-hierarchy-tree__node-label {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 26px;
+  font-size: 35px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -86,7 +86,7 @@
 }
 
 .tpl-root.tpl-hierarchy-tree.tpl-hierarchy-tree--portrait .tpl-hierarchy-tree__node-note {
-  font-size: 14px;
+  font-size: 19px;
   color: var(--s-ink-muted, #7d7568);
   line-height: 1.3;
   white-space: nowrap;
@@ -94,7 +94,7 @@
 
 .tpl-root.tpl-hierarchy-tree.tpl-hierarchy-tree--portrait .tpl-hierarchy-tree__connector-row {
   position: relative;
-  height: 48px;
+  height: 64px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -106,14 +106,14 @@
   top: 0;
   left: 50%;
   width: 1px;
-  height: 24px;
+  height: 32px;
   background: var(--s-border-strong, #3a3530);
   transform: translateX(-50%);
 }
 
 .tpl-root.tpl-hierarchy-tree.tpl-hierarchy-tree--portrait .tpl-hierarchy-tree__crossbar {
   position: absolute;
-  top: 24px;
+  top: 32px;
   left: 10%;
   right: 10%;
   height: 1px;
@@ -126,7 +126,7 @@
   justify-content: space-around;
   align-items: flex-start;
   width: 100%;
-  gap: 12px;
+  gap: 16px;
 }
 
 .tpl-root.tpl-hierarchy-tree.tpl-hierarchy-tree--portrait .tpl-hierarchy-tree__child-col {
@@ -139,6 +139,6 @@
 
 .tpl-root.tpl-hierarchy-tree.tpl-hierarchy-tree--portrait .tpl-hierarchy-tree__branch-tick {
   width: 1px;
-  height: 24px;
+  height: 32px;
   background: var(--s-border-strong, #3a3530);
 }

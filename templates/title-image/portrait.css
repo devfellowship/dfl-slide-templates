@@ -1,9 +1,9 @@
-/* tpl-title-image · portrait — 540×960 */
+/* tpl-title-image · portrait — 720×1280 */
 
 .tpl-root.tpl-title-image.tpl-title-image--portrait {
   position: relative;
-  width: 540px;
-  height: 960px;
+  width: 720px;
+  height: 1280px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -11,7 +11,7 @@
   overflow: hidden;
   isolation: isolate;
   display: grid;
-  grid-template-rows: 500px 1fr;
+  grid-template-rows: 667px 1fr;
 }
 
 .tpl-root.tpl-title-image.tpl-title-image--portrait .tpl-title-image__media {
@@ -29,16 +29,16 @@
 }
 
 .tpl-root.tpl-title-image.tpl-title-image--portrait .tpl-title-image__panel {
-  padding: 56px 56px;
+  padding: 75px 75px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 18px;
+  gap: 24px;
 }
 
 .tpl-root.tpl-title-image.tpl-title-image--portrait .tpl-title-image__eyebrow {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 14px;
+  font-size: 19px;
   letter-spacing: var(--p-tracking-wider, 0.8px);
   text-transform: uppercase;
   color: var(--s-brand-fg, #f0a872);
@@ -46,7 +46,7 @@
 
 .tpl-root.tpl-title-image.tpl-title-image--portrait .tpl-title-image__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 80px;
+  font-size: 107px;
   font-weight: var(--p-weight-700, 700);
   line-height: 0.95;
   letter-spacing: var(--p-tracking-tight, -0.4px);
@@ -56,7 +56,7 @@
 }
 
 .tpl-root.tpl-title-image.tpl-title-image--portrait .tpl-title-image__subtitle {
-  font-size: 24px;
+  font-size: 32px;
   line-height: 1.45;
   color: var(--s-ink-secondary, #c9c0b4);
   margin: 0;

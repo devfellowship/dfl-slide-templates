@@ -1,10 +1,10 @@
-/* tpl-annotated-image · landscape — 960×540 */
+/* tpl-annotated-image · landscape — 1280×720 */
 
 .tpl-root.tpl-annotated-image {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -13,7 +13,7 @@
   isolation: isolate;
   display: flex;
   flex-direction: row;
-  gap: 24px;
+  gap: 32px;
 }
 
 .tpl-root.tpl-annotated-image::before {
@@ -21,7 +21,7 @@
   position: absolute;
   inset: 0;
   background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -30,11 +30,11 @@
 
 .tpl-root.tpl-annotated-image .tpl-annotated-image__title {
   position: absolute;
-  top: 48px;
-  left: 64px;
-  right: 64px;
+  top: 64px;
+  left: 85px;
+  right: 85px;
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 32px;
+  font-size: 43px;
   font-weight: 600;
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -70,30 +70,30 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   background: var(--s-brand-solid, #E07A4A);
   color: #fff;
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 700;
-  box-shadow: 0 0 0 3px rgba(224, 122, 74, 0.3), 0 2px 8px rgba(0,0,0,0.5);
+  box-shadow: 0 0 0 4px rgba(224, 122, 74, 0.3), 0 3px 11px rgba(0,0,0,0.5);
   cursor: default;
 }
 
 .tpl-root.tpl-annotated-image .tpl-annotated-image__rail {
-  flex: 0 0 220px;
+  flex: 0 0 293px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 14px;
+  gap: 19px;
 }
 
 .tpl-root.tpl-annotated-image .tpl-annotated-image__callout {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 16px;
 }
 
 .tpl-root.tpl-annotated-image .tpl-annotated-image__callout-num {
@@ -101,18 +101,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
+  width: 29px;
+  height: 29px;
   border-radius: 50%;
   background: var(--s-brand-solid, #E07A4A);
   color: #fff;
-  font-size: 11px;
+  font-size: 15px;
   font-weight: 700;
   margin-top: 1px;
 }
 
 .tpl-root.tpl-annotated-image .tpl-annotated-image__callout-label {
-  font-size: 14px;
+  font-size: 19px;
   line-height: 1.4;
   color: var(--s-ink-secondary, #c9c0b4);
 }

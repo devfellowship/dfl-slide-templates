@@ -1,9 +1,9 @@
-/* tpl-image-quote · landscape — 960×540 */
+/* tpl-image-quote · landscape — 1280×720 */
 
 .tpl-root.tpl-image-quote {
   position: relative;
-  width: 960px;
-  height: 540px;
+  width: 1280px;
+  height: 720px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -11,7 +11,7 @@
   overflow: hidden;
   isolation: isolate;
   display: grid;
-  grid-template-columns: 380px 1fr;
+  grid-template-columns: 507px 1fr;
 }
 
 .tpl-root.tpl-image-quote .tpl-image-quote__media {
@@ -29,16 +29,16 @@
 }
 
 .tpl-root.tpl-image-quote .tpl-image-quote__body {
-  padding: 64px 72px;
+  padding: 85px 96px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 28px;
+  gap: 37px;
 }
 
 .tpl-root.tpl-image-quote .tpl-image-quote__quote {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 52px;
+  font-size: 69px;
   font-weight: var(--p-weight-600, 600);
   line-height: 1.08;
   letter-spacing: var(--p-tracking-tight, -0.4px);
@@ -55,17 +55,17 @@
 .tpl-root.tpl-image-quote .tpl-image-quote__attribution {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
 }
 
 .tpl-root.tpl-image-quote .tpl-image-quote__author {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 16px;
+  font-size: 21px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   color: var(--s-brand-fg, #f0a872);
 }
 
 .tpl-root.tpl-image-quote .tpl-image-quote__role {
-  font-size: 15px;
+  font-size: 20px;
   color: var(--s-ink-muted, #7d7568);
 }

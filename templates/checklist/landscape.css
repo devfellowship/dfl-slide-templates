@@ -1,10 +1,10 @@
-/* tpl-checklist · landscape — 960×540 */
+/* tpl-checklist · landscape — 1280×720 */
 
 .tpl-root.tpl-checklist {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -13,7 +13,7 @@
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
 }
 
 .tpl-root.tpl-checklist::before {
@@ -21,7 +21,7 @@
   position: absolute;
   inset: 0;
   background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -30,7 +30,7 @@
 
 .tpl-root.tpl-checklist .tpl-checklist__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 52px;
+  font-size: 69px;
   font-weight: var(--p-weight-700, 700);
   line-height: 1;
   letter-spacing: var(--p-tracking-tight, -0.4px);
@@ -53,8 +53,8 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 16px;
-  padding: 10px 0;
+  gap: 21px;
+  padding: 13px 0;
   border-bottom: 1px solid var(--s-border-subtle, #2a2622);
 }
 
@@ -63,9 +63,9 @@
 }
 
 .tpl-root.tpl-checklist .tpl-checklist__glyph {
-  font-size: 22px;
+  font-size: 29px;
   flex-shrink: 0;
-  width: 28px;
+  width: 37px;
   text-align: center;
   color: var(--s-ink-muted, #7d7568);
   line-height: 1;
@@ -76,7 +76,7 @@
 }
 
 .tpl-root.tpl-checklist .tpl-checklist__text {
-  font-size: 22px;
+  font-size: 29px;
   font-weight: var(--p-weight-400, 400);
   color: var(--s-ink-secondary, #c9c0b4);
   line-height: 1.3;

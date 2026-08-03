@@ -1,10 +1,10 @@
-/* tpl-video · portrait — 540×960 */
+/* tpl-video · portrait — 720×1280 */
 
 .tpl-root.tpl-video.tpl-video--portrait {
   position: relative;
-  width: 540px;
-  height: 960px;
-  padding: 64px 48px;
+  width: 720px;
+  height: 1280px;
+  padding: 85px 64px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -13,7 +13,7 @@
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
 }
 
 .tpl-root.tpl-video.tpl-video--portrait::before {
@@ -21,7 +21,7 @@
   position: absolute;
   inset: 0;
   background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -55,21 +55,21 @@
 }
 
 .tpl-root.tpl-video.tpl-video--portrait .tpl-video__play-icon {
-  width: 80px;
-  height: 80px;
-  filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.6));
+  width: 107px;
+  height: 107px;
+  filter: drop-shadow(0 5px 27px rgba(0, 0, 0, 0.6));
 }
 
 .tpl-root.tpl-video.tpl-video--portrait .tpl-video__bar {
   flex: 0 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .tpl-root.tpl-video.tpl-video--portrait .tpl-video__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 38px;
+  font-size: 51px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -78,7 +78,7 @@
 
 .tpl-root.tpl-video.tpl-video--portrait .tpl-video__caption {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 14px;
+  font-size: 19px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   color: var(--s-brand-solid, #E07A4A);
 }

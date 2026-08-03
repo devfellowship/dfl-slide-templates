@@ -1,0 +1,21 @@
+{
+  "$comment": [
+    "Canonical slide design canvas — the single source of truth for both the",
+    "static guard (scripts/lint-css.mjs, rule 4) and the runtime geometry guard",
+    "(scripts/check-canvas.ts).",
+    "",
+    "MUST stay in sync with LANDSCAPE_WIDTH / LANDSCAPE_HEIGHT in",
+    "dfl-lesson-studio: src/lib/utils/dimensions.ts. Portrait is landscape",
+    "transposed.",
+    "",
+    "fluidTemplates are the ONLY templates allowed to size to their container",
+    "instead of the fixed canvas. Keep the list tiny and justified — each entry",
+    "needs a rationale below."
+  ],
+  "landscape": { "width": 1280, "height": 720 },
+  "portrait": { "width": 720, "height": 1280 },
+  "fluidTemplates": ["blank"],
+  "fluidRationale": {
+    "blank": "The 'screen + webcam only' recording backdrop. It must stretch to whatever surface the recorder hands it, so width/height:100% is deliberate. See ADR-1 of plan 20260430-lesson-studio-ai-mode-ux-fixes."
+  }
+}

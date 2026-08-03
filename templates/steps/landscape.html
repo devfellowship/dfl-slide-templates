@@ -4,9 +4,10 @@
   <div class="dfl-section-rule"></div>
   <div class="tpl-steps__rail">
     {{#items}}
-    <div class="tpl-steps__step">
-      <div class="tpl-steps__num"></div>
-      <h4 class="tpl-steps__name">{{text}}</h4>
+    <div class="tpl-steps__step{{#state}} tpl-steps__step--{{state}}{{/state}}">
+      <div class="tpl-steps__num">{{num}}</div>
+      <h4 class="tpl-steps__name">{{#title}}{{title}}{{/title}}{{^title}}{{text}}{{/title}}</h4>
+      {{#body}}<p class="tpl-steps__body">{{body}}</p>{{/body}}
     </div>
     {{/items}}
   </div>

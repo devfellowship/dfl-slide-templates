@@ -13,6 +13,11 @@
  *  6. Every `--s-*` / `--p-*` token a template reads must actually exist in
  *     the theme file. Catches typo'd token names that silently fall back.
  *
+ * Plus rule 0, which runs once and is about the config rather than any single
+ * file: canvas.config.json must be internally coherent (portrait == landscape
+ * transposed) and must still name its cross-repo counterpart. See
+ * lintCanvasConfig() for why that half lives here and the comparison does not.
+ *
  * Usage: node scripts/lint-css.mjs
  */
 
@@ -27,6 +32,47 @@ const CANVAS = JSON.parse(
   readFileSync(join(__dirname, "canvas.config.json"), "utf8")
 );
 const FLUID = new Set(CANVAS.fluidTemplates);
+
+/**
+ * Rule 0 — the canvas config must be internally coherent before any template
+ * is judged against it.
+ *
+ * Portrait is landscape transposed. Both this repo and dfl-lesson-studio
+ * (`getDesignDimensions`) rely on that, and the cross-repo contract check over
+ * there compares field-by-field on that assumption — but here it was only ever
+ * stated in prose. Nothing stopped someone editing `portrait` to 720x1440,
+ * after which every guard in this repo would keep passing while validating 46
+ * templates against a shape the app never renders.
+ *
+ * The cross-repo half of the contract cannot run here: this repo is public and
+ * dfl-lesson-studio is private, so reading it would need a token a public
+ * workflow must not hold. This is the half that needs no credential.
+ */
+function lintCanvasConfig() {
+  const errors = [];
+  const { landscape: l, portrait: p, counterpart } = CANVAS;
+
+  if (p.width !== l.height || p.height !== l.width) {
+    errors.push(
+      `scripts/canvas.config.json: portrait is ${p.width}x${p.height}, but ` +
+        `landscape ${l.width}x${l.height} transposed is ${l.height}x${l.width}. ` +
+        `Portrait must be landscape transposed — dfl-lesson-studio derives it ` +
+        `that way (getDesignDimensions), and the cross-repo contract check ` +
+        `there compares on that assumption.`
+    );
+  }
+
+  if (!counterpart?.repo || !counterpart?.path || !counterpart?.symbols?.length) {
+    errors.push(
+      `scripts/canvas.config.json: the "counterpart" block is missing or ` +
+        `incomplete. It names the other half of the canvas contract (repo, ` +
+        `file, symbols) and is what the check in dfl-lesson-studio is written ` +
+        `against — losing it turns an enforced contract back into a comment.`
+    );
+  }
+
+  return errors;
+}
 
 const THEME = JSON.parse(
   readFileSync(join(__dirname, "theme.config.json"), "utf8")
@@ -325,7 +371,7 @@ if (cssFiles.length === 0) {
   process.exit(0);
 }
 
-let allErrors = [];
+let allErrors = lintCanvasConfig();
 for (const f of cssFiles) {
   allErrors = allErrors.concat(lintFile(f));
 }

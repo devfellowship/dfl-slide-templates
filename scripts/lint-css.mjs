@@ -70,6 +70,10 @@ function lintCanvas(filePath, strippedSrc, rel, errors) {
   const expected = CANVAS[orientation];
 
   // Walk every rule block; the cascade means a later declaration wins.
+  // This is a flat parse — it assumes no nested at-rule blocks (@media etc.),
+  // which the templates currently have none of. If that ever changes, the
+  // runtime guard in check-canvas.ts is the backstop: it measures the real
+  // laid-out box rather than trusting this parse.
   let declaredWidth = null;
   let declaredHeight = null;
   let sawRootBox = false;

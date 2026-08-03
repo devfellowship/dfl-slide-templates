@@ -6,7 +6,8 @@
     "preview": "ts-node scripts/preview-gen.ts",
     "check:canvas": "ts-node scripts/check-canvas.ts",
     "showcase": "ts-node scripts/showcase-gen.ts",
-    "lint:css": "node scripts/lint-css.mjs"
+    "lint:css": "node scripts/lint-css.mjs",
+    "check:theme": "ts-node scripts/check-theme.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.44.0",

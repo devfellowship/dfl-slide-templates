@@ -1,0 +1,49 @@
+{
+  "$comment": [
+    "Canonical theme-conformance contract — the single source of truth for both",
+    "the static guard (scripts/lint-css.mjs, rules 5 and 6) and the runtime",
+    "guard (scripts/check-theme.ts), so the two can never disagree.",
+    "",
+    "Brand authority: https://brand.devfellowship.com (machine-readable mirror at",
+    "https://brand.devfellowship.com/llms.txt). Chapter 05 defines the sand/amber",
+    "palette, chapter 06 the four type families. themes/devfellowship.css is the",
+    "CSS implementation of that guide; a template is 'on theme' when it reads",
+    "those tokens instead of restating their values.",
+    "",
+    "literalExceptions are the ONLY places a raw colour may appear in template",
+    "CSS outside a var() fallback. Keep the list tiny; every entry needs a",
+    "rationale. Same discipline as fluidTemplates in canvas.config.json."
+  ],
+
+  "themeId": "devfellowship",
+  "themeFile": "themes/devfellowship.css",
+
+  "surfaceToken": "--s-surface-page",
+  "surfaceValue": "rgb(10, 9, 8)",
+
+  "$fontComment": [
+    "The four families of brand chapter 06. Every element that renders text must",
+    "resolve to one of these as its first computed font-family — which happens",
+    "for free when the declaration is var(--s-font-display|body|mono|editorial)."
+  ],
+  "allowedFontFamilies": [
+    "Barlow Condensed",
+    "Inter",
+    "JetBrains Mono",
+    "Georgia"
+  ],
+
+  "literalExceptions": {
+    "blank": {
+      "values": ["#000000"],
+      "rationale": "The 'screen + webcam only' recording backdrop. It must be true black, not the sand-950 page surface, because the recorder composites captured video over it and any warm tint would show at the seams. Same template, same reason, as its fluidTemplates entry in canvas.config.json."
+    }
+  },
+
+  "surfaceExceptions": {
+    "blank": {
+      "value": "rgb(0, 0, 0)",
+      "rationale": "See literalExceptions.blank — true-black recording backdrop."
+    }
+  }
+}

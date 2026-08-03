@@ -18,7 +18,14 @@ templates/
     preview-portrait.png  # auto-generated preview (do not edit by hand)
 scripts/
   preview-gen.ts          # Playwright screenshot script
-  lint-css.mjs            # CSS scoping linter
+  lint-css.mjs            # CSS scoping + canvas + theme-token linter
+  check-canvas.ts         # runtime guard: does .tpl-root fill the canvas?
+  check-theme.ts          # runtime guard: is the slide on the DFL theme?
+  canvas.config.json      # canonical design canvas + fluid-template allowlist
+  theme.config.json       # theme contract: brand families, page surface, exceptions
+themes/
+  devfellowship.css       # the DFL Design System tokens (see "Theming" below)
+  default.css             # legacy light theme (--slide-* aliases only)
 registry.json             # master list of all templates
 ```
 
@@ -93,6 +100,56 @@ Additional rules enforced by the CSS linter (`npm run lint:css`):
 - No `@layer` rules — layers are reserved for the host application.
 - No `:host` pseudo-class — templates are not web components.
 - Every selector must contain `.tpl-root`.
+- The `.tpl-root` box must declare the canonical design canvas (see below).
+- **No hardcoded colour or font-family** — every colour and type family comes
+  from a theme token (see "Theming").
+- Every `--s-*` / `--p-*` token a template reads must exist in the theme.
+
+---
+
+## Theming
+
+`themes/devfellowship.css` is the CSS implementation of the DFL brand guide at
+<https://brand.devfellowship.com> (machine-readable mirror: `/llms.txt`). It is
+the **source of truth for how a slide looks** — templates read its tokens and
+never restate its values.
+
+| Need | Token |
+|------|-------|
+| Page background | `--s-surface-page` |
+| Card / panel background | `--s-surface-panel`, `--s-surface-raised`, `--s-surface-elevated` |
+| Text | `--s-ink-primary`, `--s-ink-secondary`, `--s-ink-muted`, `--s-ink-inverse` |
+| Hairlines / dividers | `--s-border-subtle`, `--s-border-strong` |
+| Accent (the only one) | `--s-brand-solid`, `--s-brand-fg`, `--s-brand-subtle`, `--s-brand-border` |
+| State | `--s-success-*`, `--s-warning-*`, `--s-danger-*`, `--s-info-*` |
+| Display type (h1/h2, ≥22px) | `--s-font-display` — Barlow Condensed |
+| Body / UI type | `--s-font-body` — Inter |
+| Meta / labels / data | `--s-font-mono` — JetBrains Mono |
+| Long-form editorial | `--s-font-editorial` — Georgia |
+
+Always keep the literal as the `var()` fallback so a template still renders
+standalone:
+
+```css
+background:  var(--s-surface-page, #0a0908);
+color:       var(--s-ink-secondary, #c9c0b4);
+font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+```
+
+Two rules that are easy to get wrong:
+
+- **Never `background: transparent` on `.tpl-root`.** The host deck paints its
+  own per-slide colour behind the slide; a transparent root leaks it. This is
+  exactly how the `table` template shipped navy blue inside an otherwise
+  near-black deck.
+- **Never a bare `font-family`.** Restating `'Inter', system-ui, …` looks right
+  today and silently stops following the brand tomorrow.
+
+Both are enforced — statically by `npm run lint:css` (rules 5 and 6) and at
+runtime by `npm run check:theme`, which renders every template over a hostile
+magenta page and reads back the computed styles. Genuine exceptions go in
+`scripts/theme.config.json` with a written rationale (today: `blank`, the
+true-black recording backdrop).
 
 ### Viewport sizes
 
@@ -132,13 +189,18 @@ Preview images are saved as `templates/<id>/preview-landscape.png` and `template
 
 ---
 
-## CSS lint
+## Checks
 
 ```bash
-npm run lint:css
+npm run lint:css      # static: scoping, @layer, :host, canvas, theme tokens
+npm run check:canvas  # runtime: does .tpl-root fill 1280x720 / 720x1280?
+npm run check:theme   # runtime: is the slide painted with the DFL theme?
 ```
 
-Checks all `templates/**/*.css` files for scoping violations, `@layer` usage, and `:host` usage. Exits with code 1 on any failure.
+Each invariant is guarded twice on purpose — once statically (fast, no browser)
+and once at runtime against the real computed layout/styles, because a static
+parse can be fooled by a later override, a transform or an inherited value.
+All three exit 1 on failure and all three run in CI.
 
 ---
 
@@ -146,7 +208,8 @@ Checks all `templates/**/*.css` files for scoping violations, `@layer` usage, an
 
 The GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push and pull request to `main`:
 
-- **lint-css** — runs the CSS scoping linter.
-- **preview-regen** — regenerates all previews using Playwright.
+- **lint-css** — runs the CSS scoping / canvas / theme-token linter.
+- **preview-regen** — canvas-fill guard, theme-conformance guard, then
+  regenerates all previews using Playwright.
   - On **pull requests**: fails if any preview image differs from what is committed (previews must be pre-generated locally).
   - On **push to main**: automatically commits regenerated previews if they changed.

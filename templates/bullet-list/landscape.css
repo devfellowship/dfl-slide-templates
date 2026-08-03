@@ -1,23 +1,56 @@
+/* tpl-bullet-list · landscape — 1280×720 · DFL DS tokens */
+
 .tpl-root.tpl-bullet-list {
-  display: flex;
-  flex-direction: column;
+  position: relative;
   width: 1280px;
   height: 720px;
-  background: var(--slide-bg, #ffffff);
-  font-family: var(--slide-font-family, 'Segoe UI', system-ui, -apple-system, sans-serif);
+  padding: 64px 85px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
   box-sizing: border-box;
-  padding: 48px 72px;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
 }
 
+.tpl-root.tpl-bullet-list::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: var(--s-texture-dot-size, 32px) var(--s-texture-dot-size, 32px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-bullet-list > * { position: relative; z-index: 1; }
+
 .tpl-root.tpl-bullet-list .tpl-bullet-list__title {
-  font-size: 46px;
-  font-weight: 700;
-  color: var(--slide-heading-color, #111827);
-  margin: 0 0 32px 0;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-  padding-bottom: 20px;
-  border-bottom: 2px solid var(--slide-border, #e5e7eb);
+  flex: 0 0 auto;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 51px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  line-height: 1.05;
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+}
+
+.tpl-root.tpl-bullet-list .tpl-bullet-list__title::after {
+  content: "";
+  display: block;
+  height: 2px;
+  margin-top: 18px;
+  background: linear-gradient(
+    90deg,
+    var(--s-brand-solid, #E07A4A) 0,
+    var(--s-brand-solid, #E07A4A) 56px,
+    var(--s-border-subtle, #2a2622) 56px,
+    var(--s-border-subtle, #2a2622) 100%
+  );
 }
 
 .tpl-root.tpl-bullet-list .tpl-bullet-list__list {
@@ -26,27 +59,28 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  flex: 1;
+  gap: 20px;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow: hidden;
 }
 
 .tpl-root.tpl-bullet-list .tpl-bullet-list__item {
   display: flex;
   align-items: flex-start;
-  font-size: 30px;
-  color: var(--slide-text, #1f2937);
+  font-size: 29px;
   line-height: 1.4;
+  color: var(--s-ink-secondary, #c9c0b4);
 }
 
 .tpl-root.tpl-bullet-list .tpl-bullet-list__item::before {
-  content: '';
+  content: "";
   display: inline-block;
-  width: 8px;
-  height: 8px;
-  background: var(--slide-primary, #3b82f6);
-  border-radius: 50%;
-  margin-top: 8px;
-  margin-right: 16px;
+  width: 10px;
+  height: 10px;
+  background: var(--s-brand-solid, #E07A4A);
+  border-radius: var(--p-radius-pill, 999px);
+  margin-top: 12px;
+  margin-right: 18px;
   flex-shrink: 0;
 }

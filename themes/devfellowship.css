@@ -58,6 +58,7 @@
   --p-font-display: 'Barlow Condensed', 'Inter', system-ui, sans-serif;
   --p-font-sans:    'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --p-font-mono:    'JetBrains Mono', ui-monospace, 'SF Mono', monospace;
+  --p-font-editorial: Georgia, 'Times New Roman', serif;
 
   /* Type · sizes (px) */
   --p-text-10: 10px;
@@ -119,6 +120,7 @@
   --s-ink-primary:   var(--p-sand-50);
   --s-ink-secondary: var(--p-sand-200);
   --s-ink-muted:     var(--p-sand-400);
+  --s-ink-disabled:  var(--p-sand-500);
   --s-ink-inverse:   var(--p-sand-950);
 
   --s-brand-solid:   var(--p-amber-500);
@@ -138,9 +140,15 @@
   --s-info-solid:     var(--p-blue-500);
   --s-info-fg:        var(--p-blue-400);
 
-  --s-font-display: var(--p-font-display);
-  --s-font-body:    var(--p-font-sans);
-  --s-font-mono:    var(--p-font-mono);
+  --s-font-display:   var(--p-font-display);
+  --s-font-body:      var(--p-font-sans);
+  --s-font-mono:      var(--p-font-mono);
+  --s-font-editorial: var(--p-font-editorial);
+
+  /* Slide chassis · the dotted page texture every slide paints over its
+   * surface. Tokenised so templates never hand-roll the rgba. */
+  --s-texture-dot:      rgba(255, 240, 220, 0.025);
+  --s-texture-dot-size: 32px;
 
   /* ─── 3 · LEGACY ALIASES (back-compat with pre-redesign templates) */
   --slide-primary:             var(--s-brand-solid);

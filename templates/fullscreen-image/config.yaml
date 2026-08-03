@@ -17,7 +17,7 @@ slots:
   - name: bg
     type: text
     required: false
-    description: "Letterbox/background color shown around the image in 'contain' mode (hex). Default #000000."
+    description: "Letterbox/background color shown around the image in 'contain' mode (hex). Default is the theme page surface (#0A0908)."
     sample: "#0A0908"
   - name: imageAlt
     type: text

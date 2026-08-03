@@ -1,10 +1,10 @@
-/* tpl-section-header · portrait — 540×960 */
+/* tpl-section-header · portrait — 720×1280 */
 
 .tpl-root.tpl-section-header.tpl-section-header--portrait {
   position: relative;
-  width: 540px;
-  height: 960px;
-  padding: 72px 56px;
+  width: 720px;
+  height: 1280px;
+  padding: 96px 75px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -15,7 +15,7 @@
   grid-template-columns: 1fr;
   grid-template-rows: auto auto;
   align-content: center;
-  gap: 16px;
+  gap: 21px;
 }
 
 .tpl-root.tpl-section-header.tpl-section-header--portrait::before {
@@ -23,7 +23,7 @@
   position: absolute;
   inset: 0;
   background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -32,7 +32,7 @@
 
 .tpl-root.tpl-section-header.tpl-section-header--portrait .tpl-section-header__chapter {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 140px;
+  font-size: 187px;
   line-height: 0.85;
   font-weight: var(--p-weight-700, 700);
   color: var(--s-brand-fg, #f0a872);
@@ -43,12 +43,12 @@
 .tpl-root.tpl-section-header.tpl-section-header--portrait .tpl-section-header__meta {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 24px;
 }
 
 .tpl-root.tpl-section-header.tpl-section-header--portrait .tpl-section-header__eyebrow {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 14px;
+  font-size: 19px;
   letter-spacing: var(--p-tracking-wider, 0.8px);
   text-transform: uppercase;
   color: var(--s-ink-muted, #7d7568);
@@ -56,7 +56,7 @@
 
 .tpl-root.tpl-section-header.tpl-section-header--portrait .tpl-section-header__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 68px;
+  font-size: 91px;
   font-weight: var(--p-weight-700, 700);
   line-height: 0.95;
   margin: 0;
@@ -66,7 +66,7 @@
 }
 
 .tpl-root.tpl-section-header.tpl-section-header--portrait .tpl-section-header__description {
-  font-size: 24px;
+  font-size: 32px;
   color: var(--s-ink-secondary, #c9c0b4);
   line-height: 1.5;
   margin: 0;

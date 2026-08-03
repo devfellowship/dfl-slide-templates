@@ -1,10 +1,10 @@
-/* tpl-big-statement · portrait — 540×960 */
+/* tpl-big-statement · portrait — 720×1280 */
 
 .tpl-root.tpl-big-statement.tpl-big-statement--portrait {
   position: relative;
-  width: 540px;
-  height: 960px;
-  padding: 96px 56px;
+  width: 720px;
+  height: 1280px;
+  padding: 128px 75px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -21,7 +21,7 @@
   position: absolute;
   inset: 0;
   background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -32,14 +32,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 28px;
+  gap: 37px;
   text-align: center;
   max-width: 16ch;
 }
 
 .tpl-root.tpl-big-statement.tpl-big-statement--portrait .tpl-big-statement__eyebrow {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 14px;
+  font-size: 19px;
   letter-spacing: var(--p-tracking-wider, 0.8px);
   text-transform: uppercase;
   color: var(--s-ink-muted, #7d7568);
@@ -47,7 +47,7 @@
 
 .tpl-root.tpl-big-statement.tpl-big-statement--portrait .tpl-big-statement__statement {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 66px;
+  font-size: 88px;
   font-weight: var(--p-weight-700, 700);
   line-height: 1.02;
   letter-spacing: var(--p-tracking-tight, -0.4px);

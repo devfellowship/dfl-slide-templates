@@ -1,10 +1,10 @@
-/* tpl-kpi · landscape — 960×540 */
+/* tpl-kpi · landscape — 1280×720 */
 
 .tpl-root.tpl-kpi {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 56px 72px;
+  width: 1280px;
+  height: 720px;
+  padding: 75px 96px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -18,30 +18,30 @@
   position: absolute;
   inset: 0;
   background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
 
 .tpl-root.tpl-kpi > * { position: relative; z-index: 1; }
 
-.tpl-root.tpl-kpi .tpl-kpi__title { margin-top: 14px; }
+.tpl-root.tpl-kpi .tpl-kpi__title { margin-top: 19px; }
 
 .tpl-root.tpl-kpi .tpl-kpi__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-top: 8px;
+  gap: 21px;
+  margin-top: 11px;
 }
 
 .tpl-root.tpl-kpi .tpl-kpi__card {
-  padding: 22px 24px;
+  padding: 29px 32px;
   background: var(--s-surface-panel, #141210);
   border: 1px solid var(--s-border-subtle, #2a2622);
   border-radius: var(--p-radius-lg, 10px);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   position: relative;
 }
 
@@ -52,7 +52,7 @@
 
 .tpl-root.tpl-kpi .tpl-kpi__label {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 13px;
+  font-size: 17px;
   letter-spacing: var(--p-tracking-wider, 0.8px);
   text-transform: uppercase;
   color: var(--s-ink-muted, #7d7568);
@@ -60,7 +60,7 @@
 
 .tpl-root.tpl-kpi .tpl-kpi__value {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 65px;
+  font-size: 87px;
   font-weight: var(--p-weight-700, 700);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   line-height: 1;
@@ -70,6 +70,6 @@
 
 .tpl-root.tpl-kpi .tpl-kpi__delta {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 15px;
+  font-size: 20px;
   color: var(--s-success-fg, #7ad79a);
 }

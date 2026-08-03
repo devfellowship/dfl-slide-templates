@@ -1,10 +1,10 @@
-/* tpl-callout · landscape — 960×540 */
+/* tpl-callout · landscape — 1280×720 */
 
 .tpl-root.tpl-callout {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 56px 72px;
+  width: 1280px;
+  height: 720px;
+  padding: 75px 96px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -21,7 +21,7 @@
   position: absolute;
   inset: 0;
   background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -29,20 +29,20 @@
 .tpl-root.tpl-callout > * { position: relative; z-index: 1; }
 
 .tpl-root.tpl-callout .tpl-callout__card {
-  padding: 48px 56px;
+  padding: 64px 75px;
   border: 1px solid var(--s-brand-border, rgba(224, 122, 74, 0.22));
   background: var(--s-brand-subtle, rgba(224, 122, 74, 0.10));
   border-radius: var(--p-radius-xl, 14px);
-  max-width: 700px;
+  max-width: 933px;
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 21px;
 }
 
 .tpl-root.tpl-callout .tpl-callout__icon {
-  width: 36px;
-  height: 36px;
+  width: 48px;
+  height: 48px;
   border-radius: var(--p-radius-md, 6px);
   background: var(--s-brand-solid, #E07A4A);
   display: flex;
@@ -50,13 +50,13 @@
   justify-content: center;
   color: var(--s-ink-inverse, #0a0908);
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 22px;
+  font-size: 29px;
   font-weight: var(--p-weight-700, 700);
 }
 
 .tpl-root.tpl-callout .tpl-callout__eyebrow {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 13px;
+  font-size: 17px;
   letter-spacing: var(--p-tracking-wider, 0.8px);
   text-transform: uppercase;
   color: var(--s-brand-fg, #f0a872);
@@ -64,7 +64,7 @@
 
 .tpl-root.tpl-callout .tpl-callout__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 50px;
+  font-size: 67px;
   font-weight: var(--p-weight-700, 700);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   line-height: 1.05;
@@ -73,7 +73,7 @@
 }
 
 .tpl-root.tpl-callout .tpl-callout__body {
-  font-size: 24px;
+  font-size: 32px;
   color: var(--s-ink-secondary, #c9c0b4);
   line-height: 1.5;
   margin: 0;

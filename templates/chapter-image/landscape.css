@@ -1,9 +1,9 @@
-/* tpl-chapter-image · landscape — 960×540 */
+/* tpl-chapter-image · landscape — 1280×720 */
 
 .tpl-root.tpl-chapter-image {
   position: relative;
-  width: 960px;
-  height: 540px;
+  width: 1280px;
+  height: 720px;
   background: var(--s-surface-page, #0a0908);
   color: #ffffff;
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -36,19 +36,19 @@
 
 .tpl-root.tpl-chapter-image .tpl-chapter-image__content {
   position: absolute;
-  left: 72px;
+  left: 96px;
   top: 50%;
   transform: translateY(-50%);
   z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  max-width: 520px;
+  gap: 16px;
+  max-width: 693px;
 }
 
 .tpl-root.tpl-chapter-image .tpl-chapter-image__number {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 120px;
+  font-size: 160px;
   font-weight: var(--p-weight-700, 700);
   line-height: 0.85;
   letter-spacing: var(--p-tracking-tight, -0.4px);
@@ -59,7 +59,7 @@
 
 .tpl-root.tpl-chapter-image .tpl-chapter-image__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 72px;
+  font-size: 96px;
   font-weight: var(--p-weight-700, 700);
   line-height: 0.95;
   letter-spacing: var(--p-tracking-tight, -0.4px);
@@ -69,10 +69,10 @@
 }
 
 .tpl-root.tpl-chapter-image .tpl-chapter-image__subtitle {
-  font-size: 22px;
+  font-size: 29px;
   font-weight: 400;
   line-height: 1.4;
   color: rgba(255, 255, 255, 0.70);
   margin: 0;
-  margin-top: 4px;
+  margin-top: 5px;
 }

@@ -1,10 +1,10 @@
-/* tpl-big-image · portrait — 540×960 */
+/* tpl-big-image · portrait — 720×1280 */
 
 .tpl-root.tpl-big-image.tpl-big-image--portrait {
   position: relative;
-  width: 540px;
-  height: 960px;
-  padding: 64px 48px;
+  width: 720px;
+  height: 1280px;
+  padding: 85px 64px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -13,7 +13,7 @@
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 37px;
 }
 
 .tpl-root.tpl-big-image.tpl-big-image--portrait::before {
@@ -21,7 +21,7 @@
   position: absolute;
   inset: 0;
   background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -48,12 +48,12 @@
   flex: 0 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 11px;
 }
 
 .tpl-root.tpl-big-image.tpl-big-image--portrait .tpl-big-image__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 38px;
+  font-size: 51px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -62,7 +62,7 @@
 
 .tpl-root.tpl-big-image.tpl-big-image--portrait .tpl-big-image__caption {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 15px;
+  font-size: 20px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   color: var(--s-ink-muted, #7d7568);
 }

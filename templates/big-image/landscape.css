@@ -1,10 +1,10 @@
-/* tpl-big-image · landscape — 960×540 */
+/* tpl-big-image · landscape — 1280×720 */
 
 .tpl-root.tpl-big-image {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -13,7 +13,7 @@
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
 }
 
 .tpl-root.tpl-big-image::before {
@@ -21,7 +21,7 @@
   position: absolute;
   inset: 0;
   background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -48,12 +48,12 @@
   flex: 0 0 auto;
   display: flex;
   align-items: baseline;
-  gap: 18px;
+  gap: 24px;
 }
 
 .tpl-root.tpl-big-image .tpl-big-image__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 34px;
+  font-size: 45px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -61,7 +61,7 @@
 
 .tpl-root.tpl-big-image .tpl-big-image__caption {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 15px;
+  font-size: 20px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   color: var(--s-ink-muted, #7d7568);
 }

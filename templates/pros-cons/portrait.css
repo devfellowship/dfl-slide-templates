@@ -1,10 +1,10 @@
-/* tpl-pros-cons · portrait — 540×960 */
+/* tpl-pros-cons · portrait — 720×1280 */
 
 .tpl-root.tpl-pros-cons.tpl-pros-cons--portrait {
   position: relative;
-  width: 540px;
-  height: 960px;
-  padding: 64px 48px;
+  width: 720px;
+  height: 1280px;
+  padding: 85px 64px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -13,7 +13,7 @@
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 37px;
 }
 
 .tpl-root.tpl-pros-cons.tpl-pros-cons--portrait::before {
@@ -21,7 +21,7 @@
   position: absolute;
   inset: 0;
   background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -31,7 +31,7 @@
 .tpl-root.tpl-pros-cons.tpl-pros-cons--portrait .tpl-pros-cons__title {
   flex: 0 0 auto;
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 40px;
+  font-size: 53px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -44,19 +44,19 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 16px;
+  gap: 21px;
 }
 
 .tpl-root.tpl-pros-cons.tpl-pros-cons--portrait .tpl-pros-cons__column {
   flex: 1 1 0;
   min-height: 0;
-  padding: 28px 30px;
+  padding: 37px 40px;
   border-radius: var(--p-radius-xl, 14px);
   border: 1px solid var(--s-border-subtle, #2a2622);
   background: var(--s-surface-panel, #1f1c18);
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 24px;
 }
 
 .tpl-root.tpl-pros-cons.tpl-pros-cons--portrait .tpl-pros-cons__column--pros {
@@ -72,9 +72,9 @@
 .tpl-root.tpl-pros-cons.tpl-pros-cons--portrait .tpl-pros-cons__heading {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 13px;
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 13px;
+  font-size: 17px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   text-transform: uppercase;
   color: var(--s-ink-muted, #7d7568);
@@ -89,7 +89,7 @@
 }
 
 .tpl-root.tpl-pros-cons.tpl-pros-cons--portrait .tpl-pros-cons__icon {
-  font-size: 16px;
+  font-size: 21px;
   font-style: normal;
 }
 
@@ -99,13 +99,13 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 13px;
+  gap: 17px;
 }
 
 .tpl-root.tpl-pros-cons.tpl-pros-cons--portrait .tpl-pros-cons__item {
   position: relative;
-  padding-left: 20px;
-  font-size: 20px;
+  padding-left: 27px;
+  font-size: 27px;
   line-height: 1.35;
   color: var(--s-ink-secondary, #c9c0b4);
 }
@@ -114,9 +114,9 @@
   content: "";
   position: absolute;
   left: 0;
-  top: 11px;
-  width: 7px;
-  height: 7px;
+  top: 15px;
+  width: 9px;
+  height: 9px;
   border-radius: 999px;
   background: var(--s-ink-muted, #7d7568);
 }

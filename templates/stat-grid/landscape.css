@@ -1,10 +1,10 @@
-/* tpl-stat-grid · landscape — 960×540 */
+/* tpl-stat-grid · landscape — 1280×720 */
 
 .tpl-root.tpl-stat-grid {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -13,7 +13,7 @@
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 37px;
 }
 
 .tpl-root.tpl-stat-grid::before {
@@ -21,7 +21,7 @@
   position: absolute;
   inset: 0;
   background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -31,7 +31,7 @@
 .tpl-root.tpl-stat-grid .tpl-stat-grid__title {
   flex: 0 0 auto;
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 34px;
+  font-size: 45px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-secondary, #c9c0b4);
@@ -43,17 +43,17 @@
   min-height: 0;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  gap: 21px;
 }
 
 .tpl-root.tpl-stat-grid .tpl-stat-grid__cell {
-  padding: 28px 24px;
+  padding: 37px 32px;
   border-radius: var(--p-radius-xl, 14px);
   border: 1px solid var(--s-border-subtle, #2a2622);
   background: var(--s-surface-panel, #1f1c18);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 11px;
   justify-content: flex-end;
 }
 
@@ -64,7 +64,7 @@
 
 .tpl-root.tpl-stat-grid .tpl-stat-grid__value {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 72px;
+  font-size: 96px;
   font-weight: var(--p-weight-700, 700);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   line-height: 1;
@@ -78,14 +78,14 @@
 
 .tpl-root.tpl-stat-grid .tpl-stat-grid__label {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 13px;
+  font-size: 17px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   text-transform: uppercase;
   color: var(--s-ink-muted, #7d7568);
 }
 
 .tpl-root.tpl-stat-grid .tpl-stat-grid__caption {
-  font-size: 14px;
+  font-size: 19px;
   color: var(--s-ink-muted, #7d7568);
   line-height: 1.3;
 }

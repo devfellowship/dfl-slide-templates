@@ -1,10 +1,10 @@
-/* tpl-checklist · portrait — 540×960 */
+/* tpl-checklist · portrait — 720×1280 */
 
 .tpl-root.tpl-checklist.tpl-checklist--portrait {
   position: relative;
-  width: 540px;
-  height: 960px;
-  padding: 64px 48px;
+  width: 720px;
+  height: 1280px;
+  padding: 85px 64px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -13,7 +13,7 @@
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 37px;
 }
 
 .tpl-root.tpl-checklist.tpl-checklist--portrait::before {
@@ -21,7 +21,7 @@
   position: absolute;
   inset: 0;
   background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -30,7 +30,7 @@
 
 .tpl-root.tpl-checklist.tpl-checklist--portrait .tpl-checklist__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 64px;
+  font-size: 85px;
   font-weight: var(--p-weight-700, 700);
   line-height: 1;
   letter-spacing: var(--p-tracking-tight, -0.4px);
@@ -53,8 +53,8 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 18px;
-  padding: 16px 0;
+  gap: 24px;
+  padding: 21px 0;
   border-bottom: 1px solid var(--s-border-subtle, #2a2622);
 }
 
@@ -63,9 +63,9 @@
 }
 
 .tpl-root.tpl-checklist.tpl-checklist--portrait .tpl-checklist__glyph {
-  font-size: 26px;
+  font-size: 35px;
   flex-shrink: 0;
-  width: 32px;
+  width: 43px;
   text-align: center;
   color: var(--s-ink-muted, #7d7568);
   line-height: 1;
@@ -76,7 +76,7 @@
 }
 
 .tpl-root.tpl-checklist.tpl-checklist--portrait .tpl-checklist__text {
-  font-size: 26px;
+  font-size: 35px;
   font-weight: var(--p-weight-400, 400);
   color: var(--s-ink-secondary, #c9c0b4);
   line-height: 1.3;

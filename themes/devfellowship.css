@@ -189,8 +189,27 @@
   color: var(--s-ink-primary);
 }
 
+/* The hairline MUST NOT be allowed to shrink below 1px.
+ *
+ * It is a 1px flex item in templates whose root is a fixed-height
+ * `display:flex; flex-direction:column` box (steps, image-row). When the slide
+ * content overflows that box, flex-shrink distributes the deficit across every
+ * item — including this one — and it lands somewhere in (0, 1)px.
+ *
+ * A sub-pixel box is invisible on screen, but it is FATAL to the PDF export:
+ * html2canvas builds the gradient tile as `canvas.width = <measured px>`, which
+ * truncates a value below 1 to 0, and then calls `createPattern` on a 0-sized
+ * canvas — "The image argument is a canvas element with a width or height of 0"
+ * — which aborts the capture and takes the whole document down with it
+ * (2026-08-04, deck "Itera — Trinidad and Tobago").
+ *
+ * `flex-shrink: 0` + `min-height` pins it at the weight it was designed for.
+ * dfl-lesson-studio also repairs sub-pixel gradient boxes at capture time, so
+ * this is belt AND braces — but the rule genuinely should never shrink. */
 .tpl-root .dfl-section-rule {
   height: 1px;
+  min-height: 1px;
+  flex-shrink: 0;
   background: linear-gradient(
     90deg,
     var(--s-brand-solid) 0,

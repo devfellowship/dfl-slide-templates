@@ -205,7 +205,21 @@
  *
  * `flex-shrink: 0` + `min-height` pins it at the weight it was designed for.
  * dfl-lesson-studio also repairs sub-pixel gradient boxes at capture time, so
- * this is belt AND braces — but the rule genuinely should never shrink. */
+ * this is belt AND braces — but the rule genuinely should never shrink.
+ *
+ * HOW LONG DOES AN EDIT TO THIS FILE TAKE TO GO LIVE? (asked the hard way,
+ * 2026-08-04.) The floor above merged three and a half minutes before the
+ * studio deployed, and a browser still measured this rule at 0.994px — which
+ * the floor makes impossible. The studio read every theme from the moving
+ * `main` URL and memoised the response for the whole session, so a tab kept
+ * the CSS it happened to load first, forever, with nothing to indicate it.
+ *
+ * Since dfl-lesson-studio#298 the studio resolves `main` to a commit SHA and
+ * reads `.../<sha>/themes/...`, so a merge here is a brand-new URL that no
+ * cache can answer with stale bytes. Propagation is bounded by the studio's
+ * 60s revision TTL, and a PDF export forces the check first. So: NOT instant,
+ * NOT deploy-gated, and no longer unbounded. Do not tell anyone a theme edit
+ * is "live immediately" — say "within about a minute". */
 .tpl-root .dfl-section-rule {
   height: 1px;
   min-height: 1px;

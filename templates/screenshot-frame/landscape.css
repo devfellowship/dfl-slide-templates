@@ -78,7 +78,11 @@
 .tpl-root.tpl-screenshot-frame .tpl-screenshot-frame__img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  /* `contain`, never `cover`: this frame exists to show a SCREENSHOT, and a
+     screenshot that has had 40% of its height cropped away to fill the frame is
+     not the thing the author put in the slot. Letterboxing inside the window
+     chrome reads as a window; a cropped UI reads as a mistake. */
+  object-fit: contain;
   display: block;
 }
 

@@ -105,3 +105,26 @@
   color: var(--s-ink-primary, #f6f1e7);
   font-weight: var(--p-weight-500, 500);
 }
+
+/* ── Row-count-aware density ──────────────────────────────────────────────
+   The wrapper is `flex: 0 1 auto; overflow: hidden`, so a table with more rows
+   than the canvas can hold does not shrink — it is CLIPPED, silently. A 7-row
+   "7 modules" table shipped to a client with six rows visible (2026-08-05).
+   Rows cannot be scaled by CSS, but their DENSITY can be chosen from the row
+   count via `:has()`, which is exactly the information the template already
+   has. Each tier is sized so header + N rows fit the wrapper budget even under
+   a two-line title. */
+.tpl-root.tpl-table .tpl-table__table:has(.tpl-table__tbody > .tpl-table__row:nth-child(6)) .tpl-table__td {
+  padding: 12px 28px;
+  font-size: 23px;
+}
+.tpl-root.tpl-table .tpl-table__table:has(.tpl-table__tbody > .tpl-table__row:nth-child(6)) .tpl-table__th {
+  padding: 14px 28px;
+}
+.tpl-root.tpl-table .tpl-table__table:has(.tpl-table__tbody > .tpl-table__row:nth-child(8)) .tpl-table__td {
+  padding: 7px 28px;
+  font-size: 20px;
+}
+.tpl-root.tpl-table .tpl-table__table:has(.tpl-table__tbody > .tpl-table__row:nth-child(8)) .tpl-table__th {
+  padding: 10px 28px;
+}

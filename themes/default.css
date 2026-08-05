@@ -1,6 +1,15 @@
 /* dfl-slide-templates: default theme
  * Pixel-accurate freeze of the original hardcoded values.
  * Inject this before any template CSS so --vars resolve.
+ *
+ * GOTCHA (noted 2026-08-05): `.dfl-section-rule` — emitted by the `steps` and
+ * `kpi` templates — is styled ONLY by themes/devfellowship.css. Under THIS
+ * theme it has no height and no background, so the separator those templates
+ * draw is simply invisible. That is a consequence of this file being a frozen
+ * snapshot of the pre-theme hardcoded values, not an oversight to patch
+ * casually: giving it a height here would change how every existing
+ * default-theme deck renders. Flagged so the next person who finds a missing
+ * hairline in a default-theme deck knows where it went.
  */
 .tpl-root {
   --slide-primary: #3b82f6;

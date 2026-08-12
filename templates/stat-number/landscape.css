@@ -28,13 +28,34 @@
 
 .tpl-root.tpl-stat-number > * { position: relative; z-index: 1; }
 
+/*
+ * The column measure.
+ *
+ * This used to be `max-width: 24ch`, which reads as "24 characters of the hero
+ * number" and is not what it does: `ch` resolves against the ELEMENT'S OWN
+ * font-size, this element declares none, and it therefore inherited 16px from
+ * the root — 24 × 10.096px = 242.3px, a column narrower than one glyph of the
+ * 373px number it was supposed to be measuring. Every part of the slide was
+ * then wrapped inside 242px.
+ *
+ * The measure now lives on `__label`, in `ch` of the label's own 35px type,
+ * which is the only element here whose width a character count describes
+ * (44ch = 971.5px). The column itself is 1184px: the canvas less a 48px
+ * optical margin, tighter than the root's 96px text margin because a display
+ * number carries its own side-bearing and reads as inset at 48px. The label
+ * keeps the text margin.
+ */
 .tpl-root.tpl-stat-number .tpl-stat-number__inner {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   gap: 16px;
-  max-width: 24ch;
+  /* `flex: none` because the column is WIDER than the root's text box: a
+     flex item shrinks to the available 1088px/570px by default, which would
+     silently undo the optical margin. */
+  flex: none;
+  width: 1184px;
 }
 
 .tpl-root.tpl-stat-number .tpl-stat-number__eyebrow {
@@ -45,14 +66,61 @@
   color: var(--s-ink-muted, #7d7568);
 }
 
+/*
+ * The hero size, and why it is 264px and not 373px.
+ *
+ * 373px only ever fitted a THREE-character value. The width a value occupies
+ * is a fixed multiple of the font-size — measured in Barlow Condensed 700 with
+ * `tnum` on, so these hold at any size:
+ *
+ *   "7" 0.497×  ·  "3x" 0.935×  ·  "73%" 1.759×  ·  "100%" 2.256×
+ *   "91,3%" 2.466×  ·  "+R$ 10 mil" 3.841×  ·  "R$ 160 mil" 3.901×
+ *   "R$1.234.567" 4.835×  ·  "R$ 1,2 milhão" 4.945×
+ *
+ * At 373px "R$ 160 mil" is 1455px, against a 1088px text column: it could not
+ * stay on one line at any width this canvas has. 264px is the largest size
+ * that satisfies BOTH guarantees this template now makes.
+ *
+ *   1. Up to 3.9× (a ten-character "R$ 160 mil") sets on ONE line inside the
+ *      1184px column — 1184 / 3.901 = 303px, taken to 264px for margin, which
+ *      puts that value at 1028.8px, inside even the 1088px text box.
+ *   2. Anything longer WRAPS, and two wrapped lines (2 × 0.82 × 264 = 432.9px)
+ *      still fit under a three-line label with both optional slots present:
+ *      432.9 + 247.8 = 680.7px of 720px. Measured worst case, "Mais de 200 mil
+ *      reais" (7.705×, 2031.5px intrinsic), breaks 1157.2 + 821.9 = two lines.
+ *
+ * Wrapping is the step-down, so the template never has to know how long the
+ * value is — which is just as well, because CSS cannot be told. `:has()`
+ * counts ELEMENTS, which is what 2e796d7 (table rows) and 6e4b4b7 (tree
+ * children) select density from, and this template's markup carries no element
+ * per character; a container query cannot read a content-sized container at
+ * all, because `container-type` applies containment in the queried axis.
+ *
+ * `overflow-wrap: break-word` is the floor under both: a single token with no
+ * break opportunity that is still wider than the column (an unspaced
+ * "R$1.234.567" is 1275.2px here) breaks inside the column instead of leaving
+ * the canvas — measured 1144.1 + 131.1. Not `white-space: nowrap`, which is
+ * exactly the construct that put hierarchy-tree's labels off the slide in
+ * 6e4b4b7.
+ *
+ * The value keeps greedy wrapping and does NOT take the label's
+ * `text-wrap: balance`. Balance can spend a line to even the line lengths:
+ * at 272px in this column "Mais de 200 mil reais" sets greedy as
+ * 1151.6 + 847.0 (two lines) and balanced as 733.2 + 758.0 + 494.1 (three),
+ * and the third line costs 223px the slide does not have. Balance is a good
+ * rule for a caption and a bad one for the element whose line count IS the
+ * budget.
+ */
 .tpl-root.tpl-stat-number .tpl-stat-number__value {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 373px;
+  font-size: 264px;
   font-weight: var(--p-weight-700, 700);
   line-height: 0.82;
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-brand-fg, #f0a872);
   font-feature-settings: "tnum" 1;
+  max-width: 100%;
+  overflow-wrap: break-word;
 }
 
 .tpl-root.tpl-stat-number .tpl-stat-number__label {
@@ -60,6 +128,7 @@
   line-height: 1.35;
   color: var(--s-ink-secondary, #c9c0b4);
   margin: 11px 0 0;
+  max-width: 44ch;
   text-wrap: balance;
 }
 

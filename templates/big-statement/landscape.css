@@ -28,13 +28,38 @@
 
 .tpl-root.tpl-big-statement > * { position: relative; z-index: 1; }
 
+/*
+ * Same defect as stat-number, found by the same audit (2026-08-12): a `ch`
+ * measure on a container that declares no font-size. `max-width: 22ch` reads
+ * as "22 characters of the statement" and resolved against the 16px this
+ * element inherits from the root — 22 × 10.096 = 222.1px, for a column that
+ * carries 85px type.
+ *
+ * It did not fail the export guard, because a flex item's `min-width: auto`
+ * floors it at min-content: the box widened to the longest WORD and the
+ * statement set in a ragged column a quarter of the slide wide. It failed to
+ * FIT: this template's own SAMPLE_DATA statement ("AI won't replace developers
+ * — developers using AI will replace those who don't.") set on TEN lines,
+ * 866.9px tall on a 720px canvas, and stood 104.4px past both edges. The
+ * committed preview-landscape.png on main is that render.
+ *
+ * The measure moves to the statement, in `ch` of its own 85px type: 22ch =
+ * 847.1px, inside the 1024px text box, which is what 22ch was always meant to
+ * say. The same sample now sets on THREE lines, 260.1px tall.
+ *
+ * `overflow-wrap: break-word` is the floor: a word wider than the measure
+ * would otherwise paint outside a box the guard measures as being inside, and
+ * a box-sized guard cannot see ink. It costs a mid-word break above ~22
+ * display characters (a 16-character "SUPERINTENDÊNCIA" is 593.4px and still
+ * fits one line here).
+ */
 .tpl-root.tpl-big-statement .tpl-big-statement__inner {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 37px;
   text-align: center;
-  max-width: 22ch;
+  width: 100%;
 }
 
 .tpl-root.tpl-big-statement .tpl-big-statement__eyebrow {
@@ -53,5 +78,7 @@
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
   margin: 0;
+  max-width: 22ch;
+  overflow-wrap: break-word;
   text-wrap: balance;
 }

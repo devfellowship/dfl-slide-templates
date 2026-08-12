@@ -64,6 +64,8 @@
   border: 1px solid var(--s-border-strong, #3a3530);
   border-radius: var(--p-radius-lg, 10px);
   min-width: 120px;
+  max-width: 100%;
+  text-align: center;
 }
 
 .tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__node--root {
@@ -81,15 +83,19 @@
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
-  line-height: 1;
-  white-space: nowrap;
+  line-height: 1.08;
+  white-space: normal;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
 .tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__node-note {
   font-size: 17px;
   color: var(--s-ink-muted, #7d7568);
   line-height: 1.3;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
 .tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__connector-row {
@@ -124,7 +130,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  align-items: flex-start;
+  align-items: stretch;
   width: 100%;
   gap: 21px;
 }
@@ -135,10 +141,20 @@
   align-items: center;
   gap: 0;
   flex: 1 1 0;
+  min-width: 0;
 }
 
 .tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__branch-tick {
   width: 1px;
   height: 27px;
   background: var(--s-border-strong, #3a3530);
+}
+
+/* A wrapped note makes the cards ragged, so the row sizes every card to the
+   tallest one and centres the type inside it. The row read as one rank of
+   equal cards while the text was `nowrap`; it must keep reading that way. */
+.tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__child-col .tpl-hierarchy-tree__node {
+  flex: 1 1 auto;
+  justify-content: center;
+  width: 100%;
 }

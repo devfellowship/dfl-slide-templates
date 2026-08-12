@@ -64,6 +64,8 @@
   border: 1px solid var(--s-border-strong, #3a3530);
   border-radius: var(--p-radius-lg, 10px);
   min-width: 133px;
+  max-width: 100%;
+  text-align: center;
 }
 
 .tpl-root.tpl-hierarchy-tree.tpl-hierarchy-tree--portrait .tpl-hierarchy-tree__node--root {
@@ -81,15 +83,19 @@
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
-  line-height: 1;
-  white-space: nowrap;
+  line-height: 1.08;
+  white-space: normal;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
 .tpl-root.tpl-hierarchy-tree.tpl-hierarchy-tree--portrait .tpl-hierarchy-tree__node-note {
   font-size: 19px;
   color: var(--s-ink-muted, #7d7568);
   line-height: 1.3;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
 .tpl-root.tpl-hierarchy-tree.tpl-hierarchy-tree--portrait .tpl-hierarchy-tree__connector-row {
@@ -124,7 +130,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  align-items: flex-start;
+  align-items: stretch;
   width: 100%;
   gap: 16px;
 }
@@ -135,10 +141,61 @@
   align-items: center;
   gap: 0;
   flex: 1 1 0;
+  min-width: 0;
 }
 
 .tpl-root.tpl-hierarchy-tree.tpl-hierarchy-tree--portrait .tpl-hierarchy-tree__branch-tick {
   width: 1px;
   height: 32px;
   background: var(--s-border-strong, #3a3530);
+}
+
+/* A wrapped note makes the cards ragged, so the row sizes every card to the
+   tallest one and centres the type inside it. The row read as one rank of
+   equal cards while the text was `nowrap`; it must keep reading that way. */
+.tpl-root.tpl-hierarchy-tree.tpl-hierarchy-tree--portrait .tpl-hierarchy-tree__child-col .tpl-hierarchy-tree__node {
+  flex: 1 1 auto;
+  justify-content: center;
+  width: 100%;
+}
+
+/* ── Child-count-aware density ────────────────────────────────────────────
+   Portrait gives the row 592px of content width, and a node keeps 35px of
+   side padding — at four children that leaves 64px for the text, so a label
+   the length of "DEVFELLOWSHIP" breaks in the middle of the word. Wrapping
+   stops the clipping; it does not on its own make four columns legible.
+   As with the `table` row count (2e796d7), the DENSITY is chosen from the
+   child count with `:has()`, which the markup already carries. Each tier is
+   sized so a 13-character display word — the longest real label in the deck
+   this came from — fits its column on one line:
+
+     · 3 children → 188px column, 154px of text  → 26px label / 16px note
+     · 4 children → 140px column, 122px of text  → 21px label / 14px note
+
+   Two children keep the full 35px label: 216px of text needs no help. */
+.tpl-root.tpl-hierarchy-tree.tpl-hierarchy-tree--portrait .tpl-hierarchy-tree__children-row:has(> .tpl-hierarchy-tree__child-col:nth-child(3)) {
+  gap: 14px;
+}
+.tpl-root.tpl-hierarchy-tree.tpl-hierarchy-tree--portrait .tpl-hierarchy-tree__children-row:has(> .tpl-hierarchy-tree__child-col:nth-child(3)) .tpl-hierarchy-tree__node {
+  padding: 18px 16px;
+  min-width: 0;
+}
+.tpl-root.tpl-hierarchy-tree.tpl-hierarchy-tree--portrait .tpl-hierarchy-tree__children-row:has(> .tpl-hierarchy-tree__child-col:nth-child(3)) .tpl-hierarchy-tree__node-label {
+  font-size: 26px;
+}
+.tpl-root.tpl-hierarchy-tree.tpl-hierarchy-tree--portrait .tpl-hierarchy-tree__children-row:has(> .tpl-hierarchy-tree__child-col:nth-child(3)) .tpl-hierarchy-tree__node-note {
+  font-size: 16px;
+}
+.tpl-root.tpl-hierarchy-tree.tpl-hierarchy-tree--portrait .tpl-hierarchy-tree__children-row:has(> .tpl-hierarchy-tree__child-col:nth-child(4)) {
+  gap: 10px;
+}
+.tpl-root.tpl-hierarchy-tree.tpl-hierarchy-tree--portrait .tpl-hierarchy-tree__children-row:has(> .tpl-hierarchy-tree__child-col:nth-child(4)) .tpl-hierarchy-tree__node {
+  padding: 14px 8px;
+  min-width: 0;
+}
+.tpl-root.tpl-hierarchy-tree.tpl-hierarchy-tree--portrait .tpl-hierarchy-tree__children-row:has(> .tpl-hierarchy-tree__child-col:nth-child(4)) .tpl-hierarchy-tree__node-label {
+  font-size: 21px;
+}
+.tpl-root.tpl-hierarchy-tree.tpl-hierarchy-tree--portrait .tpl-hierarchy-tree__children-row:has(> .tpl-hierarchy-tree__child-col:nth-child(4)) .tpl-hierarchy-tree__node-note {
+  font-size: 14px;
 }

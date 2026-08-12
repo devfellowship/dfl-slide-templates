@@ -28,13 +28,26 @@
 
 .tpl-root.tpl-big-statement.tpl-big-statement--portrait > * { position: relative; z-index: 1; }
 
+/*
+ * Same `ch`-on-a-container defect as landscape: `max-width: 16ch` resolved
+ * against the inherited 16px and made a 161.5px column for 88px type. The
+ * measure moves to the statement, in `ch` of its own 88px type. It cannot stay
+ * 16ch: at 88px that is 637.9px and this canvas only has a 570px text box, so
+ * the honest transposition is 14ch = 558.1px, the widest measure that fits.
+ *
+ * `overflow-wrap: break-word` on the statement stops a long word painting
+ * outside a box the guard measures as inside. The measured limit: a word wider
+ * than 558.1px breaks mid-word, which starts at ~15 display characters — a
+ * 16-character "SUPERINTENDÊNCIA" (593.4px) breaks here, and does not in
+ * landscape.
+ */
 .tpl-root.tpl-big-statement.tpl-big-statement--portrait .tpl-big-statement__inner {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 37px;
   text-align: center;
-  max-width: 16ch;
+  width: 100%;
 }
 
 .tpl-root.tpl-big-statement.tpl-big-statement--portrait .tpl-big-statement__eyebrow {
@@ -53,5 +66,7 @@
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
   margin: 0;
+  max-width: 14ch;
+  overflow-wrap: break-word;
   text-wrap: balance;
 }

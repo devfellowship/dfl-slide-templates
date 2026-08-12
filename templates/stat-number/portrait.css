@@ -28,13 +28,24 @@
 
 .tpl-root.tpl-stat-number.tpl-stat-number--portrait > * { position: relative; z-index: 1; }
 
+/*
+ * Same defect as landscape, same fix: `max-width: 12ch` resolved against the
+ * 16px this element inherits, not against the 347px number it was written for,
+ * so the whole slide was laid out inside 121.1px. The measure moves to
+ * `__label`, in `ch` of the label's own 37px type (24ch = 560.2px); the column
+ * is the canvas less a 40px optical margin for the display number.
+ */
 .tpl-root.tpl-stat-number.tpl-stat-number--portrait .tpl-stat-number__inner {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   gap: 16px;
-  max-width: 12ch;
+  /* `flex: none` because the column is WIDER than the root's text box: a
+     flex item shrinks to the available 1088px/570px by default, which would
+     silently undo the optical margin. */
+  flex: none;
+  width: 640px;
 }
 
 .tpl-root.tpl-stat-number.tpl-stat-number--portrait .tpl-stat-number__eyebrow {
@@ -45,14 +56,33 @@
   color: var(--s-ink-muted, #7d7568);
 }
 
+/*
+ * Portrait is WIDTH-bound where landscape is HEIGHT-bound, and it is the
+ * orientation where the shipped size failed on the template's OWN kind of
+ * value: "91,3%" (2.466×) at 347px is 855.4px on a 720px canvas, so it stood
+ * 67.7px past BOTH edges — a single unbreakable token, which is why nobody saw
+ * it. Only the three-character sample ("73%", 610.2px) stayed on.
+ *
+ * The column is 640px, so the one-line budget is 640 / 2.466 = 259px. 248px
+ * keeps every value up to 2.58× on one line. Longer values wrap, and portrait
+ * has the height to absorb them: "R$ 160 mil" sets on three lines (610.1px,
+ * total column 970.8px inside the 1088px text box), and the measured worst
+ * case "Mais de 200 mil reais" on four (813.4px, total 1174.1px of 1280px).
+ *
+ * Same two riders as landscape: `overflow-wrap: break-word` so an unbreakable
+ * token breaks inside the column instead of leaving the canvas, and greedy
+ * wrapping on the value rather than the label's `text-wrap: balance`.
+ */
 .tpl-root.tpl-stat-number.tpl-stat-number--portrait .tpl-stat-number__value {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 347px;
+  font-size: 248px;
   font-weight: var(--p-weight-700, 700);
   line-height: 0.82;
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-brand-fg, #f0a872);
   font-feature-settings: "tnum" 1;
+  max-width: 100%;
+  overflow-wrap: break-word;
 }
 
 .tpl-root.tpl-stat-number.tpl-stat-number--portrait .tpl-stat-number__label {
@@ -60,6 +90,7 @@
   line-height: 1.35;
   color: var(--s-ink-secondary, #c9c0b4);
   margin: 16px 0 0;
+  max-width: 24ch;
   text-wrap: balance;
 }
 

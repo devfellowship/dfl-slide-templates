@@ -1,6 +1,13 @@
 {
   "$schema_version": "2",
   "meta_doc": "Each template carries discoverability metadata so an authoring LLM (via the studio MCP list_templates tool) can pick the right template from a course-author intent WITHOUT fetching every config. Fields: when_to_use (intent triggers — when the LLM SHOULD reach for this), avoid_when (anti-patterns), media_profile (text-heavy|balanced|image-first|image-only|video|data|code|diagram), text_density (none|low|medium|high), layout (one-line shape), tags (free keywords for matching). Full slot schema stays in each templates/<id>/config.yaml and is returned by get_template.",
+  "themes_doc": "The themes a deck can be rendered in. This array is the SOURCE OF TRUTH — consumers read it instead of hardcoding theme ids (dfl-lesson-studio's theme picker did hardcode ['default','devfellowship'], which is why two brands were unreachable from the UI). A theme is a token-only stylesheet at themes/<id>.css, scoped under .tpl-root, that every template reads through var(--s-*) / var(--p-*); adding a theme is ONE entry here plus ONE CSS file, and no application change. 'mode' is light|dark and is advisory for the host chrome around the slide — the slide itself always paints its own surface from --s-surface-page. scripts/check-theme.ts renders every template in every theme listed here, so an entry added without a complete CSS file fails CI.",
+  "themes": [
+    { "id": "default",       "name": "Default",       "file": "themes/default.css",       "mode": "light" },
+    { "id": "devfellowship", "name": "DevFellowship", "file": "themes/devfellowship.css", "mode": "dark" },
+    { "id": "itera",         "name": "Itera",         "file": "themes/itera.css",         "mode": "dark" },
+    { "id": "revera",        "name": "Revera",        "file": "themes/revera.css",        "mode": "dark" }
+  ],
   "templates": [
     {
       "id": "title",

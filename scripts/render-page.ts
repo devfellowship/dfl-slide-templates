@@ -49,12 +49,44 @@ export interface RegistryEntry {
   category: string;
 }
 
+/**
+ * A theme, as declared by `registry.json`. Consumers (dfl-lesson-studio's
+ * theme picker, this repo's guards) read the list from there instead of
+ * hardcoding theme ids — adding a theme is one entry plus one CSS file.
+ */
+export interface RegistryTheme {
+  id: string;
+  name: string;
+  file: string;
+  mode: "light" | "dark";
+}
+
 export interface Registry {
   templates: RegistryEntry[];
+  themes: RegistryTheme[];
 }
 
 export function readRegistry(): Registry {
   return JSON.parse(fs.readFileSync(REGISTRY_PATH, "utf8"));
+}
+
+/**
+ * The declared themes, from `registry.json`.
+ *
+ * This is the ONLY list. `scripts/theme.config.json` carries the per-theme
+ * contract (forbidden colours, exceptions) and is checked against this list,
+ * so a theme cannot be added to one and forgotten in the other.
+ */
+export function readThemes(): RegistryTheme[] {
+  const themes = readRegistry().themes;
+  if (!Array.isArray(themes) || themes.length === 0) {
+    throw new Error(
+      "registry.json has no non-empty `themes` array. It is the source of " +
+        "truth for which themes exist; the guards and dfl-lesson-studio's " +
+        "theme picker both read it."
+    );
+  }
+  return themes;
 }
 
 /**
@@ -68,6 +100,11 @@ export function readRegistry(): Registry {
  * exactly like the deck runtime does (dfl-lesson-studio fetches
  * `themes/<themeId>.css` and prepends it — see `fetchTemplateAssets.ts`).
  *
+ * THEME_ID is the theme the PREVIEWS and the showcase render in — the DFL
+ * house theme. It is not "the" theme: `buildHtmlPage` takes a themeId, and
+ * `check-theme.ts` sweeps every theme declared in `registry.json` so that a
+ * template is proven to adapt to all of them, not just this one.
+ *
  * History: this used to be gated by two hand-maintained allowlists
  * (DARK_TEMPLATES / DS_REDESIGN_TEMPLATES). They went stale — nine templates
  * added in the 2026-06-24 batch consumed `--s-*` tokens but were never added
@@ -79,7 +116,8 @@ export const THEME_ID = "devfellowship";
 
 export function buildHtmlPage(
   templateId: string,
-  orientation: Orientation
+  orientation: Orientation,
+  themeId: string = THEME_ID
 ): string {
   const dir = path.join(REPO_ROOT, "templates", templateId);
   const htmlTemplate = fs.readFileSync(
@@ -90,7 +128,7 @@ export function buildHtmlPage(
   const data = SAMPLE_DATA[templateId] ?? {};
   const renderedHtml = Mustache.render(htmlTemplate, data);
   const themeCss = fs.readFileSync(
-    path.join(REPO_ROOT, "themes", `${THEME_ID}.css`),
+    path.join(REPO_ROOT, "themes", `${themeId}.css`),
     "utf8"
   );
 

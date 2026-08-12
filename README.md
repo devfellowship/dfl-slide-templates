@@ -18,15 +18,17 @@ templates/
     preview-portrait.png  # auto-generated preview (do not edit by hand)
 scripts/
   preview-gen.ts          # Playwright screenshot script
-  lint-css.mjs            # CSS scoping + canvas + theme-token linter
+  lint-css.mjs            # CSS scoping + canvas + theme-token/completeness linter
   check-canvas.ts         # runtime guard: does .tpl-root fill the canvas?
-  check-theme.ts          # runtime guard: is the slide on the DFL theme?
+  check-theme.ts          # runtime guard: every template × every theme
   canvas.config.json      # canonical design canvas + fluid-template allowlist
-  theme.config.json       # theme contract: brand families, page surface, exceptions
+  theme.config.json       # per-theme contract: brand families, forbidden colours, exceptions
 themes/
+  default.css             # complete LIGHT theme
   devfellowship.css       # the DFL Design System tokens (see "Theming" below)
-  default.css             # legacy light theme (--slide-* aliases only)
-registry.json             # master list of all templates
+  itera.css               # DFL sub-brand · evergreen accent
+  revera.css              # DFL sub-brand · trust-blue accent
+registry.json             # master list of all templates AND all themes
 ```
 
 ---
@@ -109,10 +111,52 @@ Additional rules enforced by the CSS linter (`npm run lint:css`):
 
 ## Theming
 
-`themes/devfellowship.css` is the CSS implementation of the DFL brand guide at
-<https://brand.devfellowship.com> (machine-readable mirror: `/llms.txt`). It is
-the **source of truth for how a slide looks** — templates read its tokens and
-never restate its values.
+A theme is a **token-only** stylesheet at `themes/<id>.css`, scoped under
+`.tpl-root`. It is the CSS implementation of a brand guide; templates read its
+tokens and never restate its values. `themes/devfellowship.css` implements the
+DFL guide at <https://brand.devfellowship.com> (machine-readable mirror:
+`/llms.txt`) and is the house theme the previews render in.
+
+### The themes are DATA, not a hardcoded list
+
+`registry.json` carries a top-level `themes` array, and that array is the
+**source of truth**:
+
+```json
+"themes": [
+  { "id": "default",       "name": "Default",       "file": "themes/default.css",       "mode": "light" },
+  { "id": "devfellowship", "name": "DevFellowship", "file": "themes/devfellowship.css", "mode": "dark" },
+  { "id": "itera",         "name": "Itera",         "file": "themes/itera.css",         "mode": "dark" },
+  { "id": "revera",        "name": "Revera",        "file": "themes/revera.css",        "mode": "dark" }
+]
+```
+
+**Adding a theme is one entry here plus one CSS file — no application change.**
+Consumers read the array instead of hardcoding ids; `dfl-lesson-studio` did
+hardcode `['default','devfellowship']`, which is why two brands were
+unreachable from its theme picker. `mode` is advisory for the host chrome
+*around* the slide — the slide itself always paints its own surface from
+`--s-surface-page`.
+
+`npm run check:theme` renders every template in every theme listed here, so an
+entry added without a complete stylesheet fails CI rather than shipping a
+half-painted brand.
+
+| id | mode | accent | guide |
+|----|------|--------|-------|
+| `default` | light | azure `#2563eb` | — (the neutral house-agnostic theme) |
+| `devfellowship` | dark | amber `#E07A4A` | <https://brand.devfellowship.com> |
+| `itera` | dark | evergreen `#3FD17F` | <https://brand.devfellowship.com/itera> |
+| `revera` | dark | trust-blue `#3D8FE0` | <https://brand.devfellowship.com/revera> |
+
+`itera` and `revera` are DFL sub-brands: they **inherit the DFL dark surfaces
+and the DFL typography** and change only the accent, exactly as their guides
+require ("Surface Itera nunca redefine `--bg`, `--panel` ou `--ink`"). Each
+guide also names colours that must never appear on that brand's surface — DFL
+amber on Itera, Itera green on Revera — and those lists are enforced, see
+"Checks" below.
+
+### The three-layer token architecture
 
 | Need | Token |
 |------|-------|
@@ -122,6 +166,8 @@ never restate its values.
 | Hairlines / dividers | `--s-border-subtle`, `--s-border-strong` |
 | Accent (the only one) | `--s-brand-solid`, `--s-brand-fg`, `--s-brand-subtle`, `--s-brand-border` |
 | State | `--s-success-*`, `--s-warning-*`, `--s-danger-*`, `--s-info-*` |
+| Text over a PHOTOGRAPH | `--s-ink-on-media`, `--s-ink-on-media-muted`, `--s-brand-on-media` |
+| Dotted page texture | `--s-texture-dot`, `--s-texture-dot-size` |
 | Display type (h1/h2, ≥22px) | `--s-font-display` — Barlow Condensed |
 | Body / UI type | `--s-font-body` — Inter |
 | Meta / labels / data | `--s-font-mono` — JetBrains Mono |
@@ -136,7 +182,20 @@ color:       var(--s-ink-secondary, #c9c0b4);
 font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
 ```
 
-Two rules that are easy to get wrong:
+⚠️ **That fallback is load-bearing AND dangerous.** The literal is always the
+DevFellowship value, so a token a theme forgets to define does not fail loudly
+— the template quietly paints the DFL colour under your theme. That is not
+hypothetical: until 2026-08-12 `themes/default.css` defined none of the
+semantic tokens, and a deck set to "Default" rendered in DevFellowship dark
+while every check passed. Hence rule 7 and the per-theme runtime sweep below:
+**a theme must define every token any template reads.**
+
+Use `--s-ink-on-media*` for text that sits over a photograph rather than over a
+surface. A media scrim is dark in *every* theme (a photograph is not a themed
+surface), so the ink over it stays light even on the light theme — reaching for
+`--s-ink-primary` there paints a dark title on a dark photograph.
+
+Three rules that are easy to get wrong:
 
 - **Never `background: transparent` on `.tpl-root`.** The host deck paints its
   own per-slide colour behind the slide; a transparent root leaks it. This is
@@ -144,12 +203,16 @@ Two rules that are easy to get wrong:
   near-black deck.
 - **Never a bare `font-family`.** Restating `'Inter', system-ui, …` looks right
   today and silently stops following the brand tomorrow.
+- **Never a bare brand-tinted `rgba()`.** `rgba(224, 122, 74, 0.22)` is legal
+  under the "translucent is a compositing value" exemption and still pins an
+  amber hairline onto every brand. Use `--s-brand-subtle` / `--s-brand-border`
+  / `--s-brand-ring`, or the `--s-success-*` / `--s-danger-*` tints.
 
-Both are enforced — statically by `npm run lint:css` (rules 5 and 6) and at
-runtime by `npm run check:theme`, which renders every template over a hostile
-magenta page and reads back the computed styles. Genuine exceptions go in
-`scripts/theme.config.json` with a written rationale (today: `blank`, the
-true-black recording backdrop).
+All three are enforced — statically by `npm run lint:css` (rules 5, 6 and 7)
+and at runtime by `npm run check:theme`, which renders every template in every
+theme over a hostile magenta page and reads back the computed styles. Genuine
+exceptions go in `scripts/theme.config.json` with a written rationale (today:
+`blank`, the true-black recording backdrop).
 
 ### Viewport sizes
 
@@ -177,6 +240,25 @@ Use absolute `px` dimensions on `.tpl-root` so screenshots are pixel-perfect.
 
 ---
 
+## Adding a new theme
+
+1. Copy `themes/devfellowship.css` to `themes/<id>.css` and change the values.
+   Keep the block order — the files are meant to diff line-for-line.
+2. Define **every** token in the contract. `npm run lint:css` prints the exact
+   list of any you missed; there is no partial theme, only a theme that
+   silently repaints part of DevFellowship.
+3. Keep the three `.dfl-*` chassis rules, including `flex-shrink: 0` and
+   `min-height: 1px` on `.dfl-section-rule` — templates emit those classes in
+   their markup and only the theme styles them.
+4. Add one entry to `themes` in `registry.json`.
+5. Add one `themes.<id>` entry to `scripts/theme.config.json` listing the
+   colours forbidden on that brand, each with the guide sentence that says so.
+6. `npm run lint:css && npm run check:theme`.
+
+No application code changes. Consumers read the `themes` array.
+
+---
+
 ## Generating previews
 
 ```bash
@@ -192,15 +274,44 @@ Preview images are saved as `templates/<id>/preview-landscape.png` and `template
 ## Checks
 
 ```bash
-npm run lint:css      # static: scoping, @layer, :host, canvas, theme tokens
+npm run lint:css      # static: scoping, @layer, :host, canvas, theme tokens, theme completeness
 npm run check:canvas  # runtime: does .tpl-root fill 1280x720 / 720x1280?
-npm run check:theme   # runtime: is the slide painted with the DFL theme?
+npm run check:theme   # runtime: every template × EVERY theme (368 renders today)
 ```
 
 Each invariant is guarded twice on purpose — once statically (fast, no browser)
 and once at runtime against the real computed layout/styles, because a static
 parse can be fooled by a later override, a transform or an inherited value.
 All three exit 1 on failure and all three run in CI.
+
+### What `check:theme` asserts
+
+It renders **every template × every theme × both orientations** over a hostile
+magenta page, then reads back computed styles. Per render:
+
+1. **Surface** — `.tpl-root` is opaque and its background is *this* theme's
+   `--s-surface-page`, read back from the injected CSS rather than hardcoded.
+2. **Ink** — every text colour is a value *this* theme defines.
+3. **Accent** — a template whose CSS reads `--s-brand-*` actually paints one of
+   this theme's accent values, so an Itera render shows evergreen and a Revera
+   render shows trust-blue.
+4. **No cross-brand leak** — no rendered colour is in this theme's forbidden
+   set. Accents are matched at any alpha (a tint is a palette entry); DFL dark
+   surfaces are matched only when opaque, because a translucent scrim over a
+   photograph is a compositing value and is correct in every theme.
+5. **Fonts** — every text element resolves to one of the four brand families.
+6. **Completeness** — every token any template reads resolves to a non-empty
+   value. This is also the only check that catches a theme file a *browser*
+   drops: write an asterisk-slash inside a CSS comment and the comment ends
+   early, error-recovery swallows the whole `.tpl-root` block, and a textual
+   token scan still finds every definition in the file.
+
+Run one theme for a fast local loop: `npm run check:theme -- --theme itera`.
+
+The forbidden sets and the exceptions live in `scripts/theme.config.json`, one
+entry per theme, each with the sentence from the brand guide that justifies it.
+`lint:css` fails if `registry.json` and `theme.config.json` disagree about which
+themes exist, so a theme cannot be added to one and forgotten in the other.
 
 ---
 

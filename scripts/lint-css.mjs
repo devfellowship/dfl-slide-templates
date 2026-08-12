@@ -11,7 +11,11 @@
  *  5. No hardcoded colour or font-family. Every colour and every type family
  *     must come from a theme token — `var(--token, <fallback>)`. See THEME_NOTE.
  *  6. Every `--s-*` / `--p-*` token a template reads must actually exist in
- *     the theme file. Catches typo'd token names that silently fall back.
+ *     at least one theme file. Catches typo'd token names that silently fall back.
+ *  7. THEME COMPLETENESS — every one of those tokens must be defined by EVERY
+ *     theme in registry.json, every theme must style the three shared .dfl-*
+ *     chassis classes, and registry.json and theme.config.json must name the
+ *     same themes. See lintThemes() for why a partial theme fails silently.
  *
  * Plus rule 0, which runs once and is about the config rather than any single
  * file: canvas.config.json must be internally coherent (portrait == landscape
@@ -78,15 +82,40 @@ const THEME = JSON.parse(
   readFileSync(join(__dirname, "theme.config.json"), "utf8")
 );
 
-/** Token names the theme actually defines, e.g. "--s-surface-page". */
-const THEME_TOKENS = new Set(
-  [...readFileSync(join(REPO_ROOT, THEME.themeFile), "utf8").matchAll(
-    /(--[a-z0-9-]+)\s*:/gi
-  )].map((m) => m[1])
+const REGISTRY = JSON.parse(readFileSync(join(REPO_ROOT, "registry.json"), "utf8"));
+
+/**
+ * Every theme, from `registry.json` — the source of truth for which themes
+ * exist. Rule 6 is checked against ALL of them, because a token defined by one
+ * theme and missing from another is invisible: the template falls back to its
+ * var() literal, which is always the DevFellowship value, so the render looks
+ * fine on DFL and wears DFL's colours on every other brand.
+ */
+const THEMES = REGISTRY.themes;
+
+/** Token names a given theme file defines, e.g. "--s-surface-page". */
+function tokensOf(themeFile) {
+  return new Set(
+    [...readFileSync(join(REPO_ROOT, themeFile), "utf8").matchAll(
+      /(--[a-z0-9-]+)\s*:/gi
+    )].map((m) => m[1])
+  );
+}
+
+/**
+ * The union of what every theme defines. Rule 6 uses this to answer "is this
+ * token a typo?", and lintThemes() separately answers "does EVERY theme define
+ * it?" — two different questions with two different error messages.
+ */
+const ANY_THEME_TOKENS = new Set(
+  THEMES.flatMap((t) => [...tokensOf(t.file)])
 );
 
+const HOUSE_THEME_FILE =
+  THEMES.find((t) => t.id === "devfellowship")?.file ?? THEMES[0].file;
+
 const THEME_NOTE = `
-  Colours and type families are owned by the theme (${THEME.themeFile}), which is
+  Colours and type families are owned by the theme (${HOUSE_THEME_FILE}), which is
   the CSS implementation of https://brand.devfellowship.com. A template that
   restates a value instead of reading the token stops following the brand the
   moment the brand moves — and, worse, a template that declares no colour at
@@ -286,19 +315,147 @@ function lintThemeTokens(filePath, strippedSrc, rel, errors) {
   }
 }
 
-/** Rule 6 — every token read must exist in the theme. */
+/** Rule 6 — every token read must exist in at least one theme (typo check). */
 function lintTokenExistence(strippedSrc, rel, errors) {
   const seen = new Set();
   for (const m of strippedSrc.matchAll(/var\(\s*(--[a-z0-9-]+)/gi)) {
     const token = m[1];
-    if (THEME_TOKENS.has(token) || seen.has(token)) continue;
+    if (ANY_THEME_TOKENS.has(token) || seen.has(token)) continue;
     seen.add(token);
     errors.push(
-      `${rel}: reads token "${token}", which ${THEME.themeFile} does not define — ` +
-        `it will silently fall back and drift from the brand. Fix the name or ` +
-        `add the token to the theme.`
+      `${rel}: reads token "${token}", which NO theme defines — it will ` +
+        `silently fall back to its literal and drift from the brand. Fix the ` +
+        `name, or add the token to every theme in themes/.`
     );
   }
+}
+
+/**
+ * Rule 7 — THEME COMPLETENESS. Every token any template reads must be defined
+ * by EVERY theme, and every theme must carry the shared slide chassis.
+ *
+ * This is the static half of the invariant whose runtime half is
+ * `check-theme.ts`. It is the rule that would have caught the 2026-08-12 bug
+ * without a browser: themes/default.css defined seven --slide-* aliases and
+ * none of the 34 semantic tokens templates read, so a deck on the "default"
+ * theme fell back to the DevFellowship literal on every single element and
+ * rendered dark. Nothing failed. The theme picker looked inert.
+ *
+ * It also checks the two things a theme can lose by being written from scratch:
+ *   · the three .dfl-* chassis classes, which templates emit in their MARKUP
+ *     (kpi, steps, image-row) and which are styled ONLY by the theme — a theme
+ *     without them silently drops a slide's eyebrow, title and hairline;
+ *   · the `flex-shrink: 0` + `min-height` floor on .dfl-section-rule, without
+ *     which that hairline can land on a sub-pixel height and abort the whole
+ *     PDF export (html2canvas createPattern on a 0-width canvas, 2026-08-04).
+ *
+ * What this rule CANNOT see: a theme file a browser refuses to parse. An
+ * asterisk-slash inside a CSS comment closes it early, error-recovery swallows
+ * the following rule whole, and this textual scan still finds every token in
+ * the file. Only check-theme.ts, which asks a real browser to resolve them,
+ * catches that. Hence both halves.
+ */
+function lintThemes() {
+  const errors = [];
+
+  // The contract: the union of every --s-* / --p-* token the templates read.
+  const contract = new Set();
+  for (const file of findCssFiles(join(REPO_ROOT, "templates"))) {
+    const src = readFileSync(file, "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+    for (const m of src.matchAll(/var\(\s*(--[sp]-[a-z0-9-]+)/gi)) contract.add(m[1]);
+  }
+
+  const CHASSIS = [".dfl-eyebrow", ".dfl-section-title", ".dfl-section-rule"];
+
+  // registry.json and theme.config.json must name the same themes.
+  const configured = Object.keys(THEME.themes ?? {});
+  for (const t of THEMES) {
+    if (!configured.includes(t.id))
+      errors.push(
+        `scripts/theme.config.json has no "themes.${t.id}" contract, but ` +
+          `registry.json declares that theme. Add its forbidden colours (the ` +
+          `other brands' accents, per their brand guides) so check-theme.ts can ` +
+          `assert against it.`
+      );
+  }
+  for (const id of configured) {
+    if (!THEMES.some((t) => t.id === id))
+      errors.push(
+        `scripts/theme.config.json configures theme "${id}", which registry.json ` +
+          `does not declare. registry.json is the source of truth — either add ` +
+          `it there (plus themes/${id}.css) or drop the contract.`
+      );
+  }
+
+  for (const theme of THEMES) {
+    const rel = theme.file;
+    let src;
+    try {
+      src = readFileSync(join(REPO_ROOT, rel), "utf8");
+    } catch {
+      errors.push(
+        `registry.json declares theme "${theme.id}" with file ${rel}, which does ` +
+          `not exist. A declared theme with no stylesheet leaves every token ` +
+          `unresolved, i.e. every slide rendered in DevFellowship colours.`
+      );
+      continue;
+    }
+    const stripped = src.replace(/\/\*[\s\S]*?\*\//g, "");
+
+    // The token block must be a rule whose selector is EXACTLY `.tpl-root`.
+    // Requiring the exact selector is what makes a prematurely-closed comment
+    // detectable here: the stray comment text ends up glued onto the front of
+    // the selector, so it stops being exactly `.tpl-root`.
+    const selectors = [];
+    for (const m of stripped.matchAll(/([^{}]+)\{([^{}]*)\}/g))
+      selectors.push(m[1].trim().replace(/\s+/g, " "));
+    if (!selectors.includes(".tpl-root"))
+      errors.push(
+        `${rel}: no rule with the exact selector ".tpl-root" — the token block ` +
+          `must be one. Found: ${selectors.slice(0, 4).join(" | ")}. If the ` +
+          `selector looks like prose glued to ".tpl-root", a CSS comment above ` +
+          `it was closed early by an asterisk-slash in its text.`
+      );
+
+    const defined = tokensOf(rel);
+    const missing = [...contract].filter((t) => !defined.has(t)).sort();
+    if (missing.length)
+      errors.push(
+        `${rel}: theme "${theme.id}" does not define ${missing.length} of ` +
+          `${contract.size} tokens that templates read — ${missing.join(", ")}.\n` +
+          `      Templates read every token as var(--token, <DevFellowship ` +
+          `literal>). An undefined token therefore does NOT fail: it paints the ` +
+          `DevFellowship colour under your theme. Define every token, or the ` +
+          `theme is a partial repaint of DFL.`
+      );
+
+    for (const cls of CHASSIS)
+      if (!stripped.includes(cls))
+        errors.push(
+          `${rel}: theme "${theme.id}" does not style "${cls}". Templates emit ` +
+            `that class in their markup (kpi, steps, image-row) and only the ` +
+            `theme styles it, so switching to this theme would drop it from the ` +
+            `slide with no error anywhere.`
+        );
+
+    const ruleBlock = stripped.match(
+      /\.tpl-root\s+\.dfl-section-rule\s*\{([^}]*)\}/
+    );
+    if (ruleBlock) {
+      const body = ruleBlock[1];
+      if (!/flex-shrink:\s*0/.test(body) || !/min-height:\s*1px/.test(body))
+        errors.push(
+          `${rel}: .dfl-section-rule must keep BOTH "flex-shrink: 0" and ` +
+            `"min-height: 1px". It is a 1px flex item inside fixed-height ` +
+            `column layouts (steps, image-row); without the floor an overflowing ` +
+            `slide shrinks it into (0, 1)px, and html2canvas then calls ` +
+            `createPattern on a 0-width canvas and aborts the ENTIRE PDF export ` +
+            `(2026-08-04, deck "Itera — Trinidad and Tobago").`
+        );
+    }
+  }
+
+  return errors;
 }
 
 function lintFile(filePath) {
@@ -371,7 +528,7 @@ if (cssFiles.length === 0) {
   process.exit(0);
 }
 
-let allErrors = lintCanvasConfig();
+let allErrors = lintCanvasConfig().concat(lintThemes());
 for (const f of cssFiles) {
   allErrors = allErrors.concat(lintFile(f));
 }

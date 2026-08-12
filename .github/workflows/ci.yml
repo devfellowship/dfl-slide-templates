@@ -56,12 +56,15 @@ jobs:
       - name: Check canvas fill
         run: npm run check:canvas
 
-      # Renders every template with the devfellowship theme over a deliberately
-      # hostile page colour and reads back computed styles. Catches the class of
-      # bug the static rules cannot see: a transparent .tpl-root that lets the
-      # host deck's own slide colour through (how `table` shipped navy blue in a
-      # near-black deck), and off-brand type families arriving by inheritance.
-      - name: Check theme conformance
+      # Renders every template in EVERY theme declared by registry.json, both
+      # orientations, over a deliberately hostile page colour, and reads back
+      # computed styles. Catches the classes of bug the static rules cannot see:
+      # a transparent .tpl-root that lets the host deck's own slide colour
+      # through (how `table` shipped navy blue in a near-black deck), off-brand
+      # type families arriving by inheritance, and — since 2026-08-12 — a theme
+      # that leaves tokens undefined so every template falls back to the
+      # DevFellowship literal and the deck renders in the wrong brand.
+      - name: Check theme conformance (every template × every theme)
         run: npm run check:theme
 
       - name: Generate previews

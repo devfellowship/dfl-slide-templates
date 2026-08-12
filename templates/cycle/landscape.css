@@ -21,7 +21,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
   background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
@@ -88,8 +88,8 @@
 
 .tpl-root.tpl-cycle .tpl-cycle__stage:first-child .tpl-cycle__stage-node {
   border-color: var(--s-brand-solid, #E07A4A);
-  background: rgba(224, 122, 74, 0.10);
-  box-shadow: 0 0 32px rgba(224, 122, 74, 0.15);
+  background: var(--s-brand-subtle, rgba(224, 122, 74, 0.10));
+  box-shadow: 0 0 32px var(--s-brand-border, rgba(224, 122, 74, 0.22));
 }
 
 .tpl-root.tpl-cycle .tpl-cycle__stage-label {

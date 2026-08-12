@@ -138,7 +138,9 @@ export const SAMPLE_DATA: Record<string, Record<string, unknown>> = {
     imageUrl:
       "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1600&auto=format&fit=crop",
     fit: "cover",
-    bg: "#0A0908",
+    // No `bg`: the letterbox colour then comes from the CSS rule, which reads
+    // var(--s-surface-page) and so follows whichever theme is injected. Passing a
+    // hex here would pin every preview and every theme render to DFL sand-950.
     imageAlt: "A glowing network of connected nodes filling the slide",
   },
   "big-image": {

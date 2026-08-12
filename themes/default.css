@@ -1,22 +1,302 @@
-/* dfl-slide-templates: default theme
- * Pixel-accurate freeze of the original hardcoded values.
- * Inject this before any template CSS so --vars resolve.
+/* dfl-slide-templates: default theme (LIGHT)
+ * --------------------------------------------------------------------
+ * A complete light theme. Same three-layer token architecture as
+ * themes/devfellowship.css, and the same block order, so the two files
+ * diff line-for-line:
+ *   1. PRIMITIVE — raw scales (--p-sand-*, --p-azure-*, --p-text-14, …)
+ *   2. SEMANTIC — intent (--s-surface-page, --s-ink-primary, --s-brand-solid)
+ *   3. LEGACY ALIAS — the seven --slide-* shims, at their original values.
  *
- * GOTCHA (noted 2026-08-05): `.dfl-section-rule` — emitted by the `steps` and
- * `kpi` templates — is styled ONLY by themes/devfellowship.css. Under THIS
- * theme it has no height and no background, so the separator those templates
- * draw is simply invisible. That is a consequence of this file being a frozen
- * snapshot of the pre-theme hardcoded values, not an oversight to patch
- * casually: giving it a height here would change how every existing
- * default-theme deck renders. Flagged so the next person who finds a missing
- * hairline in a default-theme deck knows where it went.
- */
+ * Plus the shared "slide chassis" utilities (.dfl-eyebrow,
+ * .dfl-section-title, .dfl-section-rule) — a template that uses them must
+ * not lose them by switching theme.
+ *
+ * WHAT THIS FILE USED TO BE, AND WHY IT CHANGED (2026-08-12, on Tainan's
+ * request). Until today this file was a "pixel-accurate freeze of the
+ * original hardcoded values": seven --slide-* aliases and NOT ONE semantic
+ * or primitive token. Every template reads its semantic tokens as
+ * `var(--s-token, <literal>)`, and every one of those literals is the
+ * DevFellowship DARK value. So under the default theme all 34 semantic
+ * tokens were unresolved, every template fell back to the DFL dark literal,
+ * and a deck set to "Default" rendered in DevFellowship dark — the theme
+ * picker looked like it did nothing. That was the bug. Ending the freeze IS
+ * the fix; the change to how default-theme decks render is deliberate, and
+ * it is the point.
+ *
+ * The seven --slide-* values are unchanged, so anything reading those still
+ * gets exactly what it got before.
+ *
+ * Contrast: every ink-on-surface pair defined below clears WCAG AA for body
+ * text (>= 4.5:1). The lowest pair in the theme is --s-brand-solid as text
+ * on --s-surface-elevated at 4.56:1.
+ *
+ * v1 — 2026-08-12 · light theme, was a frozen alias file.
+ * -------------------------------------------------------------------- */
+
+/* ─── 1 · PRIMITIVES ──────────────────────────────────────────────── */
 .tpl-root {
-  --slide-primary: #3b82f6;
-  --slide-bg: #ffffff;
-  --slide-text: #1f2937;
-  --slide-heading-color: #111827;
-  --slide-border: #e5e7eb;
-  --slide-font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  /* Color · Sand (the neutral ramp)
+   *
+   * --p-sand-* is the CROSS-THEME NAME of the neutral ramp: `code-output`
+   * and `screenshot-frame` read --p-sand-500 directly, so the name is part
+   * of the contract and every theme must define it. Under this theme the
+   * values are cool near-neutrals rather than the DFL warm sand; the ramp
+   * keeps its direction (50 lightest -> 950 darkest), and the SEMANTIC layer
+   * below reads it from the opposite end. */
+  --p-sand-50:   #ffffff;
+  --p-sand-100:  #f8f9fb;
+  --p-sand-200:  #f3f5f8;
+  --p-sand-300:  #eef1f5;
+  --p-sand-400:  #e5e7eb;
+  /* Deliberately low-contrast: it is --s-border-strong and the window-chrome
+   * dot in `code-output` / `screenshot-frame`. DFL's own sand-500 sits at
+   * ~1.9:1 on its raised surface, so a quiet grey here is faithful, not weak.
+   * Neither role renders text. */
+  --p-sand-500:  #b8bfc9;
+  --p-sand-600:  #5f6b7a;
+  --p-sand-700:  #4b5563;
+  --p-sand-800:  #374151;
+  --p-sand-850:  #1f2937;
+  --p-sand-900:  #111827;
+  --p-sand-950:  #030712;
+
+  /* Color · Azure (brand)
+   *
+   * The historical default accent is #3b82f6, kept at the 500 stop and still
+   * the value of the legacy --slide-primary alias. It is NOT --s-brand-solid:
+   * #3b82f6 on white is 3.68:1, which fails AA for body text, and templates
+   * do paint text with --s-brand-solid (`chapter-image`, `cycle`, `roadmap`).
+   * --s-brand-solid is the 600 stop, 5.17:1 on the page and 4.56:1 on the
+   * darkest surface. */
+  --p-azure-50:  #eff6ff;
+  --p-azure-100: #dbeafe;
+  --p-azure-200: #bfdbfe;
+  --p-azure-300: #93c5fd;
+  --p-azure-400: #60a5fa;
+  --p-azure-500: #3b82f6;
+  --p-azure-600: #2563eb;
+  --p-azure-700: #1d4ed8;
+  --p-azure-800: #1e40af;
+  --p-azure-900: #1e3a8a;
+
+  /* Color · Status
+   *
+   * Every stop below is chosen to clear AA as TEXT on the darkest surface
+   * (--p-sand-300), because templates use these tokens for text as well as
+   * for fills: `checklist`, `code-output` and `pros-cons` all set
+   * `color: var(--s-success-solid)`. On a white page a true yellow cannot
+   * clear AA as text, so the warning ramp is a deep ochre. */
+  --p-green-400: #146c34;
+  --p-green-500: #115a2a;
+  --p-yellow-400: #a34608;
+  --p-yellow-500: #8a3a06;
+  --p-blue-400:  #15607a;
+  --p-blue-500:  #0f4d63;
+  --p-red-400:   #cf2020;
+  --p-red-500:   #b91c1c;
+
+  /* Type · families — the four brand families, unchanged across every theme.
+   * A theme changes colour, never type (brand guide ch. 06). */
+  --p-font-display: 'Barlow Condensed', 'Inter', system-ui, sans-serif;
+  --p-font-sans:    'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --p-font-mono:    'JetBrains Mono', ui-monospace, 'SF Mono', monospace;
+  --p-font-editorial: Georgia, 'Times New Roman', serif;
+
+  /* Type · sizes (px) */
+  --p-text-10: 10px;
+  --p-text-11: 11px;
+  --p-text-12: 12px;
+  --p-text-13: 13px;
+  --p-text-14: 14px;
+  --p-text-15: 15px;
+  --p-text-16: 16px;
+  --p-text-18: 18px;
+  --p-text-20: 20px;
+  --p-text-24: 24px;
+  --p-text-32: 32px;
+  --p-text-40: 40px;
+
+  --p-weight-400: 400;
+  --p-weight-500: 500;
+  --p-weight-600: 600;
+  --p-weight-700: 700;
+
+  --p-leading-tight:   1.2;
+  --p-leading-snug:    1.4;
+  --p-leading-normal:  1.55;
+  --p-leading-relaxed: 1.7;
+
+  --p-tracking-tight:  -0.4px;
+  --p-tracking-normal: 0;
+  --p-tracking-wide:   0.5px;
+  --p-tracking-wider:  0.8px;
+
+  /* Spacing · 4px base */
+  --p-space-1:  4px;
+  --p-space-2:  8px;
+  --p-space-3:  12px;
+  --p-space-4:  16px;
+  --p-space-5:  20px;
+  --p-space-6:  24px;
+  --p-space-8:  32px;
+  --p-space-10: 40px;
+  --p-space-12: 48px;
+  --p-space-16: 64px;
+
+  --p-radius-sm:   4px;
+  --p-radius-md:   6px;
+  --p-radius-lg:   10px;
+  --p-radius-xl:   14px;
+  --p-radius-pill: 999px;
+
+  /* ─── 2 · SEMANTIC ────────────────────────────────────────────── */
+  /* The surfaces read the LIGHT end of the ramp and the ink reads the DARK
+   * end — the same lines as themes/devfellowship.css, mirrored. */
+  --s-surface-page:     var(--p-sand-50);
+  --s-surface-panel:    var(--p-sand-100);
+  --s-surface-raised:   var(--p-sand-200);
+  --s-surface-elevated: var(--p-sand-300);
+
+  --s-border-subtle: var(--p-sand-400);
+  --s-border-strong: var(--p-sand-500);
+  --s-border-focus:  var(--p-azure-600);
+
+  --s-ink-primary:   var(--p-sand-900);
+  --s-ink-secondary: var(--p-sand-850);
+  --s-ink-muted:     var(--p-sand-700);
+  --s-ink-disabled:  var(--p-sand-600);
+  --s-ink-inverse:   var(--p-sand-50);
+
+  /* Hover and pressed move AWAY from the page, so on a light theme they get
+   * darker — the mirror of the dark theme, where they get lighter. */
+  --s-brand-solid:   var(--p-azure-600);
+  --s-brand-hover:   var(--p-azure-700);
+  --s-brand-pressed: var(--p-azure-900);
+  --s-brand-fg:      var(--p-azure-800);
+  --s-brand-subtle:  rgba(37, 99, 235, 0.10);
+  /* 0.30, where the dark themes use 0.22: an accent tint needs more alpha
+   * over white than over near-black to read as a hairline. */
+  --s-brand-border:  rgba(37, 99, 235, 0.30);
+  --s-brand-ring:    rgba(37, 99, 235, 0.45);
+
+  --s-success-solid:  var(--p-green-500);
+  --s-success-fg:     var(--p-green-400);
+  --s-warning-solid:  var(--p-yellow-500);
+  --s-warning-fg:     var(--p-yellow-400);
+  --s-danger-solid:   var(--p-red-500);
+  --s-danger-fg:      var(--p-red-400);
+  --s-info-solid:     var(--p-blue-500);
+  --s-info-fg:        var(--p-blue-400);
+
+  /* Status TINTS. --s-*-solid is the ink; these two are the wash and hairline
+   * a card uses to say "this column is the good one" (`pros-cons`). They are
+   * translucent, so they compose over whatever surface the card sits on, and
+   * they must be tokens: hardcoded, the DFL green wash survived a theme switch
+   * and the light theme showed a dark-theme tint (found by probing every
+   * template in every theme, 2026-08-12). */
+  --s-success-subtle: rgba(17, 90, 42, 0.07);
+  --s-success-border: rgba(17, 90, 42, 0.20);
+  --s-danger-subtle:  rgba(185, 28, 28, 0.07);
+  --s-danger-border:  rgba(185, 28, 28, 0.20);
+
+  --s-font-display:   var(--p-font-display);
+  --s-font-body:      var(--p-font-sans);
+  --s-font-mono:      var(--p-font-mono);
+  --s-font-editorial: var(--p-font-editorial);
+
+  /* Slide chassis · the dotted page texture. Dark dots on a light page: the
+   * DFL value is a warm near-white at 2.5% alpha, which is invisible here. */
+  --s-texture-dot:      rgba(17, 24, 39, 0.05);
+  --s-texture-dot-size: 32px;
+
+  /* Ink ON MEDIA · a media scrim is dark in every theme, including this one,
+   * so the ink over it stays light. See the same block in
+   * themes/devfellowship.css for the full rationale. */
+  --s-ink-on-media:       #ffffff;
+  --s-ink-on-media-muted: rgba(255, 255, 255, 0.70);
+  --s-brand-on-media:     var(--p-azure-300);
+
+  /* ─── 3 · LEGACY ALIASES (back-compat with pre-redesign templates) */
+  /* Every value below is byte-identical to what this file defined before
+   * 2026-08-12, so anything still reading a --slide-* token renders exactly
+   * as it did. Five of the seven are now real aliases onto the layers above,
+   * which is only possible because the ramp was built around them. */
+  --slide-primary:             var(--p-azure-500);   /* #3b82f6 */
+  --slide-bg:                  var(--s-surface-page); /* #ffffff */
+  --slide-text:                var(--s-ink-secondary); /* #1f2937 */
+  --slide-heading-color:       var(--s-ink-primary);  /* #111827 */
+  --slide-border:              var(--s-border-subtle); /* #e5e7eb */
+  /* NOT var(--s-font-body): --s-font-body is Inter, and this alias was
+   * 'Segoe UI'. Frozen deliberately — the brief is that a pre-redesign
+   * template renders identically to today. No template in this repo reads a
+   * --slide-* token (verified 2026-08-12 by grepping every template
+   * stylesheet for a --slide- read: there are none), so the two font aliases
+   * are for external consumers only. */
+  --slide-font-family:         'Segoe UI', system-ui, -apple-system, sans-serif;
   --slide-font-family-heading: var(--slide-font-family);
+}
+
+/* ─── Shared slide-chassis utilities (used by new DS templates) ──── */
+.tpl-root .dfl-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--s-font-mono);
+  font-size: var(--p-text-12);
+  letter-spacing: var(--p-tracking-wider);
+  text-transform: uppercase;
+  color: var(--s-ink-muted);
+  font-weight: var(--p-weight-500);
+}
+.tpl-root .dfl-eyebrow::before {
+  content: "";
+  width: 18px;
+  height: 1px;
+  background: var(--s-brand-solid);
+}
+
+.tpl-root .dfl-section-title {
+  font-family: var(--s-font-display);
+  font-weight: var(--p-weight-600);
+  letter-spacing: var(--p-tracking-tight);
+  font-size: 40px;
+  line-height: 1.05;
+  margin: 0;
+  color: var(--s-ink-primary);
+}
+
+/* The hairline MUST NOT be allowed to shrink below 1px.
+ *
+ * It is a 1px flex item in templates whose root is a fixed-height
+ * `display:flex; flex-direction:column` box (steps, image-row). When the slide
+ * content overflows that box, flex-shrink distributes the deficit across every
+ * item — including this one — and it lands somewhere in (0, 1)px.
+ *
+ * A sub-pixel box is invisible on screen, but it is FATAL to the PDF export:
+ * html2canvas builds the gradient tile as `canvas.width = <measured px>`, which
+ * truncates a value below 1 to 0, and then calls `createPattern` on a 0-sized
+ * canvas — "The image argument is a canvas element with a width or height of 0"
+ * — which aborts the capture and takes the whole document down with it
+ * (2026-08-04, deck "Itera — Trinidad and Tobago").
+ *
+ * `flex-shrink: 0` + `min-height` pins it at the weight it was designed for.
+ *
+ * Until 2026-08-12 this rule did not exist in this file at all, and the old
+ * header comment flagged it as a known gotcha: `steps` and `kpi` emit
+ * `.dfl-section-rule`, only themes/devfellowship.css styled it, so under the
+ * default theme the separator was simply invisible. The comment called it a
+ * consequence of the file being a frozen snapshot rather than an oversight to
+ * patch. The freeze is over, so the hairline is styled. */
+.tpl-root .dfl-section-rule {
+  height: 1px;
+  min-height: 1px;
+  flex-shrink: 0;
+  background: linear-gradient(
+    90deg,
+    var(--s-brand-solid) 0,
+    var(--s-brand-solid) 56px,
+    var(--s-border-subtle) 56px,
+    var(--s-border-subtle) 100%
+  );
+  margin: 18px 0 28px;
 }

@@ -1,25 +1,38 @@
-/* dfl-slide-templates: devfellowship theme (DFL DS Redesign · v0)
+/* dfl-slide-templates: itera theme (DFL sub-brand · evergreen accent)
  * --------------------------------------------------------------------
- * The DFL Design System, three-layer token architecture:
- *   1. PRIMITIVE — raw scales (--p-amber-500, --p-text-14, …)
- *   2. SEMANTIC — intent (--s-surface-page, --s-ink-primary, --s-brand-solid)
- *   3. LEGACY ALIAS — backwards-compat shims (--slide-bg, --slide-text)
- *      so existing default/devfellowship templates keep working.
+ * Itera is the DFL microlearning sub-brand. It INHERITS the DFL dark
+ * surfaces and the DFL typography and changes exactly one thing: the accent.
  *
- * Plus shared "slide chassis" utilities (.dfl-eyebrow,
- * .dfl-section-title, .dfl-section-rule) used by the new
- * DS-redesigned templates (kpi / section / steps / callout).
+ * Brand authority: https://brand.devfellowship.com/itera (machine-readable
+ * mirror at /itera/llms.txt), chapter "03 · Cor". The guide's own words:
+ * "Surface Itera nunca redefine --bg, --panel ou --ink. Só os tokens
+ * --brand-*." This file is that instruction, expressed in the token
+ * architecture of themes/devfellowship.css — same three layers, same block
+ * order, so the two files diff line-for-line:
+ *   1. PRIMITIVE — raw scales
+ *   2. SEMANTIC — intent
+ *   3. LEGACY ALIAS — the --slide-* shims
+ * Plus the shared slide-chassis utilities, which a template must not lose by
+ * switching theme.
  *
- * All rules are scoped under .tpl-root so the CSS-scoping linter passes
- * and tokens don't leak into the host studio app.
+ * FORBIDDEN on an Itera surface (guide 3.2):
+ *   #E07A4A  DFL amber      — co-branding "by DFL" only, never a slide accent
+ *   #3D8FE0  Revera blue    — exclusive to Revera, never leaks
+ *   #00FF88  saturated glow — neon is not Itera
+ * Nothing in this file defines any of the three. scripts/check-theme.ts
+ * asserts at runtime that no rendered element computes to them.
  *
- * v0 — 2026-05-15 · ported from "DFL DS Redesign" V0 bundle (Tainan).
+ * v1 — 2026-08-12.
  * -------------------------------------------------------------------- */
 
 /* ─── 1 · PRIMITIVES ──────────────────────────────────────────────── */
 .tpl-root {
-  /* Color · Sand (warm low-chroma neutrals) */
-  --p-sand-50:   #f6f1e7;
+  /* Color · Sand (warm low-chroma neutrals) — inherited from DFL.
+   * Two stops carry the sub-brand's own value, per guide 3.2 ("Herdadas DFL"),
+   * and the guide wins over smoothing:
+   *   sand-50  is ink   #F4EDE2  (DFL: #f6f1e7)
+   *   sand-850 is panel-2 #1C1916 (DFL: #1a1714) */
+  --p-sand-50:   #f4ede2;
   --p-sand-100:  #e8e0d0;
   --p-sand-200:  #c9c0b4;
   --p-sand-300:  #a89e8f;
@@ -28,23 +41,35 @@
   --p-sand-600:  #3a3530;
   --p-sand-700:  #2a2622;
   --p-sand-800:  #1f1c18;
-  --p-sand-850:  #1a1714;
+  --p-sand-850:  #1c1916;
   --p-sand-900:  #141210;
   --p-sand-950:  #0a0908;
 
-  /* Color · Amber (brand) */
-  --p-amber-50:  #fff1e6;
-  --p-amber-100: #fadcc0;
-  --p-amber-200: #f5c298;
-  --p-amber-300: #f0a872;
-  --p-amber-400: #ea915a;
-  --p-amber-500: #E07A4A;
-  --p-amber-600: #c2663b;
-  --p-amber-700: #9e5230;
-  --p-amber-800: #783e25;
-  --p-amber-900: #4d2818;
+  /* Color · Evergreen (brand) — replaces the DFL amber ramp.
+   *
+   * The Itera guide authors FOUR colours (3.2). Only the stops it names are
+   * defined here; where themes/devfellowship.css has a 10-step amber ramp,
+   * this file does not invent six evergreens the guide never approved.
+   *   500 itera-evergreen  #3FD17F  primary · CTA · "aplicação em prod"
+   *   400 evergreen-hi     #62D996  text on dark · hover · ring
+   *   900 evergreen-soft   #1C3A2A  subtle background · row highlight
+   * 600 is the one derived value: a pressed state, one step down on the same
+   * channel ratios the DFL amber ramp uses from 500 to 600. The guide names no
+   * pressed state, and no template reads --s-brand-pressed today. */
+  --p-evergreen-400: #62D996;
+  --p-evergreen-500: #3FD17F;
+  --p-evergreen-600: #36b064;
+  --p-evergreen-900: #1C3A2A;
 
-  /* Color · Status */
+  /* Color · Clay — Itera's second authored colour, and it is NOT an accent.
+   * Guide 3.2/3.1: "só Q&A · pergunta humana · nunca CTA". It is reserved for
+   * the question surface. Kept out of every --s-brand-* token on purpose. */
+  --p-clay-500: #E0A86F;
+
+  /* Color · Status — inherited from DFL unchanged.
+   * The guide lists #5EC27E under "Proibidos" with the qualifier
+   * "só status semântico" — which is exactly and only what --s-success-* is.
+   * A green tick in `checklist` is a status, not the Itera accent. */
   --p-green-400: #7ad79a;
   --p-green-500: #5ec27e;
   --p-yellow-400: #f0c875;
@@ -54,7 +79,8 @@
   --p-red-400:   #e89898;
   --p-red-500:   #e07a7a;
 
-  /* Type · families */
+  /* Type · families — inherited from DFL (guide ch. 04). A sub-brand theme
+   * changes colour, never type. */
   --p-font-display: 'Barlow Condensed', 'Inter', system-ui, sans-serif;
   --p-font-sans:    'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --p-font-mono:    'JetBrains Mono', ui-monospace, 'SF Mono', monospace;
@@ -115,7 +141,7 @@
 
   --s-border-subtle: var(--p-sand-700);
   --s-border-strong: var(--p-sand-600);
-  --s-border-focus:  var(--p-amber-500);
+  --s-border-focus:  var(--p-evergreen-500);
 
   --s-ink-primary:   var(--p-sand-50);
   --s-ink-secondary: var(--p-sand-200);
@@ -123,13 +149,23 @@
   --s-ink-disabled:  var(--p-sand-500);
   --s-ink-inverse:   var(--p-sand-950);
 
-  --s-brand-solid:   var(--p-amber-500);
-  --s-brand-hover:   var(--p-amber-400);
-  --s-brand-pressed: var(--p-amber-600);
-  --s-brand-fg:      var(--p-amber-300);
-  --s-brand-subtle:  rgba(224, 122, 74, 0.10);
-  --s-brand-border:  rgba(224, 122, 74, 0.22);
-  --s-brand-ring:    rgba(224, 122, 74, 0.45);
+  /* The guide's --brand / --brand-hi / --brand-soft / --brand-mid /
+   * --brand-ring (3.5), mapped onto the DFL semantic names. --s-brand-fg is
+   * the "texto sobre dark" role, so it is evergreen-hi: 11.4:1 on the page
+   * surface (guide 3.4). */
+  --s-brand-solid:   var(--p-evergreen-500);
+  --s-brand-hover:   var(--p-evergreen-400);
+  --s-brand-pressed: var(--p-evergreen-600);
+  --s-brand-fg:      var(--p-evergreen-400);
+  --s-brand-subtle:  rgba(63, 209, 127, 0.10);
+  --s-brand-border:  rgba(63, 209, 127, 0.22);
+  --s-brand-ring:    rgba(63, 209, 127, 0.45);
+
+  /* Q&A · the clay surface. Never a CTA, never competes with evergreen on the
+   * same plane (guide 3.1). No template paints with it yet; it exists so the
+   * first one that needs a question surface does not reach for the accent. */
+  --s-qa-solid:  var(--p-clay-500);
+  --s-qa-subtle: rgba(224, 168, 111, 0.10);
 
   --s-success-solid:  var(--p-green-500);
   --s-success-fg:     var(--p-green-400);
@@ -156,23 +192,15 @@
   --s-font-mono:      var(--p-font-mono);
   --s-font-editorial: var(--p-font-editorial);
 
-  /* Slide chassis · the dotted page texture every slide paints over its
-   * surface. Tokenised so templates never hand-roll the rgba. */
+  /* Slide chassis · the dotted page texture. Inherited from DFL: it is a
+   * property of the dark surface, not of the accent. */
   --s-texture-dot:      rgba(255, 240, 220, 0.025);
   --s-texture-dot-size: 32px;
 
-  /* Ink ON MEDIA · text that sits over a photograph, not over a surface.
-   *
-   * A media scrim is dark in EVERY theme — including the light one — because
-   * it darkens a photograph so type can be read on it, and a photograph is not
-   * a themed surface. So the ink over it is light in every theme too, and it
-   * must not be --s-ink-primary: under themes/default.css that ink is near
-   * black, and `full-bleed` / `chapter-image` would render a dark title on a
-   * dark photograph. These three tokens are the ink and accent for that one
-   * situation. (2026-08-12) */
+  /* Ink ON MEDIA · see the same block in themes/devfellowship.css. */
   --s-ink-on-media:       var(--p-sand-50);
   --s-ink-on-media-muted: rgba(255, 255, 255, 0.70);
-  --s-brand-on-media:     var(--p-amber-300);
+  --s-brand-on-media:     var(--p-evergreen-400);
 
   /* ─── 3 · LEGACY ALIASES (back-compat with pre-redesign templates) */
   --slide-primary:             var(--s-brand-solid);
@@ -225,25 +253,13 @@
  * truncates a value below 1 to 0, and then calls `createPattern` on a 0-sized
  * canvas — "The image argument is a canvas element with a width or height of 0"
  * — which aborts the capture and takes the whole document down with it
- * (2026-08-04, deck "Itera — Trinidad and Tobago").
+ * (2026-08-04, deck "Itera — Trinidad and Tobago" — an ITERA deck, which is
+ * this theme's own first customer).
  *
  * `flex-shrink: 0` + `min-height` pins it at the weight it was designed for.
  * dfl-lesson-studio also repairs sub-pixel gradient boxes at capture time, so
- * this is belt AND braces — but the rule genuinely should never shrink.
- *
- * HOW LONG DOES AN EDIT TO THIS FILE TAKE TO GO LIVE? (asked the hard way,
- * 2026-08-04.) The floor above merged three and a half minutes before the
- * studio deployed, and a browser still measured this rule at 0.994px — which
- * the floor makes impossible. The studio read every theme from the moving
- * `main` URL and memoised the response for the whole session, so a tab kept
- * the CSS it happened to load first, forever, with nothing to indicate it.
- *
- * Since dfl-lesson-studio#298 the studio resolves `main` to a commit SHA and
- * reads `.../<sha>/themes/...`, so a merge here is a brand-new URL that no
- * cache can answer with stale bytes. Propagation is bounded by the studio's
- * 60s revision TTL, and a PDF export forces the check first. So: NOT instant,
- * NOT deploy-gated, and no longer unbounded. Do not tell anyone a theme edit
- * is "live immediately" — say "within about a minute". */
+ * this is belt AND braces — but the rule genuinely should never shrink. Do not
+ * drop either declaration when editing this file. */
 .tpl-root .dfl-section-rule {
   height: 1px;
   min-height: 1px;

@@ -1,30 +1,63 @@
 {
   "$comment": [
     "Canonical theme-conformance contract — the single source of truth for both",
-    "the static guard (scripts/lint-css.mjs, rules 5 and 6) and the runtime",
+    "the static guard (scripts/lint-css.mjs, rules 5, 6 and 7) and the runtime",
     "guard (scripts/check-theme.ts), so the two can never disagree.",
     "",
-    "Brand authority: https://brand.devfellowship.com (machine-readable mirror at",
-    "https://brand.devfellowship.com/llms.txt). Chapter 05 defines the sand/amber",
-    "palette, chapter 06 the four type families. themes/devfellowship.css is the",
-    "CSS implementation of that guide; a template is 'on theme' when it reads",
-    "those tokens instead of restating their values.",
+    "WHICH THEMES EXIST IS NOT DECIDED HERE. registry.json's `themes` array is",
+    "the source of truth; this file adds the per-theme CONTRACT (which colours",
+    "are forbidden, which templates are exempt). lint-css.mjs fails if the two",
+    "lists disagree, so a theme cannot be added to one and forgotten in the",
+    "other.",
+    "",
+    "Brand authority: https://brand.devfellowship.com (mirror at /llms.txt) for",
+    "DFL, /itera/llms.txt and /revera/llms.txt for the two sub-brands, chapter",
+    "'03 · Cor' of each. A theme file is the CSS implementation of one of those",
+    "guides; a template is 'on theme' when it reads the tokens instead of",
+    "restating their values.",
+    "",
+    "WHY THE FORBIDDEN LISTS EXIST. Every template reads its tokens as",
+    "var(--s-token, <literal>), and every literal is the DevFellowship value.",
+    "That fallback is load-bearing — it keeps a template renderable standalone —",
+    "but it means a theme that fails to define a token does not fail loudly: the",
+    "template silently paints the DFL colour instead. That is exactly how a deck",
+    "set to the 'default' theme rendered in DevFellowship dark until 2026-08-12",
+    "(themes/default.css defined ZERO --s-* tokens). Asserting 'the surface is",
+    "the theme's surface' catches it on .tpl-root; asserting 'no element",
+    "computes to another brand's colour' catches it everywhere else.",
     "",
     "literalExceptions are the ONLY places a raw colour may appear in template",
     "CSS outside a var() fallback. Keep the list tiny; every entry needs a",
     "rationale. Same discipline as fluidTemplates in canvas.config.json."
   ],
 
-  "themeId": "devfellowship",
-  "themeFile": "themes/devfellowship.css",
+  "$schema_version": 2,
 
   "surfaceToken": "--s-surface-page",
-  "surfaceValue": "rgb(10, 9, 8)",
+
+  "$tokenRoleComment": [
+    "The tokens whose resolved value the runtime guard reads back from the",
+    "browser to know what THIS theme's surface / ink / accent actually are. It",
+    "never hardcodes a colour per theme: it asks the injected CSS. So a theme",
+    "cannot pass by agreeing with a stale number in this file."
+  ],
+  "inkTokens": [
+    "--s-ink-primary",
+    "--s-ink-secondary",
+    "--s-ink-muted",
+    "--s-ink-disabled",
+    "--s-ink-inverse",
+    "--s-ink-on-media",
+    "--s-ink-on-media-muted"
+  ],
+  "accentTokens": ["--s-brand-solid", "--s-brand-fg", "--s-brand-on-media"],
 
   "$fontComment": [
     "The four families of brand chapter 06. Every element that renders text must",
     "resolve to one of these as its first computed font-family — which happens",
-    "for free when the declaration is var(--s-font-display|body|mono|editorial)."
+    "for free when the declaration is var(--s-font-display|body|mono|editorial).",
+    "Type is NOT themed: all four themes declare the same four families, because",
+    "a sub-brand changes colour and never type."
   ],
   "allowedFontFamilies": [
     "Barlow Condensed",
@@ -33,6 +66,85 @@
     "Georgia"
   ],
 
+  "$forbiddenComment": [
+    "Per theme: colours that must never appear in a render of that theme, with",
+    "the rule from the brand guide that says so.",
+    "",
+    "`accents` are matched AT ANY ALPHA. An accent tint is a palette entry, and",
+    "the theme owns a token for it (--s-brand-subtle / --s-brand-border /",
+    "--s-brand-ring), so a translucent Itera-green wash on a Revera slide is the",
+    "same defect as an opaque one.",
+    "",
+    "`surfaces` are matched ONLY WHEN OPAQUE. This is deliberate, and it is the",
+    "same distinction lint-css.mjs rule 5 already draws: a translucent colour is",
+    "a compositing value (a scrim over a photograph, a hairline, the dotted page",
+    "texture), not a palette entry. `full-bleed` and `chapter-image` legitimately",
+    "paint rgba(10, 9, 8, 0.1 … 0.95) over a photograph in EVERY theme, light",
+    "one included — a photograph is not a themed surface, and the ink over it",
+    "comes from --s-ink-on-media for exactly that reason. An OPAQUE DFL surface",
+    "on the light theme is the reported bug and nothing else."
+  ],
+  "themes": {
+    "default": {
+      "forbidden": {
+        "accents": {
+          "#E07A4A": "DFL amber. The light theme's accent is --p-azure-600; amber here means a template fell through to its var() fallback."
+        },
+        "surfaces": {
+          "#0a0908": "DFL sand-950 page surface. THIS is the reported bug: with themes/default.css defining no tokens, every template's .tpl-root fell back to this literal and a 'Default' deck rendered DevFellowship dark. On unmodified origin/main this assertion fails on 45 of 46 templates.",
+          "#141210": "DFL sand-900 panel.",
+          "#1a1714": "DFL sand-850 raised surface.",
+          "#1f1c18": "DFL sand-800 elevated surface.",
+          "#2a2622": "DFL sand-700 subtle border.",
+          "#f6f1e7": "DFL sand-50 — the DARK theme's primary ink. Near-white text on a near-white page: invisible, and the surest sign the ink token did not resolve."
+        }
+      }
+    },
+    "devfellowship": {
+      "forbidden": {
+        "accents": {
+          "#3FD17F": "Itera evergreen. Sub-brand accents do not appear on a DFL house slide (DFL guide ch. 17 family rules).",
+          "#3D8FE0": "Revera trust-blue. Same rule."
+        },
+        "surfaces": {}
+      }
+    },
+    "itera": {
+      "forbidden": {
+        "accents": {
+          "#E07A4A": "DFL amber. Itera guide 3.2 lists it under 'Proibidos em surface Itera' — 'só em co-branding by DFL'. No template emits a co-branding mark, so on a slide it can only be a fallback leak.",
+          "#3D8FE0": "Revera trust-blue. Itera guide 3.2: 'exclusivo Revera · não vaza pra Itera'.",
+          "#00FF88": "Saturated neon. Itera guide 3.2: 'nunca · neon não é Itera'."
+        },
+        "surfaces": {}
+      },
+      "$note": [
+        "#5EC27E is listed in the Itera guide under 'Proibidos' with the",
+        "qualifier 'só status semântico', so it is NOT forbidden here: it is the",
+        "value of --s-success-* in every dark theme, and a green tick in",
+        "`checklist` is a status, not the Itera accent. Forbidding it would fail",
+        "a render that follows the guide."
+      ]
+    },
+    "revera": {
+      "forbidden": {
+        "accents": {
+          "#3FD17F": "Itera evergreen. Revera guide 3.2: 'exclusivo Itera · não vaza'.",
+          "#0066FF": "Electric blue. Revera guide 3.2: 'nunca · SaaS slop'.",
+          "#00D4FF": "Saturated neon. Revera guide 3.2: 'nunca · neon não é Revera'."
+        },
+        "surfaces": {}
+      },
+      "$note": [
+        "DFL amber #E07A4A is deliberately NOT forbidden on Revera. Guide 3.4",
+        "keeps it as the ancestral 'by DFL' filiation mark, once per surface —",
+        "themes/revera.css defines it as --s-filiation-solid. It is still never",
+        "a CTA and never a KPI, which is a rule about which token a template",
+        "reads, not about which colour lands on the page."
+      ]
+    }
+  },
+
   "literalExceptions": {
     "blank": {
       "values": ["#000000"],
@@ -40,10 +152,15 @@
     }
   },
 
+  "$surfaceExceptionComment": [
+    "A template whose .tpl-root is deliberately NOT the theme page surface.",
+    "`value` is either one computed colour (the same in every theme) or an",
+    "object keyed by theme id when the exception is theme-specific."
+  ],
   "surfaceExceptions": {
     "blank": {
       "value": "rgb(0, 0, 0)",
-      "rationale": "See literalExceptions.blank — true-black recording backdrop."
+      "rationale": "See literalExceptions.blank — true-black recording backdrop, in every theme including the light one. The backdrop exists to be composited under captured video, so it does not follow the deck's palette."
     }
   }
 }

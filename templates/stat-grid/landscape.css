@@ -20,7 +20,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
   background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
@@ -58,8 +58,8 @@
 }
 
 .tpl-root.tpl-stat-grid .tpl-stat-grid__cell:first-child {
-  background: rgba(224, 122, 74, 0.08);
-  border-color: rgba(224, 122, 74, 0.22);
+  background: var(--s-brand-subtle, rgba(224, 122, 74, 0.10));
+  border-color: var(--s-brand-border, rgba(224, 122, 74, 0.22));
 }
 
 .tpl-root.tpl-stat-grid .tpl-stat-grid__value {

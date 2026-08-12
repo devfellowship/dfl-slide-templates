@@ -50,7 +50,7 @@
   font-size: 19px;
   letter-spacing: var(--p-tracking-wider, 0.8px);
   text-transform: uppercase;
-  color: var(--s-brand-fg, #f0a872);
+  color: var(--s-brand-on-media, #f0a872);
 }
 
 .tpl-root.tpl-full-bleed.tpl-full-bleed--portrait .tpl-full-bleed__title {
@@ -60,6 +60,6 @@
   line-height: 0.95;
   letter-spacing: var(--p-tracking-tight, -0.4px);
   margin: 0;
-  color: var(--s-ink-primary, #f6f1e7);
+  color: var(--s-ink-on-media, #f6f1e7);
   text-wrap: balance;
 }

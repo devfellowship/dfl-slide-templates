@@ -20,7 +20,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
   background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
@@ -78,7 +78,7 @@
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
   font-size: 16px;
   font-weight: 700;
-  box-shadow: 0 0 0 4px rgba(224, 122, 74, 0.3), 0 3px 11px rgba(0,0,0,0.5);
+  box-shadow: 0 0 0 4px var(--s-brand-ring, rgba(224, 122, 74, 0.45)), 0 3px 11px rgba(0,0,0,0.5);
   cursor: default;
 }
 

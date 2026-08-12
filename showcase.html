@@ -62,6 +62,7 @@
   --p-font-display: 'Barlow Condensed', 'Inter', system-ui, sans-serif;
   --p-font-sans:    'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --p-font-mono:    'JetBrains Mono', ui-monospace, 'SF Mono', monospace;
+  --p-font-editorial: Georgia, 'Times New Roman', serif;
 
   /* Type · sizes (px) */
   --p-text-10: 10px;
@@ -123,6 +124,7 @@
   --s-ink-primary:   var(--p-sand-50);
   --s-ink-secondary: var(--p-sand-200);
   --s-ink-muted:     var(--p-sand-400);
+  --s-ink-disabled:  var(--p-sand-500);
   --s-ink-inverse:   var(--p-sand-950);
 
   --s-brand-solid:   var(--p-amber-500);
@@ -142,9 +144,39 @@
   --s-info-solid:     var(--p-blue-500);
   --s-info-fg:        var(--p-blue-400);
 
-  --s-font-display: var(--p-font-display);
-  --s-font-body:    var(--p-font-sans);
-  --s-font-mono:    var(--p-font-mono);
+  /* Status TINTS. --s-*-solid is the ink; these two are the wash and hairline
+   * a card uses to say "this column is the good one" (`pros-cons`). They are
+   * translucent, so they compose over whatever surface the card sits on, and
+   * they must be tokens: hardcoded, the DFL green wash survived a theme switch
+   * and the light theme showed a dark-theme tint (found by probing every
+   * template in every theme, 2026-08-12). */
+  --s-success-subtle: rgba(94, 194, 126, 0.07);
+  --s-success-border: rgba(94, 194, 126, 0.20);
+  --s-danger-subtle:  rgba(224, 122, 122, 0.07);
+  --s-danger-border:  rgba(224, 122, 122, 0.20);
+
+  --s-font-display:   var(--p-font-display);
+  --s-font-body:      var(--p-font-sans);
+  --s-font-mono:      var(--p-font-mono);
+  --s-font-editorial: var(--p-font-editorial);
+
+  /* Slide chassis · the dotted page texture every slide paints over its
+   * surface. Tokenised so templates never hand-roll the rgba. */
+  --s-texture-dot:      rgba(255, 240, 220, 0.025);
+  --s-texture-dot-size: 32px;
+
+  /* Ink ON MEDIA · text that sits over a photograph, not over a surface.
+   *
+   * A media scrim is dark in EVERY theme — including the light one — because
+   * it darkens a photograph so type can be read on it, and a photograph is not
+   * a themed surface. So the ink over it is light in every theme too, and it
+   * must not be --s-ink-primary: under themes/default.css that ink is near
+   * black, and `full-bleed` / `chapter-image` would render a dark title on a
+   * dark photograph. These three tokens are the ink and accent for that one
+   * situation. (2026-08-12) */
+  --s-ink-on-media:       var(--p-sand-50);
+  --s-ink-on-media-muted: rgba(255, 255, 255, 0.70);
+  --s-brand-on-media:     var(--p-amber-300);
 
   /* ─── 3 · LEGACY ALIASES (back-compat with pre-redesign templates) */
   --slide-primary:             var(--s-brand-solid);
@@ -185,8 +217,41 @@
   color: var(--s-ink-primary);
 }
 
+/* The hairline MUST NOT be allowed to shrink below 1px.
+ *
+ * It is a 1px flex item in templates whose root is a fixed-height
+ * `display:flex; flex-direction:column` box (steps, image-row). When the slide
+ * content overflows that box, flex-shrink distributes the deficit across every
+ * item — including this one — and it lands somewhere in (0, 1)px.
+ *
+ * A sub-pixel box is invisible on screen, but it is FATAL to the PDF export:
+ * html2canvas builds the gradient tile as `canvas.width = <measured px>`, which
+ * truncates a value below 1 to 0, and then calls `createPattern` on a 0-sized
+ * canvas — "The image argument is a canvas element with a width or height of 0"
+ * — which aborts the capture and takes the whole document down with it
+ * (2026-08-04, deck "Itera — Trinidad and Tobago").
+ *
+ * `flex-shrink: 0` + `min-height` pins it at the weight it was designed for.
+ * dfl-lesson-studio also repairs sub-pixel gradient boxes at capture time, so
+ * this is belt AND braces — but the rule genuinely should never shrink.
+ *
+ * HOW LONG DOES AN EDIT TO THIS FILE TAKE TO GO LIVE? (asked the hard way,
+ * 2026-08-04.) The floor above merged three and a half minutes before the
+ * studio deployed, and a browser still measured this rule at 0.994px — which
+ * the floor makes impossible. The studio read every theme from the moving
+ * `main` URL and memoised the response for the whole session, so a tab kept
+ * the CSS it happened to load first, forever, with nothing to indicate it.
+ *
+ * Since dfl-lesson-studio#298 the studio resolves `main` to a commit SHA and
+ * reads `.../<sha>/themes/...`, so a merge here is a brand-new URL that no
+ * cache can answer with stale bytes. Propagation is bounded by the studio's
+ * 60s revision TTL, and a PDF export forces the check first. So: NOT instant,
+ * NOT deploy-gated, and no longer unbounded. Do not tell anyone a theme edit
+ * is "live immediately" — say "within about a minute". */
 .tpl-root .dfl-section-rule {
   height: 1px;
+  min-height: 1px;
+  flex-shrink: 0;
   background: linear-gradient(
     90deg,
     var(--s-brand-solid) 0,
@@ -235,7 +300,7 @@
 <body>
   <div class="page-head">
     <h1>dfl-slide-templates</h1>
-    <p><span class="count">45 templates</span> · DevFellowship theme · minimalist + image-forward. Each card shows the landscape render plus the discoverability metadata an authoring LLM uses to pick it.</p>
+    <p><span class="count">46 templates</span> · DevFellowship theme · minimalist + image-forward. Each card shows the landscape render plus the discoverability metadata an authoring LLM uses to pick it.</p>
   </div>
   <div class="grid">
 
@@ -248,38 +313,68 @@
             <span class="pill">density: low</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>.tpl-root.tpl-title {
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-title · landscape — 1280×720 · DFL DS tokens */
+
+.tpl-root.tpl-title {
+  position: relative;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 1280px;
-  height: 720px;
-  background: var(--slide-bg, #1a2340);
-  font-family: var(--slide-font-family-heading, var(--slide-font-family, 'Inter', system-ui, -apple-system, sans-serif));
-  box-sizing: border-box;
-  padding: 40px;
   text-align: center;
 }
 
+.tpl-root.tpl-title::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: var(--s-texture-dot-size, 32px) var(--s-texture-dot-size, 32px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-title > * { position: relative; z-index: 1; }
+
 .tpl-root.tpl-title .tpl-title__inner {
-  max-width: 880px;
+  max-width: 980px;
 }
 
 .tpl-root.tpl-title .tpl-title__heading {
-  font-size: 90px;
-  font-weight: 700;
-  color: var(--slide-heading-color, #ffffff);
-  line-height: 1.2;
-  margin: 0 0 24px 0;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 96px;
+  font-weight: var(--p-weight-700, 700);
+  letter-spacing: -2px;
+  line-height: 1.02;
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
   word-wrap: break-word;
 }
 
+.tpl-root.tpl-title .tpl-title__heading::after {
+  content: "";
+  display: block;
+  width: 96px;
+  height: 2px;
+  margin: 32px auto 0;
+  background: var(--s-brand-solid, #E07A4A);
+}
+
 .tpl-root.tpl-title .tpl-title__subtitle {
-  font-size: 42px;
-  font-weight: 400;
-  color: var(--slide-text, #e0e0e0);
-  line-height: 1.4;
-  margin: 0;
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  font-size: 34px;
+  font-weight: var(--p-weight-400, 400);
+  color: var(--s-ink-secondary, #c9c0b4);
+  line-height: 1.45;
+  margin: 32px 0 0 0;
 }
 </style><div class="tpl-root tpl-title">
   <div class="tpl-title__inner">
@@ -303,13 +398,13 @@
             <span class="pill">density: low</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-section-header · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-section-header · landscape — 1280×720 */
 
 .tpl-root.tpl-section-header {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 56px 72px;
+  width: 1280px;
+  height: 720px;
+  padding: 75px 96px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -317,17 +412,17 @@
   overflow: hidden;
   isolation: isolate;
   display: grid;
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: 267px 1fr;
   align-items: center;
-  gap: 48px;
+  gap: 64px;
 }
 
 .tpl-root.tpl-section-header::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -336,7 +431,7 @@
 
 .tpl-root.tpl-section-header .tpl-section-header__chapter {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 200px;
+  font-size: 267px;
   line-height: 0.85;
   font-weight: var(--p-weight-700, 700);
   color: var(--s-brand-fg, #f0a872);
@@ -347,12 +442,12 @@
 .tpl-root.tpl-section-header .tpl-section-header__meta {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 24px;
 }
 
 .tpl-root.tpl-section-header .tpl-section-header__eyebrow {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 14px;
+  font-size: 19px;
   letter-spacing: var(--p-tracking-wider, 0.8px);
   text-transform: uppercase;
   color: var(--s-ink-muted, #7d7568);
@@ -360,7 +455,7 @@
 
 .tpl-root.tpl-section-header .tpl-section-header__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 90px;
+  font-size: 120px;
   font-weight: var(--p-weight-700, 700);
   line-height: 0.95;
   margin: 0;
@@ -370,7 +465,7 @@
 }
 
 .tpl-root.tpl-section-header .tpl-section-header__description {
-  font-size: 24px;
+  font-size: 32px;
   color: var(--s-ink-secondary, #c9c0b4);
   line-height: 1.5;
   margin: 0;
@@ -400,26 +495,59 @@
             <span class="pill">density: high</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>.tpl-root.tpl-bullet-list {
-  display: flex;
-  flex-direction: column;
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-bullet-list · landscape — 1280×720 · DFL DS tokens */
+
+.tpl-root.tpl-bullet-list {
+  position: relative;
   width: 1280px;
   height: 720px;
-  background: var(--slide-bg, #ffffff);
-  font-family: var(--slide-font-family, 'Segoe UI', system-ui, -apple-system, sans-serif);
+  padding: 64px 85px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
   box-sizing: border-box;
-  padding: 48px 72px;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
 }
 
+.tpl-root.tpl-bullet-list::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: var(--s-texture-dot-size, 32px) var(--s-texture-dot-size, 32px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-bullet-list > * { position: relative; z-index: 1; }
+
 .tpl-root.tpl-bullet-list .tpl-bullet-list__title {
-  font-size: 46px;
-  font-weight: 700;
-  color: var(--slide-heading-color, #111827);
-  margin: 0 0 32px 0;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-  padding-bottom: 20px;
-  border-bottom: 2px solid var(--slide-border, #e5e7eb);
+  flex: 0 0 auto;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 51px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  line-height: 1.05;
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+}
+
+.tpl-root.tpl-bullet-list .tpl-bullet-list__title::after {
+  content: "";
+  display: block;
+  height: 2px;
+  margin-top: 18px;
+  background: linear-gradient(
+    90deg,
+    var(--s-brand-solid, #E07A4A) 0,
+    var(--s-brand-solid, #E07A4A) 56px,
+    var(--s-border-subtle, #2a2622) 56px,
+    var(--s-border-subtle, #2a2622) 100%
+  );
 }
 
 .tpl-root.tpl-bullet-list .tpl-bullet-list__list {
@@ -428,28 +556,29 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  flex: 1;
+  gap: 20px;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow: hidden;
 }
 
 .tpl-root.tpl-bullet-list .tpl-bullet-list__item {
   display: flex;
   align-items: flex-start;
-  font-size: 30px;
-  color: var(--slide-text, #1f2937);
+  font-size: 29px;
   line-height: 1.4;
+  color: var(--s-ink-secondary, #c9c0b4);
 }
 
 .tpl-root.tpl-bullet-list .tpl-bullet-list__item::before {
-  content: '';
+  content: "";
   display: inline-block;
-  width: 8px;
-  height: 8px;
-  background: var(--slide-primary, #3b82f6);
-  border-radius: 50%;
-  margin-top: 8px;
-  margin-right: 16px;
+  width: 10px;
+  height: 10px;
+  background: var(--s-brand-solid, #E07A4A);
+  border-radius: var(--p-radius-pill, 999px);
+  margin-top: 12px;
+  margin-right: 18px;
   flex-shrink: 0;
 }
 </style><div class="tpl-root tpl-bullet-list">
@@ -477,73 +606,141 @@
             <span class="pill">density: high</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>.tpl-root.tpl-two-column {
-  display: flex;
-  flex-direction: column;
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-two-column · landscape — 1280×720 · DFL DS tokens */
+
+.tpl-root.tpl-two-column {
+  position: relative;
   width: 1280px;
   height: 720px;
-  background: var(--slide-bg, #ffffff);
-  font-family: var(--slide-font-family, 'Segoe UI', system-ui, -apple-system, sans-serif);
+  padding: 64px 85px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
   box-sizing: border-box;
-  padding: 48px 60px;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
 }
+
+.tpl-root.tpl-two-column::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: var(--s-texture-dot-size, 32px) var(--s-texture-dot-size, 32px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-two-column > * { position: relative; z-index: 1; }
 
 .tpl-root.tpl-two-column .tpl-two-column__title {
-  font-size: 42px;
-  font-weight: 700;
-  color: var(--slide-heading-color, #111827);
-  margin: 0 0 28px 0;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-}
-
-.tpl-root.tpl-two-column .tpl-two-column__columns {
-  display: flex;
-  flex: 1;
-  gap: 0;
-  overflow: hidden;
-}
-
-.tpl-root.tpl-two-column .tpl-two-column__col {
-  flex: 1;
-  overflow: hidden;
-  font-size: 26px;
-  color: var(--slide-text, #374151);
-  line-height: 1.6;
-}
-
-.tpl-root.tpl-two-column .tpl-two-column__col--left {
-  padding-right: 32px;
-}
-
-.tpl-root.tpl-two-column .tpl-two-column__col--right {
-  padding-left: 32px;
-}
-
-.tpl-root.tpl-two-column .tpl-two-column__divider {
-  width: 1px;
-  background: var(--slide-border, #e5e7eb);
-  flex-shrink: 0;
-}
-
-.tpl-root.tpl-two-column .tpl-two-column__col h3 {
-  font-size: 26px;
-  font-weight: 600;
-  color: var(--slide-heading-color, #111827);
-  margin: 0 0 12px 0;
-}
-
-.tpl-root.tpl-two-column .tpl-two-column__col p {
-  margin: 0 0 12px 0;
-}
-
-.tpl-root.tpl-two-column .tpl-two-column__col ul {
-  padding-left: 20px;
+  flex: 0 0 auto;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 51px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  line-height: 1.05;
+  color: var(--s-ink-primary, #f6f1e7);
   margin: 0;
 }
 
+.tpl-root.tpl-two-column .tpl-two-column__title::after {
+  content: "";
+  display: block;
+  height: 2px;
+  margin-top: 18px;
+  background: linear-gradient(
+    90deg,
+    var(--s-brand-solid, #E07A4A) 0,
+    var(--s-brand-solid, #E07A4A) 56px,
+    var(--s-border-subtle, #2a2622) 56px,
+    var(--s-border-subtle, #2a2622) 100%
+  );
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__columns {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 27px;
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__col {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  padding: 34px 38px;
+  border-radius: var(--p-radius-xl, 14px);
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  background: var(--s-surface-panel, #141210);
+  font-size: 25px;
+  line-height: 1.45;
+  color: var(--s-ink-secondary, #c9c0b4);
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__col--right {
+  background: var(--s-brand-subtle, rgba(224, 122, 74, 0.10));
+  border-color: var(--s-brand-border, rgba(224, 122, 74, 0.22));
+}
+
+/* The two columns are cards now, separated by the flex gap — the legacy
+ * hairline element in the markup would double up, so it is hidden rather
+ * than removed (the slot contract and the HTML stay untouched). */
+.tpl-root.tpl-two-column .tpl-two-column__divider {
+  display: none;
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__col h3 {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 17px;
+  font-weight: var(--p-weight-500, 500);
+  letter-spacing: var(--p-tracking-wider, 0.8px);
+  text-transform: uppercase;
+  color: var(--s-ink-muted, #7d7568);
+  margin: 0 0 18px 0;
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__col--right h3 {
+  color: var(--s-brand-fg, #f0a872);
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__col p {
+  margin: 0 0 14px 0;
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__col ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .tpl-root.tpl-two-column .tpl-two-column__col li {
-  margin-bottom: 6px;
+  position: relative;
+  padding-left: 26px;
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__col li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 13px;
+  width: 9px;
+  height: 9px;
+  border-radius: var(--p-radius-pill, 999px);
+  background: var(--s-ink-muted, #7d7568);
+}
+
+.tpl-root.tpl-two-column .tpl-two-column__col--right li::before {
+  background: var(--s-brand-solid, #E07A4A);
 }
 </style><div class="tpl-root tpl-two-column">
   <h2 class="tpl-two-column__title">Side by Side Comparison</h2>
@@ -573,21 +770,42 @@
             <span class="pill">density: medium</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>.tpl-root.tpl-img-text {
-  display: flex;
-  flex-direction: row;
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-img-text · landscape — 1280×720 · DFL DS tokens */
+
+.tpl-root.tpl-img-text {
+  position: relative;
   width: 1280px;
   height: 720px;
-  background: var(--slide-bg, #ffffff);
-  font-family: var(--slide-font-family, 'Segoe UI', system-ui, -apple-system, sans-serif);
+  padding: 64px 85px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
   box-sizing: border-box;
   overflow: hidden;
+  isolation: isolate;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
 }
+
+.tpl-root.tpl-img-text::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: var(--s-texture-dot-size, 32px) var(--s-texture-dot-size, 32px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-img-text > * { position: relative; z-index: 1; }
 
 .tpl-root.tpl-img-text .tpl-img-text__image-pane {
   flex: 0 0 45%;
+  min-width: 0;
+  min-height: 0;
   overflow: hidden;
-  background: var(--slide-bg, #f3f4f6);
+  background: var(--s-surface-panel, #141210);
 }
 
 .tpl-root.tpl-img-text .tpl-img-text__image {
@@ -598,40 +816,73 @@
 }
 
 .tpl-root.tpl-img-text .tpl-img-text__text-pane {
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 48px 56px;
+  padding: 56px 64px;
   overflow: hidden;
 }
 
 .tpl-root.tpl-img-text .tpl-img-text__title {
-  font-size: 40px;
-  font-weight: 700;
-  color: var(--slide-heading-color, #111827);
-  margin: 0 0 20px 0;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-}
-
-.tpl-root.tpl-img-text .tpl-img-text__body {
-  font-size: 26px;
-  color: var(--slide-text, #374151);
-  line-height: 1.65;
-}
-
-.tpl-root.tpl-img-text .tpl-img-text__body p {
-  margin: 0 0 12px 0;
-}
-
-.tpl-root.tpl-img-text .tpl-img-text__body ul {
-  padding-left: 20px;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 48px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  line-height: 1.05;
+  color: var(--s-ink-primary, #f6f1e7);
   margin: 0;
 }
 
+.tpl-root.tpl-img-text .tpl-img-text__title::after {
+  content: "";
+  display: block;
+  height: 2px;
+  margin-top: 18px;
+  background: linear-gradient(
+    90deg,
+    var(--s-brand-solid, #E07A4A) 0,
+    var(--s-brand-solid, #E07A4A) 56px,
+    var(--s-border-subtle, #2a2622) 56px,
+    var(--s-border-subtle, #2a2622) 100%
+  );
+}
+
+.tpl-root.tpl-img-text .tpl-img-text__body {
+  font-size: 25px;
+  line-height: 1.5;
+  color: var(--s-ink-secondary, #c9c0b4);
+}
+
+.tpl-root.tpl-img-text .tpl-img-text__body p {
+  margin: 0 0 14px 0;
+}
+
+.tpl-root.tpl-img-text .tpl-img-text__body ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .tpl-root.tpl-img-text .tpl-img-text__body li {
-  margin-bottom: 6px;
+  position: relative;
+  padding-left: 26px;
+}
+
+.tpl-root.tpl-img-text .tpl-img-text__body li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 13px;
+  width: 9px;
+  height: 9px;
+  border-radius: var(--p-radius-pill, 999px);
+  background: var(--s-brand-solid, #E07A4A);
 }
 </style><div class="tpl-root tpl-img-text">
   <div class="tpl-img-text__image-pane">
@@ -658,34 +909,53 @@
             <span class="pill">density: low</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>.tpl-root.tpl-image {
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-image · landscape — 1280×720 · DFL DS tokens */
+
+.tpl-root.tpl-image {
+  position: relative;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 1280px;
-  height: 720px;
-  background: transparent;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  box-sizing: border-box;
-  padding: 40px;
-  gap: 24px;
+  gap: 32px;
 }
 
+.tpl-root.tpl-image::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: var(--s-texture-dot-size, 32px) var(--s-texture-dot-size, 32px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-image > * { position: relative; z-index: 1; }
+
 .tpl-root.tpl-image .tpl-image__img {
-  max-width: 80%;
-  max-height: 60%;
+  max-width: 100%;
+  max-height: 62%;
   object-fit: contain;
-  border-radius: 8px;
+  border-radius: var(--p-radius-xl, 14px);
+  border: 1px solid var(--s-border-subtle, #2a2622);
 }
 
 .tpl-root.tpl-image .tpl-image__description {
-  font-size: 32px;
-  font-weight: 400;
-  color: #e0e0e0;
+  font-size: 28px;
+  font-weight: var(--p-weight-400, 400);
+  color: var(--s-ink-secondary, #c9c0b4);
   text-align: center;
-  line-height: 1.5;
-  max-width: 80%;
+  line-height: 1.45;
+  max-width: 82%;
   margin: 0;
 }
 </style><div class="tpl-root tpl-image">
@@ -696,6 +966,52 @@
         <footer class="card__foot">
           <p class="card__use"><b>When:</b> Show one image with a short caption. Screenshot, product shot, single illustrative photo.</p>
           <div class="tags"><span class="tag">image</span><span class="tag">screenshot</span><span class="tag">photo</span><span class="tag">single-visual</span><span class="tag">caption</span></div>
+        </footer>
+      </section>
+
+      <section class="card">
+        <header class="card__head">
+          <div class="card__id">Full-screen Image <code>fullscreen-image</code></div>
+          <div class="card__meta">
+            <span class="pill pill--cat">media</span>
+            <span class="pill">image-only</span>
+            <span class="pill">density: none</span>
+          </div>
+        </header>
+        <div class="card__stage"><div class="card__scale"><style>/* fullscreen-image landscape 1280x720 — single image filling the whole slide.
+ * No dotted texture / padding chassis here on purpose: the image IS the slide.
+ * The root still paints an opaque themed surface so the letterbox band in
+ * 'contain' mode (and any transparent PNG) reads as DFL sand-950, never as
+ * whatever colour the host deck happens to have behind the slide. */
+.tpl-root.tpl-fullscreen-image {
+  width: 1280px;
+  height: 720px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  background: var(--s-surface-page, #0a0908);
+  box-sizing: border-box;
+}
+
+.tpl-root.tpl-fullscreen-image .tpl-fsimg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tpl-root.tpl-fullscreen-image .tpl-fsimg--cover { object-fit: cover; }
+.tpl-root.tpl-fullscreen-image .tpl-fsimg--contain { object-fit: contain; }
+</style><div class="tpl-root tpl-fullscreen-image">
+  <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1451187580459-43490279c0fa?w&#x3D;1600&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="A glowing network of connected nodes filling the slide" class="tpl-fsimg tpl-fsimg--cover" crossorigin="anonymous" />
+</div>
+</div></div>
+        <footer class="card__foot">
+          <p class="card__use"><b>When:</b> Display ONE image filling the entire slide canvas with no caption or overlay text. Use 'contain' fit for pre-made slides/diagrams/screenshots that must be shown whole; 'cover' fit for photos/backgrounds that may crop.</p>
+          <div class="tags"><span class="tag">full-screen</span><span class="tag">fullscreen</span><span class="tag">image-only</span><span class="tag">contain</span><span class="tag">cover</span><span class="tag">diagram</span><span class="tag">screenshot</span><span class="tag">pre-made-slide</span><span class="tag">letterbox</span></div>
         </footer>
       </section>
 
@@ -732,7 +1048,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
   background-size: 24px 24px;
   pointer-events: none;
   z-index: 0;
@@ -831,59 +1147,82 @@
             <span class="pill">density: medium</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>.tpl-root.tpl-quote {
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-quote · landscape — 1280×720 · DFL DS tokens */
+
+.tpl-root.tpl-quote {
+  position: relative;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 1280px;
-  height: 720px;
-  background: var(--slide-bg, #f9fafb);
-  font-family: var(--slide-font-family, 'Segoe UI', system-ui, -apple-system, sans-serif);
-  box-sizing: border-box;
-  padding: 60px 100px;
 }
 
+.tpl-root.tpl-quote::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: var(--s-texture-dot-size, 32px) var(--s-texture-dot-size, 32px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-quote > * { position: relative; z-index: 1; }
+
 .tpl-root.tpl-quote .tpl-quote__inner {
-  max-width: 720px;
+  max-width: 860px;
   text-align: center;
 }
 
 .tpl-root.tpl-quote .tpl-quote__mark {
-  font-size: 96px;
+  font-family: var(--s-font-editorial, Georgia, 'Times New Roman', serif);
+  font-size: 110px;
   line-height: 0.5;
-  color: var(--slide-primary, #3b82f6);
-  font-family: Georgia, 'Times New Roman', serif;
-  margin-bottom: 20px;
+  color: var(--s-brand-solid, #E07A4A);
+  margin-bottom: 28px;
   display: block;
 }
 
 .tpl-root.tpl-quote .tpl-quote__text {
-  font-size: 36px;
-  font-weight: 400;
-  color: var(--slide-heading-color, #111827);
-  line-height: 1.5;
-  margin: 0 0 28px 0;
+  font-family: var(--s-font-editorial, Georgia, 'Times New Roman', serif);
+  font-size: 38px;
+  font-weight: var(--p-weight-400, 400);
   font-style: italic;
-  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1.5;
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0 0 32px 0;
 }
 
 .tpl-root.tpl-quote .tpl-quote__attribution {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
 }
 
 .tpl-root.tpl-quote .tpl-quote__author {
-  font-size: 24px;
-  font-weight: 600;
-  color: var(--slide-text, #1f2937);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  font-size: 25px;
+  font-weight: var(--p-weight-600, 600);
+  color: var(--s-ink-primary, #f6f1e7);
   display: block;
 }
 
 .tpl-root.tpl-quote .tpl-quote__source {
-  font-size: 20px;
-  color: #6b7280;
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 18px;
+  font-weight: var(--p-weight-500, 500);
+  letter-spacing: var(--p-tracking-wider, 0.8px);
+  text-transform: uppercase;
+  color: var(--s-ink-muted, #7d7568);
   display: block;
 }
 </style><div class="tpl-root tpl-quote">
@@ -912,13 +1251,13 @@
             <span class="pill">density: medium</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-callout · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-callout · landscape — 1280×720 */
 
 .tpl-root.tpl-callout {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 56px 72px;
+  width: 1280px;
+  height: 720px;
+  padding: 75px 96px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -934,8 +1273,8 @@
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -943,20 +1282,20 @@
 .tpl-root.tpl-callout > * { position: relative; z-index: 1; }
 
 .tpl-root.tpl-callout .tpl-callout__card {
-  padding: 48px 56px;
+  padding: 64px 75px;
   border: 1px solid var(--s-brand-border, rgba(224, 122, 74, 0.22));
   background: var(--s-brand-subtle, rgba(224, 122, 74, 0.10));
   border-radius: var(--p-radius-xl, 14px);
-  max-width: 700px;
+  max-width: 933px;
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 21px;
 }
 
 .tpl-root.tpl-callout .tpl-callout__icon {
-  width: 36px;
-  height: 36px;
+  width: 48px;
+  height: 48px;
   border-radius: var(--p-radius-md, 6px);
   background: var(--s-brand-solid, #E07A4A);
   display: flex;
@@ -964,13 +1303,13 @@
   justify-content: center;
   color: var(--s-ink-inverse, #0a0908);
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 22px;
+  font-size: 29px;
   font-weight: var(--p-weight-700, 700);
 }
 
 .tpl-root.tpl-callout .tpl-callout__eyebrow {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 13px;
+  font-size: 17px;
   letter-spacing: var(--p-tracking-wider, 0.8px);
   text-transform: uppercase;
   color: var(--s-brand-fg, #f0a872);
@@ -978,7 +1317,7 @@
 
 .tpl-root.tpl-callout .tpl-callout__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 50px;
+  font-size: 67px;
   font-weight: var(--p-weight-700, 700);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   line-height: 1.05;
@@ -987,7 +1326,7 @@
 }
 
 .tpl-root.tpl-callout .tpl-callout__body {
-  font-size: 24px;
+  font-size: 32px;
   color: var(--s-ink-secondary, #c9c0b4);
   line-height: 1.5;
   margin: 0;
@@ -1016,60 +1355,98 @@
             <span class="pill">density: high</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>.tpl-root.tpl-code-block {
-  display: flex;
-  flex-direction: column;
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-code-block · landscape — 1280×720 · DFL DS tokens */
+
+.tpl-root.tpl-code-block {
+  position: relative;
   width: 1280px;
   height: 720px;
-  background: var(--slide-bg, #ffffff);
-  font-family: var(--slide-font-family, 'Segoe UI', system-ui, -apple-system, sans-serif);
+  padding: 64px 85px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
   box-sizing: border-box;
-  padding: 48px 60px;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
 }
 
+.tpl-root.tpl-code-block::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: var(--s-texture-dot-size, 32px) var(--s-texture-dot-size, 32px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-code-block > * { position: relative; z-index: 1; }
+
 .tpl-root.tpl-code-block .tpl-code-block__title {
-  font-size: 40px;
-  font-weight: 700;
-  color: var(--slide-heading-color, #111827);
-  margin: 0 0 24px 0;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
+  flex: 0 0 auto;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 51px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  line-height: 1.05;
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+}
+
+.tpl-root.tpl-code-block .tpl-code-block__title::after {
+  content: "";
+  display: block;
+  height: 2px;
+  margin-top: 18px;
+  background: linear-gradient(
+    90deg,
+    var(--s-brand-solid, #E07A4A) 0,
+    var(--s-brand-solid, #E07A4A) 56px,
+    var(--s-border-subtle, #2a2622) 56px,
+    var(--s-border-subtle, #2a2622) 100%
+  );
 }
 
 .tpl-root.tpl-code-block .tpl-code-block__container {
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  background: #1e1e2e;
-  border-radius: 10px;
+  background: var(--s-surface-panel, #141210);
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  border-radius: var(--p-radius-xl, 14px);
   overflow: hidden;
   position: relative;
 }
 
 .tpl-root.tpl-code-block .tpl-code-block__lang-badge {
   position: absolute;
-  top: 14px;
-  right: 18px;
-  font-size: 15px;
-  font-weight: 600;
-  color: #94a3b8;
+  top: 18px;
+  right: 22px;
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 16px;
+  font-weight: var(--p-weight-500, 500);
+  color: var(--s-brand-fg, #f0a872);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-family: 'Segoe UI', system-ui, sans-serif;
+  letter-spacing: var(--p-tracking-wider, 0.8px);
 }
 
 .tpl-root.tpl-code-block .tpl-code-block__pre {
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
   margin: 0;
-  padding: 28px 32px;
-  overflow: auto;
+  padding: 32px 34px;
+  overflow: hidden;
 }
 
 .tpl-root.tpl-code-block .tpl-code-block__code {
-  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', 'Courier New', monospace;
-  font-size: 20px;
-  line-height: 1.7;
-  color: #cdd6f4;
+  font-family: var(--s-font-mono, 'JetBrains Mono', ui-monospace, monospace);
+  font-size: 22px;
+  line-height: 1.6;
+  color: var(--s-ink-secondary, #c9c0b4);
   white-space: pre;
   display: block;
 }
@@ -1127,7 +1504,7 @@ console.log(output);</code></pre>
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
   background-size: 24px 24px;
   pointer-events: none;
   z-index: 0;
@@ -1183,7 +1560,7 @@ console.log(output);</code></pre>
   flex-shrink: 0;
 }
 
-.tpl-root.tpl-steps .tpl-steps__num::before {
+.tpl-root.tpl-steps .tpl-steps__num:empty::before {
   content: counter(step-counter, decimal-leading-zero);
 }
 
@@ -1219,21 +1596,25 @@ console.log(output);</code></pre>
   <h2 class="dfl-section-title tpl-steps__title">Record &amp; publish flow</h2>
   <div class="dfl-section-rule"></div>
   <div class="tpl-steps__rail">
-    <div class="tpl-steps__step">
-      <div class="tpl-steps__num"></div>
-      <h4 class="tpl-steps__name"></h4>
+    <div class="tpl-steps__step tpl-steps__step--done">
+      <div class="tpl-steps__num">01</div>
+      <h4 class="tpl-steps__name">Plan</h4>
+      <p class="tpl-steps__body">Outline the lesson in our editor with AI assistance.</p>
+    </div>
+    <div class="tpl-steps__step tpl-steps__step--active">
+      <div class="tpl-steps__num">02</div>
+      <h4 class="tpl-steps__name">Record</h4>
+      <p class="tpl-steps__body">Screen + webcam capture, multi-take support.</p>
     </div>
     <div class="tpl-steps__step">
-      <div class="tpl-steps__num"></div>
-      <h4 class="tpl-steps__name"></h4>
+      <div class="tpl-steps__num">03</div>
+      <h4 class="tpl-steps__name">Edit</h4>
+      <p class="tpl-steps__body">Auto-cut silences, generate captions, B-roll.</p>
     </div>
     <div class="tpl-steps__step">
-      <div class="tpl-steps__num"></div>
-      <h4 class="tpl-steps__name"></h4>
-    </div>
-    <div class="tpl-steps__step">
-      <div class="tpl-steps__num"></div>
-      <h4 class="tpl-steps__name"></h4>
+      <div class="tpl-steps__num">04</div>
+      <h4 class="tpl-steps__name">Publish</h4>
+      <p class="tpl-steps__body">Ship to fellows + companies with one click.</p>
     </div>
   </div>
 </div>
@@ -1253,13 +1634,13 @@ console.log(output);</code></pre>
             <span class="pill">density: medium</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-kpi · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-kpi · landscape — 1280×720 */
 
 .tpl-root.tpl-kpi {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 56px 72px;
+  width: 1280px;
+  height: 720px;
+  padding: 75px 96px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -1272,31 +1653,31 @@ console.log(output);</code></pre>
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
 
 .tpl-root.tpl-kpi > * { position: relative; z-index: 1; }
 
-.tpl-root.tpl-kpi .tpl-kpi__title { margin-top: 14px; }
+.tpl-root.tpl-kpi .tpl-kpi__title { margin-top: 19px; }
 
 .tpl-root.tpl-kpi .tpl-kpi__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-top: 8px;
+  gap: 21px;
+  margin-top: 11px;
 }
 
 .tpl-root.tpl-kpi .tpl-kpi__card {
-  padding: 22px 24px;
+  padding: 29px 32px;
   background: var(--s-surface-panel, #141210);
   border: 1px solid var(--s-border-subtle, #2a2622);
   border-radius: var(--p-radius-lg, 10px);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   position: relative;
 }
 
@@ -1307,7 +1688,7 @@ console.log(output);</code></pre>
 
 .tpl-root.tpl-kpi .tpl-kpi__label {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 13px;
+  font-size: 17px;
   letter-spacing: var(--p-tracking-wider, 0.8px);
   text-transform: uppercase;
   color: var(--s-ink-muted, #7d7568);
@@ -1315,7 +1696,7 @@ console.log(output);</code></pre>
 
 .tpl-root.tpl-kpi .tpl-kpi__value {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 65px;
+  font-size: 87px;
   font-weight: var(--p-weight-700, 700);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   line-height: 1;
@@ -1325,7 +1706,7 @@ console.log(output);</code></pre>
 
 .tpl-root.tpl-kpi .tpl-kpi__delta {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 15px;
+  font-size: 20px;
   color: var(--s-success-fg, #7ad79a);
 }
 </style><div class="tpl-root tpl-kpi">
@@ -1381,59 +1762,97 @@ console.log(output);</code></pre>
             <span class="pill">density: high</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>.tpl-root.tpl-table {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-table · landscape — 1280×720 · DFL DS tokens */
+
+.tpl-root.tpl-table {
+  position: relative;
   width: 1280px;
   height: 720px;
-  background: transparent;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  padding: 64px 85px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
   box-sizing: border-box;
-  padding: 40px;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 32px;
 }
 
+.tpl-root.tpl-table::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: var(--s-texture-dot-size, 32px) var(--s-texture-dot-size, 32px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-table > * { position: relative; z-index: 1; }
+
 .tpl-root.tpl-table .tpl-table__title {
-  font-size: 40px;
-  font-weight: 700;
-  color: #ffffff;
-  margin: 0 0 24px 0;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-  align-self: flex-start;
-  width: 80%;
-  max-width: 900px;
+  flex: 0 0 auto;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 51px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  line-height: 1.05;
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+}
+
+.tpl-root.tpl-table .tpl-table__title::after {
+  content: "";
+  display: block;
+  height: 2px;
+  margin-top: 18px;
+  background: linear-gradient(
+    90deg,
+    var(--s-brand-solid, #E07A4A) 0,
+    var(--s-brand-solid, #E07A4A) 56px,
+    var(--s-border-subtle, #2a2622) 56px,
+    var(--s-border-subtle, #2a2622) 100%
+  );
 }
 
 .tpl-root.tpl-table .tpl-table__wrapper {
-  overflow: auto;
-  border-radius: 8px;
-  width: 80%;
-  max-width: 900px;
-  background: rgba(255, 255, 255, 0.05);
+  flex: 0 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: var(--p-radius-xl, 14px);
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  background: var(--s-surface-panel, #141210);
 }
 
 .tpl-root.tpl-table .tpl-table__table {
   width: 100%;
   border-collapse: collapse;
   font-size: 26px;
-  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+  color: var(--s-ink-secondary, #c9c0b4);
 }
 
 .tpl-root.tpl-table .tpl-table__thead {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--s-surface-raised, #1a1714);
 }
 
 .tpl-root.tpl-table .tpl-table__th {
-  padding: 16px 24px;
+  padding: 20px 28px;
   text-align: left;
-  font-weight: 600;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 17px;
+  font-weight: var(--p-weight-500, 500);
+  letter-spacing: var(--p-tracking-wider, 0.8px);
+  text-transform: uppercase;
+  color: var(--s-ink-muted, #7d7568);
+  border-bottom: 1px solid var(--s-brand-border, rgba(224, 122, 74, 0.22));
 }
 
 .tpl-root.tpl-table .tpl-table__row {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--s-border-subtle, #2a2622);
 }
 
 .tpl-root.tpl-table .tpl-table__row:last-child {
@@ -1441,8 +1860,37 @@ console.log(output);</code></pre>
 }
 
 .tpl-root.tpl-table .tpl-table__td {
-  padding: 16px 24px;
-  line-height: 1.4;
+  padding: 18px 28px;
+  line-height: 1.35;
+}
+
+/* First column reads as the row label, not as data. */
+.tpl-root.tpl-table .tpl-table__td:first-child {
+  color: var(--s-ink-primary, #f6f1e7);
+  font-weight: var(--p-weight-500, 500);
+}
+
+/* ── Row-count-aware density ──────────────────────────────────────────────
+   The wrapper is `flex: 0 1 auto; overflow: hidden`, so a table with more rows
+   than the canvas can hold does not shrink — it is CLIPPED, silently. A 7-row
+   "7 modules" table shipped to a client with six rows visible (2026-08-05).
+   Rows cannot be scaled by CSS, but their DENSITY can be chosen from the row
+   count via `:has()`, which is exactly the information the template already
+   has. Each tier is sized so header + N rows fit the wrapper budget even under
+   a two-line title. */
+.tpl-root.tpl-table .tpl-table__table:has(.tpl-table__tbody > .tpl-table__row:nth-child(6)) .tpl-table__td {
+  padding: 12px 28px;
+  font-size: 23px;
+}
+.tpl-root.tpl-table .tpl-table__table:has(.tpl-table__tbody > .tpl-table__row:nth-child(6)) .tpl-table__th {
+  padding: 14px 28px;
+}
+.tpl-root.tpl-table .tpl-table__table:has(.tpl-table__tbody > .tpl-table__row:nth-child(8)) .tpl-table__td {
+  padding: 7px 28px;
+  font-size: 20px;
+}
+.tpl-root.tpl-table .tpl-table__table:has(.tpl-table__tbody > .tpl-table__row:nth-child(8)) .tpl-table__th {
+  padding: 10px 28px;
 }
 </style><div class="tpl-root tpl-table">
   <h2 class="tpl-table__title">Q1 Performance</h2>
@@ -1501,31 +1949,67 @@ console.log(output);</code></pre>
             <span class="pill">density: low</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>.tpl-root.tpl-chart {
-  display: flex;
-  flex-direction: column;
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-chart · landscape — 1280×720 · DFL DS tokens */
+
+.tpl-root.tpl-chart {
+  position: relative;
   width: 1280px;
   height: 720px;
-  background: var(--slide-bg, #ffffff);
-  font-family: var(--slide-font-family, 'Segoe UI', system-ui, -apple-system, sans-serif);
+  padding: 64px 85px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
   box-sizing: border-box;
-  padding: 48px 60px;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
 }
 
+.tpl-root.tpl-chart::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: var(--s-texture-dot-size, 32px) var(--s-texture-dot-size, 32px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-chart > * { position: relative; z-index: 1; }
+
 .tpl-root.tpl-chart .tpl-chart__title {
-  font-size: 40px;
-  font-weight: 700;
-  color: var(--slide-heading-color, #111827);
-  margin: 0 0 24px 0;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
+  flex: 0 0 auto;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 51px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  line-height: 1.05;
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+}
+
+.tpl-root.tpl-chart .tpl-chart__title::after {
+  content: "";
+  display: block;
+  height: 2px;
+  margin-top: 18px;
+  background: linear-gradient(
+    90deg,
+    var(--s-brand-solid, #E07A4A) 0,
+    var(--s-brand-solid, #E07A4A) 56px,
+    var(--s-border-subtle, #2a2622) 56px,
+    var(--s-border-subtle, #2a2622) 100%
+  );
 }
 
 .tpl-root.tpl-chart .tpl-chart__area {
-  flex: 1;
-  border-radius: 10px;
-  border: 1px solid var(--slide-border, #e5e7eb);
-  background: var(--slide-bg, #f9fafb);
+  flex: 1 1 auto;
+  min-height: 0;
+  border-radius: var(--p-radius-xl, 14px);
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  background: var(--s-surface-panel, #141210);
   position: relative;
   overflow: hidden;
 }
@@ -1543,21 +2027,23 @@ console.log(output);</code></pre>
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 18px;
+  color: var(--s-brand-solid, #E07A4A);
 }
 
 .tpl-root.tpl-chart .tpl-chart__placeholder-icon {
-  width: 64px;
-  height: 64px;
-  opacity: 0.7;
+  width: 72px;
+  height: 72px;
 }
 
 .tpl-root.tpl-chart .tpl-chart__placeholder-label {
-  font-size: 22px;
-  color: #9ca3af;
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 18px;
+  font-weight: var(--p-weight-500, 500);
+  letter-spacing: var(--p-tracking-wider, 0.8px);
+  text-transform: uppercase;
+  color: var(--s-ink-muted, #7d7568);
   margin: 0;
-  text-transform: capitalize;
-  font-weight: 500;
 }
 </style><div class="tpl-root tpl-chart">
   <h2 class="tpl-chart__title">Monthly Active Users</h2>
@@ -1566,9 +2052,9 @@ console.log(output);</code></pre>
     <div class="tpl-chart__placeholder">
       <div class="tpl-chart__placeholder-icon">
         <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="6" y="28" width="8" height="14" rx="1" fill="#3b82f6"/>
-          <rect x="20" y="18" width="8" height="24" rx="1" fill="#60a5fa"/>
-          <rect x="34" y="10" width="8" height="32" rx="1" fill="#93c5fd"/>
+          <rect x="6" y="28" width="8" height="14" rx="1" fill="currentColor"/>
+          <rect x="20" y="18" width="8" height="24" rx="1" fill="currentColor" opacity="0.66"/>
+          <rect x="34" y="10" width="8" height="32" rx="1" fill="currentColor" opacity="0.4"/>
         </svg>
       </div>
       <p class="tpl-chart__placeholder-label">bar chart</p>
@@ -1629,13 +2115,13 @@ console.log(output);</code></pre>
             <span class="pill">density: low</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-big-statement · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-big-statement · landscape — 1280×720 */
 
 .tpl-root.tpl-big-statement {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 72px 96px;
+  width: 1280px;
+  height: 720px;
+  padding: 96px 128px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -1651,8 +2137,8 @@ console.log(output);</code></pre>
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -1663,14 +2149,14 @@ console.log(output);</code></pre>
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 28px;
+  gap: 37px;
   text-align: center;
   max-width: 22ch;
 }
 
 .tpl-root.tpl-big-statement .tpl-big-statement__eyebrow {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 14px;
+  font-size: 19px;
   letter-spacing: var(--p-tracking-wider, 0.8px);
   text-transform: uppercase;
   color: var(--s-ink-muted, #7d7568);
@@ -1678,7 +2164,7 @@ console.log(output);</code></pre>
 
 .tpl-root.tpl-big-statement .tpl-big-statement__statement {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 64px;
+  font-size: 85px;
   font-weight: var(--p-weight-700, 700);
   line-height: 1.02;
   letter-spacing: var(--p-tracking-tight, -0.4px);
@@ -1708,14 +2194,14 @@ console.log(output);</code></pre>
             <span class="pill">density: low</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-full-bleed · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-full-bleed · landscape — 1280×720 */
 
 .tpl-root.tpl-full-bleed {
   position: relative;
-  width: 960px;
-  height: 540px;
+  width: 1280px;
+  height: 720px;
   background: var(--s-surface-page, #0a0908);
-  color: #ffffff;
+  color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
   box-sizing: border-box;
   overflow: hidden;
@@ -1746,31 +2232,31 @@ console.log(output);</code></pre>
 
 .tpl-root.tpl-full-bleed .tpl-full-bleed__content {
   position: absolute;
-  left: 72px;
-  right: 72px;
-  bottom: 64px;
+  left: 96px;
+  right: 96px;
+  bottom: 85px;
   z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 21px;
 }
 
 .tpl-root.tpl-full-bleed .tpl-full-bleed__eyebrow {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 14px;
+  font-size: 19px;
   letter-spacing: var(--p-tracking-wider, 0.8px);
   text-transform: uppercase;
-  color: var(--s-brand-fg, #f0a872);
+  color: var(--s-brand-on-media, #f0a872);
 }
 
 .tpl-root.tpl-full-bleed .tpl-full-bleed__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 96px;
+  font-size: 128px;
   font-weight: var(--p-weight-700, 700);
   line-height: 0.95;
   letter-spacing: var(--p-tracking-tight, -0.4px);
   margin: 0;
-  color: #ffffff;
+  color: var(--s-ink-on-media, #f6f1e7);
   text-wrap: balance;
 }
 </style><div class="tpl-root tpl-full-bleed">
@@ -1797,13 +2283,13 @@ console.log(output);</code></pre>
             <span class="pill">density: low</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-big-image · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-big-image · landscape — 1280×720 */
 
 .tpl-root.tpl-big-image {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -1812,15 +2298,15 @@ console.log(output);</code></pre>
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
 }
 
 .tpl-root.tpl-big-image::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -1847,12 +2333,12 @@ console.log(output);</code></pre>
   flex: 0 0 auto;
   display: flex;
   align-items: baseline;
-  gap: 18px;
+  gap: 24px;
 }
 
 .tpl-root.tpl-big-image .tpl-big-image__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 34px;
+  font-size: 45px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -1860,7 +2346,7 @@ console.log(output);</code></pre>
 
 .tpl-root.tpl-big-image .tpl-big-image__caption {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 15px;
+  font-size: 20px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   color: var(--s-ink-muted, #7d7568);
 }
@@ -1889,13 +2375,13 @@ console.log(output);</code></pre>
             <span class="pill">density: low</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-image-grid · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-image-grid · landscape — 1280×720 */
 
 .tpl-root.tpl-image-grid {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -1904,15 +2390,15 @@ console.log(output);</code></pre>
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
 }
 
 .tpl-root.tpl-image-grid::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -1922,7 +2408,7 @@ console.log(output);</code></pre>
 .tpl-root.tpl-image-grid .tpl-image-grid__title {
   flex: 0 0 auto;
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 38px;
+  font-size: 51px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -1935,7 +2421,7 @@ console.log(output);</code></pre>
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-auto-rows: 1fr;
-  gap: 16px;
+  gap: 21px;
 }
 
 .tpl-root.tpl-image-grid .tpl-image-grid__cell {
@@ -1986,13 +2472,13 @@ console.log(output);</code></pre>
             <span class="pill">density: high</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-comparison · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-comparison · landscape — 1280×720 */
 
 .tpl-root.tpl-comparison {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -2001,15 +2487,15 @@ console.log(output);</code></pre>
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 37px;
 }
 
 .tpl-root.tpl-comparison::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -2019,7 +2505,7 @@ console.log(output);</code></pre>
 .tpl-root.tpl-comparison .tpl-comparison__title {
   flex: 0 0 auto;
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 38px;
+  font-size: 51px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -2031,19 +2517,19 @@ console.log(output);</code></pre>
   min-height: 0;
   display: flex;
   align-items: stretch;
-  gap: 20px;
+  gap: 27px;
 }
 
 .tpl-root.tpl-comparison .tpl-comparison__panel {
   flex: 1 1 0;
   min-width: 0;
-  padding: 28px 30px;
+  padding: 37px 40px;
   border-radius: var(--p-radius-xl, 14px);
   border: 1px solid var(--s-border-subtle, #2a2622);
   background: var(--s-surface-panel, #141210);
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 24px;
 }
 
 .tpl-root.tpl-comparison .tpl-comparison__panel--right {
@@ -2053,7 +2539,7 @@ console.log(output);</code></pre>
 
 .tpl-root.tpl-comparison .tpl-comparison__label {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 14px;
+  font-size: 19px;
   letter-spacing: var(--p-tracking-wider, 0.8px);
   text-transform: uppercase;
   color: var(--s-ink-muted, #7d7568);
@@ -2069,13 +2555,13 @@ console.log(output);</code></pre>
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 19px;
 }
 
 .tpl-root.tpl-comparison .tpl-comparison__item {
   position: relative;
-  padding-left: 22px;
-  font-size: 20px;
+  padding-left: 29px;
+  font-size: 27px;
   line-height: 1.35;
   color: var(--s-ink-secondary, #c9c0b4);
 }
@@ -2084,9 +2570,9 @@ console.log(output);</code></pre>
   content: "";
   position: absolute;
   left: 0;
-  top: 11px;
-  width: 8px;
-  height: 8px;
+  top: 15px;
+  width: 11px;
+  height: 11px;
   border-radius: 999px;
   background: var(--s-ink-muted, #7d7568);
 }
@@ -2099,7 +2585,7 @@ console.log(output);</code></pre>
   flex: 0 0 auto;
   align-self: center;
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 26px;
+  font-size: 35px;
   font-weight: var(--p-weight-700, 700);
   letter-spacing: var(--p-tracking-wide, 0.5px);
   color: var(--s-ink-muted, #7d7568);
@@ -2138,13 +2624,13 @@ console.log(output);</code></pre>
             <span class="pill">density: low</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-stat-number · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-stat-number · landscape — 1280×720 */
 
 .tpl-root.tpl-stat-number {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 56px 72px;
+  width: 1280px;
+  height: 720px;
+  padding: 75px 96px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -2160,8 +2646,8 @@ console.log(output);</code></pre>
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -2173,13 +2659,13 @@ console.log(output);</code></pre>
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 12px;
+  gap: 16px;
   max-width: 24ch;
 }
 
 .tpl-root.tpl-stat-number .tpl-stat-number__eyebrow {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 14px;
+  font-size: 19px;
   letter-spacing: var(--p-tracking-wider, 0.8px);
   text-transform: uppercase;
   color: var(--s-ink-muted, #7d7568);
@@ -2187,7 +2673,7 @@ console.log(output);</code></pre>
 
 .tpl-root.tpl-stat-number .tpl-stat-number__value {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 280px;
+  font-size: 373px;
   font-weight: var(--p-weight-700, 700);
   line-height: 0.82;
   letter-spacing: var(--p-tracking-tight, -0.4px);
@@ -2196,16 +2682,16 @@ console.log(output);</code></pre>
 }
 
 .tpl-root.tpl-stat-number .tpl-stat-number__label {
-  font-size: 26px;
+  font-size: 35px;
   line-height: 1.35;
   color: var(--s-ink-secondary, #c9c0b4);
-  margin: 8px 0 0;
+  margin: 11px 0 0;
   text-wrap: balance;
 }
 
 .tpl-root.tpl-stat-number .tpl-stat-number__source {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 13px;
+  font-size: 17px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   color: var(--s-ink-muted, #7d7568);
 }
@@ -2233,13 +2719,13 @@ console.log(output);</code></pre>
             <span class="pill">density: medium</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-feature-cards · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-feature-cards · landscape — 1280×720 */
 
 .tpl-root.tpl-feature-cards {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -2249,15 +2735,15 @@ console.log(output);</code></pre>
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 12px;
+  gap: 16px;
 }
 
 .tpl-root.tpl-feature-cards::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -2266,7 +2752,7 @@ console.log(output);</code></pre>
 
 .tpl-root.tpl-feature-cards .tpl-feature-cards__eyebrow {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 14px;
+  font-size: 19px;
   letter-spacing: var(--p-tracking-wider, 0.8px);
   text-transform: uppercase;
   color: var(--s-ink-muted, #7d7568);
@@ -2274,34 +2760,34 @@ console.log(output);</code></pre>
 
 .tpl-root.tpl-feature-cards .tpl-feature-cards__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 38px;
+  font-size: 51px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
-  margin: 0 0 20px;
+  margin: 0 0 27px;
 }
 
 .tpl-root.tpl-feature-cards .tpl-feature-cards__row {
   display: flex;
-  gap: 20px;
+  gap: 27px;
   align-items: stretch;
 }
 
 .tpl-root.tpl-feature-cards .tpl-feature-cards__card {
   flex: 1 1 0;
   min-width: 0;
-  padding: 24px;
+  padding: 32px;
   border-radius: var(--p-radius-xl, 14px);
   border: 1px solid var(--s-border-subtle, #2a2622);
   background: var(--s-surface-panel, #141210);
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 19px;
 }
 
 .tpl-root.tpl-feature-cards .tpl-feature-cards__icon {
-  width: 64px;
-  height: 64px;
+  width: 85px;
+  height: 85px;
   border-radius: var(--p-radius-lg, 10px);
   overflow: hidden;
   border: 1px solid var(--s-border-subtle, #2a2622);
@@ -2317,14 +2803,14 @@ console.log(output);</code></pre>
 
 .tpl-root.tpl-feature-cards .tpl-feature-cards__card-title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 28px;
+  font-size: 37px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
 }
 
 .tpl-root.tpl-feature-cards .tpl-feature-cards__card-caption {
-  font-size: 17px;
+  font-size: 23px;
   line-height: 1.4;
   color: var(--s-ink-secondary, #c9c0b4);
 }
@@ -2365,12 +2851,12 @@ console.log(output);</code></pre>
             <span class="pill">density: medium</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-image-quote · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-image-quote · landscape — 1280×720 */
 
 .tpl-root.tpl-image-quote {
   position: relative;
-  width: 960px;
-  height: 540px;
+  width: 1280px;
+  height: 720px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -2378,7 +2864,7 @@ console.log(output);</code></pre>
   overflow: hidden;
   isolation: isolate;
   display: grid;
-  grid-template-columns: 380px 1fr;
+  grid-template-columns: 507px 1fr;
 }
 
 .tpl-root.tpl-image-quote .tpl-image-quote__media {
@@ -2396,16 +2882,16 @@ console.log(output);</code></pre>
 }
 
 .tpl-root.tpl-image-quote .tpl-image-quote__body {
-  padding: 64px 72px;
+  padding: 85px 96px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 28px;
+  gap: 37px;
 }
 
 .tpl-root.tpl-image-quote .tpl-image-quote__quote {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 52px;
+  font-size: 69px;
   font-weight: var(--p-weight-600, 600);
   line-height: 1.08;
   letter-spacing: var(--p-tracking-tight, -0.4px);
@@ -2422,18 +2908,18 @@ console.log(output);</code></pre>
 .tpl-root.tpl-image-quote .tpl-image-quote__attribution {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
 }
 
 .tpl-root.tpl-image-quote .tpl-image-quote__author {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 16px;
+  font-size: 21px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   color: var(--s-brand-fg, #f0a872);
 }
 
 .tpl-root.tpl-image-quote .tpl-image-quote__role {
-  font-size: 15px;
+  font-size: 20px;
   color: var(--s-ink-muted, #7d7568);
 }
 </style><div class="tpl-root tpl-image-quote">
@@ -2464,12 +2950,12 @@ console.log(output);</code></pre>
             <span class="pill">density: low</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-title-image · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-title-image · landscape — 1280×720 */
 
 .tpl-root.tpl-title-image {
   position: relative;
-  width: 960px;
-  height: 540px;
+  width: 1280px;
+  height: 720px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -2477,20 +2963,20 @@ console.log(output);</code></pre>
   overflow: hidden;
   isolation: isolate;
   display: grid;
-  grid-template-columns: 1fr 420px;
+  grid-template-columns: 1fr 560px;
 }
 
 .tpl-root.tpl-title-image .tpl-title-image__panel {
-  padding: 64px 64px 64px 72px;
+  padding: 85px 85px 85px 96px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 20px;
+  gap: 27px;
 }
 
 .tpl-root.tpl-title-image .tpl-title-image__eyebrow {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 14px;
+  font-size: 19px;
   letter-spacing: var(--p-tracking-wider, 0.8px);
   text-transform: uppercase;
   color: var(--s-brand-fg, #f0a872);
@@ -2498,7 +2984,7 @@ console.log(output);</code></pre>
 
 .tpl-root.tpl-title-image .tpl-title-image__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 84px;
+  font-size: 112px;
   font-weight: var(--p-weight-700, 700);
   line-height: 0.95;
   letter-spacing: var(--p-tracking-tight, -0.4px);
@@ -2508,7 +2994,7 @@ console.log(output);</code></pre>
 }
 
 .tpl-root.tpl-title-image .tpl-title-image__subtitle {
-  font-size: 24px;
+  font-size: 32px;
   line-height: 1.45;
   color: var(--s-ink-secondary, #c9c0b4);
   margin: 0;
@@ -2554,13 +3040,13 @@ console.log(output);</code></pre>
             <span class="pill">density: low</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-screenshot-frame · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-screenshot-frame · landscape — 1280×720 */
 
 .tpl-root.tpl-screenshot-frame {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -2571,15 +3057,15 @@ console.log(output);</code></pre>
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 22px;
+  gap: 29px;
 }
 
 .tpl-root.tpl-screenshot-frame::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -2594,33 +3080,33 @@ console.log(output);</code></pre>
   overflow: hidden;
   border: 1px solid var(--s-border-subtle, #2a2622);
   background: var(--s-surface-raised, #1a1714);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.45);
   display: flex;
   flex-direction: column;
 }
 
 .tpl-root.tpl-screenshot-frame .tpl-screenshot-frame__chrome {
   flex: 0 0 auto;
-  height: 38px;
+  height: 51px;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 0 16px;
-  background: var(--s-surface-sunken, #141210);
+  gap: 11px;
+  padding: 0 21px;
+  background: var(--s-surface-panel, #141210);
   border-bottom: 1px solid var(--s-border-subtle, #2a2622);
 }
 
 .tpl-root.tpl-screenshot-frame .tpl-screenshot-frame__dot {
-  width: 10px;
-  height: 10px;
+  width: 13px;
+  height: 13px;
   border-radius: 50%;
   background: var(--p-sand-500, #5a5249);
 }
 
 .tpl-root.tpl-screenshot-frame .tpl-screenshot-frame__url {
-  margin-left: 14px;
+  margin-left: 19px;
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 13px;
+  font-size: 17px;
   color: var(--s-ink-muted, #7d7568);
   letter-spacing: var(--p-tracking-wide, 0.4px);
 }
@@ -2634,14 +3120,18 @@ console.log(output);</code></pre>
 .tpl-root.tpl-screenshot-frame .tpl-screenshot-frame__img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  /* `contain`, never `cover`: this frame exists to show a SCREENSHOT, and a
+     screenshot that has had 40% of its height cropped away to fill the frame is
+     not the thing the author put in the slot. Letterboxing inside the window
+     chrome reads as a window; a cropped UI reads as a mistake. */
+  object-fit: contain;
   display: block;
 }
 
 .tpl-root.tpl-screenshot-frame .tpl-screenshot-frame__caption {
   flex: 0 0 auto;
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 15px;
+  font-size: 20px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   color: var(--s-ink-muted, #7d7568);
   text-align: center;
@@ -2676,13 +3166,13 @@ console.log(output);</code></pre>
             <span class="pill">density: low</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-annotated-image · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-annotated-image · landscape — 1280×720 */
 
 .tpl-root.tpl-annotated-image {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -2691,15 +3181,15 @@ console.log(output);</code></pre>
   isolation: isolate;
   display: flex;
   flex-direction: row;
-  gap: 24px;
+  gap: 32px;
 }
 
 .tpl-root.tpl-annotated-image::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -2708,11 +3198,11 @@ console.log(output);</code></pre>
 
 .tpl-root.tpl-annotated-image .tpl-annotated-image__title {
   position: absolute;
-  top: 48px;
-  left: 64px;
-  right: 64px;
+  top: 64px;
+  left: 85px;
+  right: 85px;
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 32px;
+  font-size: 43px;
   font-weight: 600;
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -2748,30 +3238,30 @@ console.log(output);</code></pre>
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   background: var(--s-brand-solid, #E07A4A);
-  color: #fff;
+  color: var(--s-ink-inverse, #0a0908);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 700;
-  box-shadow: 0 0 0 3px rgba(224, 122, 74, 0.3), 0 2px 8px rgba(0,0,0,0.5);
+  box-shadow: 0 0 0 4px var(--s-brand-ring, rgba(224, 122, 74, 0.45)), 0 3px 11px rgba(0,0,0,0.5);
   cursor: default;
 }
 
 .tpl-root.tpl-annotated-image .tpl-annotated-image__rail {
-  flex: 0 0 220px;
+  flex: 0 0 293px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 14px;
+  gap: 19px;
 }
 
 .tpl-root.tpl-annotated-image .tpl-annotated-image__callout {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 16px;
 }
 
 .tpl-root.tpl-annotated-image .tpl-annotated-image__callout-num {
@@ -2779,18 +3269,18 @@ console.log(output);</code></pre>
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
+  width: 29px;
+  height: 29px;
   border-radius: 50%;
   background: var(--s-brand-solid, #E07A4A);
-  color: #fff;
-  font-size: 11px;
+  color: var(--s-ink-inverse, #0a0908);
+  font-size: 15px;
   font-weight: 700;
   margin-top: 1px;
 }
 
 .tpl-root.tpl-annotated-image .tpl-annotated-image__callout-label {
-  font-size: 14px;
+  font-size: 19px;
   line-height: 1.4;
   color: var(--s-ink-secondary, #c9c0b4);
 }
@@ -2839,13 +3329,13 @@ console.log(output);</code></pre>
             <span class="pill">density: low</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-image-caption-grid · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-image-caption-grid · landscape — 1280×720 */
 
 .tpl-root.tpl-image-caption-grid {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -2854,15 +3344,15 @@ console.log(output);</code></pre>
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 27px;
 }
 
 .tpl-root.tpl-image-caption-grid::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -2872,7 +3362,7 @@ console.log(output);</code></pre>
 .tpl-root.tpl-image-caption-grid .tpl-image-caption-grid__title {
   flex: 0 0 auto;
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 36px;
+  font-size: 48px;
   font-weight: 600;
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -2885,7 +3375,7 @@ console.log(output);</code></pre>
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-auto-rows: 1fr;
-  gap: 16px;
+  gap: 21px;
 }
 
 .tpl-root.tpl-image-caption-grid .tpl-image-caption-grid__cell {
@@ -2893,7 +3383,7 @@ console.log(output);</code></pre>
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 11px;
 }
 
 .tpl-root.tpl-image-caption-grid .tpl-image-caption-grid__frame {
@@ -2914,7 +3404,7 @@ console.log(output);</code></pre>
 
 .tpl-root.tpl-image-caption-grid .tpl-image-caption-grid__caption {
   flex: 0 0 auto;
-  font-size: 12px;
+  font-size: 16px;
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
   letter-spacing: var(--p-tracking-wide, 0.5px);
   color: var(--s-ink-muted, #7d7568);
@@ -2969,13 +3459,13 @@ console.log(output);</code></pre>
             <span class="pill">density: none</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-before-after-image · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-before-after-image · landscape — 1280×720 */
 
 .tpl-root.tpl-before-after-image {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -2984,15 +3474,15 @@ console.log(output);</code></pre>
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 27px;
 }
 
 .tpl-root.tpl-before-after-image::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -3002,7 +3492,7 @@ console.log(output);</code></pre>
 .tpl-root.tpl-before-after-image .tpl-before-after-image__title {
   flex: 0 0 auto;
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 36px;
+  font-size: 48px;
   font-weight: 600;
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -3023,15 +3513,15 @@ console.log(output);</code></pre>
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 13px;
 }
 
 .tpl-root.tpl-before-after-image .tpl-before-after-image__panel--before {
-  padding-right: 12px;
+  padding-right: 16px;
 }
 
 .tpl-root.tpl-before-after-image .tpl-before-after-image__panel--after {
-  padding-left: 12px;
+  padding-left: 16px;
 }
 
 .tpl-root.tpl-before-after-image .tpl-before-after-image__frame {
@@ -3059,7 +3549,7 @@ console.log(output);</code></pre>
 .tpl-root.tpl-before-after-image .tpl-before-after-image__label {
   flex: 0 0 auto;
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 13px;
+  font-size: 17px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   text-transform: uppercase;
 }
@@ -3107,13 +3597,13 @@ console.log(output);</code></pre>
             <span class="pill">density: low</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-polaroid-stack · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-polaroid-stack · landscape — 1280×720 */
 
 .tpl-root.tpl-polaroid-stack {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -3122,15 +3612,15 @@ console.log(output);</code></pre>
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 27px;
 }
 
 .tpl-root.tpl-polaroid-stack::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -3140,7 +3630,7 @@ console.log(output);</code></pre>
 .tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__title {
   flex: 0 0 auto;
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 36px;
+  font-size: 48px;
   font-weight: 600;
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -3154,41 +3644,41 @@ console.log(output);</code></pre>
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 32px;
+  gap: 43px;
 }
 
 .tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__card {
   flex: 0 0 auto;
-  width: 200px;
+  width: 267px;
   background: var(--s-surface-raised, #1a1714);
   border: 1px solid var(--s-border-subtle, #2a2622);
   border-radius: var(--p-radius-md, 8px);
-  padding: 10px 10px 16px 10px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55);
+  padding: 13px 13px 21px 13px;
+  box-shadow: 0 11px 43px rgba(0, 0, 0, 0.55);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 13px;
 }
 
 .tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__fan .tpl-polaroid-stack__card:nth-child(1) {
-  transform: rotate(-4deg) translateY(6px);
+  transform: rotate(-4deg) translateY(8px);
 }
 
 .tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__fan .tpl-polaroid-stack__card:nth-child(2) {
-  transform: rotate(1deg) translateY(-4px);
+  transform: rotate(1deg) translateY(-5px);
   z-index: 2;
 }
 
 .tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__fan .tpl-polaroid-stack__card:nth-child(3) {
-  transform: rotate(5deg) translateY(8px);
+  transform: rotate(5deg) translateY(11px);
 }
 
 .tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__photo {
   width: 100%;
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  border-radius: 4px;
-  background: var(--s-surface-sunken, #141210);
+  border-radius: 5px;
+  background: var(--s-surface-panel, #141210);
 }
 
 .tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__img {
@@ -3204,10 +3694,10 @@ console.log(output);</code></pre>
 
 .tpl-root.tpl-polaroid-stack .tpl-polaroid-stack__caption {
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
-  font-size: 13px;
+  font-size: 17px;
   font-style: italic;
   color: var(--s-ink-secondary, #c9c0b4);
-  letter-spacing: 0.2px;
+  letter-spacing: 0.27px;
 }
 </style><div class="tpl-root tpl-polaroid-stack">
   <h2 class="tpl-polaroid-stack__title">Moments from the sprint</h2>
@@ -3254,13 +3744,13 @@ console.log(output);</code></pre>
             <span class="pill">density: low</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-logo-wall · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-logo-wall · landscape — 1280×720 */
 
 .tpl-root.tpl-logo-wall {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -3269,15 +3759,15 @@ console.log(output);</code></pre>
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 37px;
 }
 
 .tpl-root.tpl-logo-wall::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -3288,12 +3778,12 @@ console.log(output);</code></pre>
   flex: 0 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
 }
 
 .tpl-root.tpl-logo-wall .tpl-logo-wall__eyebrow {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 11px;
+  font-size: 15px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   text-transform: uppercase;
   color: var(--s-brand-solid, #E07A4A);
@@ -3301,7 +3791,7 @@ console.log(output);</code></pre>
 
 .tpl-root.tpl-logo-wall .tpl-logo-wall__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 36px;
+  font-size: 48px;
   font-weight: 600;
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -3314,7 +3804,7 @@ console.log(output);</code></pre>
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   grid-auto-rows: 1fr;
-  gap: 12px;
+  gap: 16px;
 }
 
 .tpl-root.tpl-logo-wall .tpl-logo-wall__cell {
@@ -3324,24 +3814,24 @@ console.log(output);</code></pre>
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   border: 1px solid var(--s-border-subtle, #2a2622);
   border-radius: var(--p-radius-md, 8px);
   background: var(--s-surface-raised, #1a1714);
-  padding: 10px 8px;
+  padding: 13px 11px;
 }
 
 .tpl-root.tpl-logo-wall .tpl-logo-wall__logo {
   width: 100%;
-  max-width: 48px;
-  height: 32px;
+  max-width: 64px;
+  height: 43px;
   object-fit: contain;
   display: block;
   filter: grayscale(1) brightness(0.8);
 }
 
 .tpl-root.tpl-logo-wall .tpl-logo-wall__name {
-  font-size: 10px;
+  font-size: 13px;
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
   letter-spacing: var(--p-tracking-wide, 0.5px);
   color: var(--s-ink-muted, #7d7568);
@@ -3399,13 +3889,13 @@ console.log(output);</code></pre>
             <span class="pill">density: low</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-video · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-video · landscape — 1280×720 */
 
 .tpl-root.tpl-video {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -3414,15 +3904,15 @@ console.log(output);</code></pre>
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 27px;
 }
 
 .tpl-root.tpl-video::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -3456,21 +3946,21 @@ console.log(output);</code></pre>
 }
 
 .tpl-root.tpl-video .tpl-video__play-icon {
-  width: 72px;
-  height: 72px;
-  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.6));
+  width: 96px;
+  height: 96px;
+  filter: drop-shadow(0 5px 21px rgba(0, 0, 0, 0.6));
 }
 
 .tpl-root.tpl-video .tpl-video__bar {
   flex: 0 0 auto;
   display: flex;
   align-items: baseline;
-  gap: 18px;
+  gap: 24px;
 }
 
 .tpl-root.tpl-video .tpl-video__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 32px;
+  font-size: 43px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -3478,7 +3968,7 @@ console.log(output);</code></pre>
 
 .tpl-root.tpl-video .tpl-video__caption {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 14px;
+  font-size: 19px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   color: var(--s-brand-solid, #E07A4A);
 }
@@ -3513,13 +4003,13 @@ console.log(output);</code></pre>
             <span class="pill">density: none</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-split-media · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-split-media · landscape — 1280×720 */
 
 .tpl-root.tpl-split-media {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -3528,15 +4018,15 @@ console.log(output);</code></pre>
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
 }
 
 .tpl-root.tpl-split-media::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -3546,7 +4036,7 @@ console.log(output);</code></pre>
 .tpl-root.tpl-split-media .tpl-split-media__title {
   flex: 0 0 auto;
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 36px;
+  font-size: 48px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -3566,7 +4056,7 @@ console.log(output);</code></pre>
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 13px;
 }
 
 .tpl-root.tpl-split-media .tpl-split-media__frame {
@@ -3588,7 +4078,7 @@ console.log(output);</code></pre>
 .tpl-root.tpl-split-media .tpl-split-media__label {
   flex: 0 0 auto;
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 13px;
+  font-size: 17px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   text-transform: uppercase;
   color: var(--s-ink-muted, #7d7568);
@@ -3598,7 +4088,7 @@ console.log(output);</code></pre>
 .tpl-root.tpl-split-media .tpl-split-media__divider {
   flex: 0 0 1px;
   align-self: stretch;
-  margin: 0 20px;
+  margin: 0 27px;
   background: var(--s-border-strong, #3a3530);
 }
 </style><div class="tpl-root tpl-split-media">
@@ -3635,13 +4125,13 @@ console.log(output);</code></pre>
             <span class="pill">density: medium</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-code-output · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-code-output · landscape — 1280×720 */
 
 .tpl-root.tpl-code-output {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -3650,15 +4140,15 @@ console.log(output);</code></pre>
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 27px;
 }
 
 .tpl-root.tpl-code-output::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -3668,7 +4158,7 @@ console.log(output);</code></pre>
 .tpl-root.tpl-code-output .tpl-code-output__title {
   flex: 0 0 auto;
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 34px;
+  font-size: 45px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -3691,28 +4181,28 @@ console.log(output);</code></pre>
   border-radius: var(--p-radius-xl, 14px);
   overflow: hidden;
   border: 1px solid var(--s-border-subtle, #2a2622);
-  background: var(--s-surface-sunken, #141210);
+  background: var(--s-surface-panel, #141210);
 }
 
 .tpl-root.tpl-code-output .tpl-code-output__pane--output {
-  background: #0d1117;
+  background: var(--s-surface-page, #0a0908);
   border-color: var(--s-border-strong, #3a3530);
 }
 
 .tpl-root.tpl-code-output .tpl-code-output__pane-header {
   flex: 0 0 auto;
-  height: 36px;
+  height: 48px;
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 0 16px;
+  gap: 9px;
+  padding: 0 21px;
   background: var(--s-surface-raised, #1a1714);
   border-bottom: 1px solid var(--s-border-subtle, #2a2622);
 }
 
 .tpl-root.tpl-code-output .tpl-code-output__pane-dot {
-  width: 9px;
-  height: 9px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   background: var(--p-sand-500, #5a5249);
 }
@@ -3720,7 +4210,7 @@ console.log(output);</code></pre>
 .tpl-root.tpl-code-output .tpl-code-output__lang {
   margin-left: auto;
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 12px;
+  font-size: 16px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   text-transform: uppercase;
   color: var(--s-brand-solid, #E07A4A);
@@ -3729,7 +4219,7 @@ console.log(output);</code></pre>
 .tpl-root.tpl-code-output .tpl-code-output__output-label {
   margin-left: auto;
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 12px;
+  font-size: 16px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   text-transform: uppercase;
   color: var(--s-success-solid, #5ec27e);
@@ -3739,13 +4229,13 @@ console.log(output);</code></pre>
   flex: 1 1 auto;
   min-height: 0;
   margin: 0;
-  padding: 20px 22px;
+  padding: 27px 29px;
   overflow: hidden;
 }
 
 .tpl-root.tpl-code-output .tpl-code-output__code {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 15px;
+  font-size: 20px;
   line-height: 1.65;
   color: var(--s-ink-primary, #f6f1e7);
   white-space: pre;
@@ -3754,7 +4244,7 @@ console.log(output);</code></pre>
 
 .tpl-root.tpl-code-output .tpl-code-output__output-text {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 14px;
+  font-size: 19px;
   line-height: 1.65;
   color: var(--s-success-solid, #5ec27e);
   white-space: pre;
@@ -3764,8 +4254,8 @@ console.log(output);</code></pre>
 .tpl-root.tpl-code-output .tpl-code-output__arrow {
   flex: 0 0 auto;
   align-self: center;
-  padding: 0 16px;
-  font-size: 22px;
+  padding: 0 21px;
+  font-size: 29px;
   color: var(--s-ink-muted, #7d7568);
 }
 </style><div class="tpl-root tpl-code-output">
@@ -3814,13 +4304,13 @@ To github.com:devfellowship&#x2F;app.git
             <span class="pill">density: low</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-definition · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-definition · landscape — 1280×720 */
 
 .tpl-root.tpl-definition {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -3836,8 +4326,8 @@ To github.com:devfellowship&#x2F;app.git
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -3845,15 +4335,15 @@ To github.com:devfellowship&#x2F;app.git
 .tpl-root.tpl-definition > * { position: relative; z-index: 1; }
 
 .tpl-root.tpl-definition .tpl-definition__body {
-  max-width: 680px;
+  max-width: 907px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 24px;
 }
 
 .tpl-root.tpl-definition .tpl-definition__eyebrow {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 14px;
+  font-size: 19px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   text-transform: uppercase;
   color: var(--s-brand-solid, #E07A4A);
@@ -3861,7 +4351,7 @@ To github.com:devfellowship&#x2F;app.git
 
 .tpl-root.tpl-definition .tpl-definition__term {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 76px;
+  font-size: 101px;
   font-weight: var(--p-weight-700, 700);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -3870,14 +4360,14 @@ To github.com:devfellowship&#x2F;app.git
 }
 
 .tpl-root.tpl-definition .tpl-definition__rule {
-  width: 48px;
-  height: 3px;
-  border-radius: 2px;
+  width: 64px;
+  height: 4px;
+  border-radius: 3px;
   background: var(--s-brand-solid, #E07A4A);
 }
 
 .tpl-root.tpl-definition .tpl-definition__def {
-  font-size: 22px;
+  font-size: 29px;
   line-height: 1.5;
   color: var(--s-ink-secondary, #c9c0b4);
   margin: 0;
@@ -3906,13 +4396,13 @@ To github.com:devfellowship&#x2F;app.git
             <span class="pill">density: low</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-matrix-2x2 · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-matrix-2x2 · landscape — 1280×720 */
 
 .tpl-root.tpl-matrix-2x2 {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -3921,15 +4411,15 @@ To github.com:devfellowship&#x2F;app.git
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 27px;
 }
 
 .tpl-root.tpl-matrix-2x2::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -3939,7 +4429,7 @@ To github.com:devfellowship&#x2F;app.git
 .tpl-root.tpl-matrix-2x2 .tpl-matrix-2x2__title {
   flex: 0 0 auto;
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 36px;
+  font-size: 48px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -3951,7 +4441,7 @@ To github.com:devfellowship&#x2F;app.git
   min-height: 0;
   display: flex;
   align-items: stretch;
-  gap: 10px;
+  gap: 13px;
 }
 
 .tpl-root.tpl-matrix-2x2 .tpl-matrix-2x2__y-label {
@@ -3959,7 +4449,7 @@ To github.com:devfellowship&#x2F;app.git
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 13px;
+  font-size: 17px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   color: var(--s-ink-muted, #7d7568);
   align-self: center;
@@ -3971,7 +4461,7 @@ To github.com:devfellowship&#x2F;app.git
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 11px;
 }
 
 .tpl-root.tpl-matrix-2x2 .tpl-matrix-2x2__grid {
@@ -3980,7 +4470,7 @@ To github.com:devfellowship&#x2F;app.git
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  gap: 6px;
+  gap: 8px;
   border: 1px solid var(--s-border-strong, #3a3530);
   border-radius: var(--p-radius-xl, 14px);
   overflow: hidden;
@@ -3992,8 +4482,8 @@ To github.com:devfellowship&#x2F;app.git
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  gap: 6px;
-  padding: 18px 22px;
+  gap: 8px;
+  padding: 24px 29px;
   background: var(--s-surface-raised, #1a1714);
 }
 
@@ -4007,14 +4497,14 @@ To github.com:devfellowship&#x2F;app.git
 
 .tpl-root.tpl-matrix-2x2 .tpl-matrix-2x2__cell-label {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 26px;
+  font-size: 35px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
 }
 
 .tpl-root.tpl-matrix-2x2 .tpl-matrix-2x2__cell-note {
-  font-size: 14px;
+  font-size: 19px;
   line-height: 1.4;
   color: var(--s-ink-muted, #7d7568);
 }
@@ -4022,7 +4512,7 @@ To github.com:devfellowship&#x2F;app.git
 .tpl-root.tpl-matrix-2x2 .tpl-matrix-2x2__x-label {
   flex: 0 0 auto;
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 13px;
+  font-size: 17px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   color: var(--s-ink-muted, #7d7568);
   text-align: right;
@@ -4070,13 +4560,13 @@ To github.com:devfellowship&#x2F;app.git
             <span class="pill">density: low</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-timeline · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-timeline · landscape — 1280×720 */
 
 .tpl-root.tpl-timeline {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -4086,15 +4576,15 @@ To github.com:devfellowship&#x2F;app.git
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 32px;
+  gap: 43px;
 }
 
 .tpl-root.tpl-timeline::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -4103,7 +4593,7 @@ To github.com:devfellowship&#x2F;app.git
 
 .tpl-root.tpl-timeline .tpl-timeline__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 40px;
+  font-size: 53px;
   font-weight: var(--p-weight-700, 700);
   line-height: 1;
   letter-spacing: var(--p-tracking-tight, -0.4px);
@@ -4123,9 +4613,9 @@ To github.com:devfellowship&#x2F;app.git
 
 .tpl-root.tpl-timeline .tpl-timeline__line {
   position: absolute;
-  top: 18px;
-  left: 18px;
-  right: 18px;
+  top: 24px;
+  left: 24px;
+  right: 24px;
   height: 1px;
   background: var(--s-border-strong, #3a3530);
   z-index: 0;
@@ -4136,35 +4626,35 @@ To github.com:devfellowship&#x2F;app.git
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 10px;
+  gap: 13px;
   flex: 1 1 0;
   z-index: 1;
   padding-top: 0;
 }
 
 .tpl-root.tpl-timeline .tpl-timeline__dot {
-  width: 14px;
-  height: 14px;
+  width: 19px;
+  height: 19px;
   border-radius: 50%;
   background: var(--s-brand-solid, #E07A4A);
-  border: 2px solid var(--s-surface-page, #0a0908);
+  border: 3px solid var(--s-surface-page, #0a0908);
   box-shadow: 0 0 0 1px var(--s-brand-solid, #E07A4A);
   flex-shrink: 0;
-  margin-top: 11px;
+  margin-top: 15px;
 }
 
 .tpl-root.tpl-timeline .tpl-timeline__date {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 11px;
+  font-size: 15px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   text-transform: uppercase;
   color: var(--s-ink-muted, #7d7568);
-  margin-top: 14px;
+  margin-top: 19px;
 }
 
 .tpl-root.tpl-timeline .tpl-timeline__label {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 22px;
+  font-size: 29px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -4173,7 +4663,7 @@ To github.com:devfellowship&#x2F;app.git
 }
 
 .tpl-root.tpl-timeline .tpl-timeline__note {
-  font-size: 14px;
+  font-size: 19px;
   color: var(--s-ink-muted, #7d7568);
   line-height: 1.4;
   margin: 0;
@@ -4224,13 +4714,13 @@ To github.com:devfellowship&#x2F;app.git
             <span class="pill">density: low</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-process-flow · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-process-flow · landscape — 1280×720 */
 
 .tpl-root.tpl-process-flow {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -4240,15 +4730,15 @@ To github.com:devfellowship&#x2F;app.git
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 36px;
+  gap: 48px;
 }
 
 .tpl-root.tpl-process-flow::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -4257,7 +4747,7 @@ To github.com:devfellowship&#x2F;app.git
 
 .tpl-root.tpl-process-flow .tpl-process-flow__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 40px;
+  font-size: 53px;
   font-weight: var(--p-weight-700, 700);
   line-height: 1;
   letter-spacing: var(--p-tracking-tight, -0.4px);
@@ -4292,8 +4782,8 @@ To github.com:devfellowship&#x2F;app.git
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 20px 18px;
+  gap: 11px;
+  padding: 27px 24px;
   background: var(--s-surface-raised, #1a1714);
   border: 1px solid var(--s-border-subtle, #2a2622);
   border-radius: var(--p-radius-lg, 10px);
@@ -4302,7 +4792,7 @@ To github.com:devfellowship&#x2F;app.git
 
 .tpl-root.tpl-process-flow .tpl-process-flow__label {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 24px;
+  font-size: 32px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -4310,16 +4800,16 @@ To github.com:devfellowship&#x2F;app.git
 }
 
 .tpl-root.tpl-process-flow .tpl-process-flow__note {
-  font-size: 14px;
+  font-size: 19px;
   color: var(--s-ink-muted, #7d7568);
   line-height: 1.4;
 }
 
 .tpl-root.tpl-process-flow .tpl-process-flow__arrow {
   flex-shrink: 0;
-  font-size: 22px;
+  font-size: 29px;
   color: var(--s-brand-solid, #E07A4A);
-  padding: 0 10px;
+  padding: 0 13px;
   line-height: 1;
   align-self: center;
 }
@@ -4372,13 +4862,13 @@ To github.com:devfellowship&#x2F;app.git
             <span class="pill">density: none</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-hierarchy-tree · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-hierarchy-tree · landscape — 1280×720 */
 
 .tpl-root.tpl-hierarchy-tree {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -4388,7 +4878,7 @@ To github.com:devfellowship&#x2F;app.git
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 24px;
+  gap: 32px;
 }
 
 .tpl-root.tpl-hierarchy-tree::before {
@@ -4396,7 +4886,7 @@ To github.com:devfellowship&#x2F;app.git
   position: absolute;
   inset: 0;
   background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -4405,7 +4895,7 @@ To github.com:devfellowship&#x2F;app.git
 
 .tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 40px;
+  font-size: 53px;
   font-weight: var(--p-weight-700, 700);
   line-height: 1;
   letter-spacing: var(--p-tracking-tight, -0.4px);
@@ -4432,12 +4922,12 @@ To github.com:devfellowship&#x2F;app.git
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 14px 22px;
+  gap: 5px;
+  padding: 19px 29px;
   background: var(--s-surface-raised, #1a1714);
   border: 1px solid var(--s-border-strong, #3a3530);
   border-radius: var(--p-radius-lg, 10px);
-  min-width: 90px;
+  min-width: 120px;
 }
 
 .tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__node--root {
@@ -4451,7 +4941,7 @@ To github.com:devfellowship&#x2F;app.git
 
 .tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__node-label {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 22px;
+  font-size: 29px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -4460,7 +4950,7 @@ To github.com:devfellowship&#x2F;app.git
 }
 
 .tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__node-note {
-  font-size: 13px;
+  font-size: 17px;
   color: var(--s-ink-muted, #7d7568);
   line-height: 1.3;
   white-space: nowrap;
@@ -4468,7 +4958,7 @@ To github.com:devfellowship&#x2F;app.git
 
 .tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__connector-row {
   position: relative;
-  height: 40px;
+  height: 53px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -4480,14 +4970,14 @@ To github.com:devfellowship&#x2F;app.git
   top: 0;
   left: 50%;
   width: 1px;
-  height: 20px;
+  height: 27px;
   background: var(--s-border-strong, #3a3530);
   transform: translateX(-50%);
 }
 
 .tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__crossbar {
   position: absolute;
-  top: 20px;
+  top: 27px;
   left: 12%;
   right: 12%;
   height: 1px;
@@ -4500,7 +4990,7 @@ To github.com:devfellowship&#x2F;app.git
   justify-content: space-around;
   align-items: flex-start;
   width: 100%;
-  gap: 16px;
+  gap: 21px;
 }
 
 .tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__child-col {
@@ -4513,7 +5003,7 @@ To github.com:devfellowship&#x2F;app.git
 
 .tpl-root.tpl-hierarchy-tree .tpl-hierarchy-tree__branch-tick {
   width: 1px;
-  height: 20px;
+  height: 27px;
   background: var(--s-border-strong, #3a3530);
 }
 </style><div class="tpl-root tpl-hierarchy-tree">
@@ -4576,13 +5066,13 @@ To github.com:devfellowship&#x2F;app.git
             <span class="pill">density: medium</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-agenda · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-agenda · landscape — 1280×720 */
 
 .tpl-root.tpl-agenda {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -4591,15 +5081,15 @@ To github.com:devfellowship&#x2F;app.git
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 27px;
 }
 
 .tpl-root.tpl-agenda::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -4609,12 +5099,12 @@ To github.com:devfellowship&#x2F;app.git
 .tpl-root.tpl-agenda .tpl-agenda__header {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .tpl-root.tpl-agenda .tpl-agenda__eyebrow {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 13px;
+  font-size: 17px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   text-transform: uppercase;
   color: var(--s-ink-muted, #7d7568);
@@ -4622,7 +5112,7 @@ To github.com:devfellowship&#x2F;app.git
 
 .tpl-root.tpl-agenda .tpl-agenda__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 52px;
+  font-size: 69px;
   font-weight: var(--p-weight-700, 700);
   line-height: 1;
   letter-spacing: var(--p-tracking-tight, -0.4px);
@@ -4652,8 +5142,8 @@ To github.com:devfellowship&#x2F;app.git
   display: flex;
   flex-direction: row;
   align-items: baseline;
-  gap: 20px;
-  padding: 10px 0;
+  gap: 27px;
+  padding: 13px 0;
   border-bottom: 1px solid var(--s-border-subtle, #2a2622);
   counter-increment: agenda-counter;
 }
@@ -4665,14 +5155,14 @@ To github.com:devfellowship&#x2F;app.git
 .tpl-root.tpl-agenda .tpl-agenda__item::before {
   content: counter(agenda-counter, decimal-leading-zero);
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 14px;
+  font-size: 19px;
   color: var(--s-brand-solid, #E07A4A);
   flex-shrink: 0;
-  min-width: 28px;
+  min-width: 37px;
 }
 
 .tpl-root.tpl-agenda .tpl-agenda__label {
-  font-size: 22px;
+  font-size: 29px;
   font-weight: var(--p-weight-500, 500);
   color: var(--s-ink-primary, #f6f1e7);
   flex: 1 1 auto;
@@ -4681,7 +5171,7 @@ To github.com:devfellowship&#x2F;app.git
 
 .tpl-root.tpl-agenda .tpl-agenda__note {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 13px;
+  font-size: 17px;
   color: var(--s-ink-muted, #7d7568);
   flex-shrink: 0;
   letter-spacing: var(--p-tracking-wide, 0.5px);
@@ -4727,13 +5217,13 @@ To github.com:devfellowship&#x2F;app.git
             <span class="pill">density: medium</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-checklist · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-checklist · landscape — 1280×720 */
 
 .tpl-root.tpl-checklist {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -4742,15 +5232,15 @@ To github.com:devfellowship&#x2F;app.git
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
 }
 
 .tpl-root.tpl-checklist::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -4759,7 +5249,7 @@ To github.com:devfellowship&#x2F;app.git
 
 .tpl-root.tpl-checklist .tpl-checklist__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 52px;
+  font-size: 69px;
   font-weight: var(--p-weight-700, 700);
   line-height: 1;
   letter-spacing: var(--p-tracking-tight, -0.4px);
@@ -4782,8 +5272,8 @@ To github.com:devfellowship&#x2F;app.git
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 16px;
-  padding: 10px 0;
+  gap: 21px;
+  padding: 13px 0;
   border-bottom: 1px solid var(--s-border-subtle, #2a2622);
 }
 
@@ -4792,9 +5282,9 @@ To github.com:devfellowship&#x2F;app.git
 }
 
 .tpl-root.tpl-checklist .tpl-checklist__glyph {
-  font-size: 22px;
+  font-size: 29px;
   flex-shrink: 0;
-  width: 28px;
+  width: 37px;
   text-align: center;
   color: var(--s-ink-muted, #7d7568);
   line-height: 1;
@@ -4805,7 +5295,7 @@ To github.com:devfellowship&#x2F;app.git
 }
 
 .tpl-root.tpl-checklist .tpl-checklist__text {
-  font-size: 22px;
+  font-size: 29px;
   font-weight: var(--p-weight-400, 400);
   color: var(--s-ink-secondary, #c9c0b4);
   line-height: 1.3;
@@ -4856,13 +5346,13 @@ To github.com:devfellowship&#x2F;app.git
             <span class="pill">density: high</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-pros-cons · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-pros-cons · landscape — 1280×720 */
 
 .tpl-root.tpl-pros-cons {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -4871,15 +5361,15 @@ To github.com:devfellowship&#x2F;app.git
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
 }
 
 .tpl-root.tpl-pros-cons::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -4889,7 +5379,7 @@ To github.com:devfellowship&#x2F;app.git
 .tpl-root.tpl-pros-cons .tpl-pros-cons__title {
   flex: 0 0 auto;
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 38px;
+  font-size: 51px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -4901,37 +5391,37 @@ To github.com:devfellowship&#x2F;app.git
   min-height: 0;
   display: flex;
   align-items: stretch;
-  gap: 20px;
+  gap: 27px;
 }
 
 .tpl-root.tpl-pros-cons .tpl-pros-cons__column {
   flex: 1 1 0;
   min-width: 0;
-  padding: 28px 30px;
+  padding: 37px 40px;
   border-radius: var(--p-radius-xl, 14px);
   border: 1px solid var(--s-border-subtle, #2a2622);
   background: var(--s-surface-panel, #1f1c18);
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 24px;
 }
 
 .tpl-root.tpl-pros-cons .tpl-pros-cons__column--pros {
-  background: rgba(94, 194, 126, 0.07);
-  border-color: rgba(94, 194, 126, 0.20);
+  background: var(--s-success-subtle, rgba(94, 194, 126, 0.07));
+  border-color: var(--s-success-border, rgba(94, 194, 126, 0.20));
 }
 
 .tpl-root.tpl-pros-cons .tpl-pros-cons__column--cons {
-  background: rgba(224, 122, 122, 0.07);
-  border-color: rgba(224, 122, 122, 0.20);
+  background: var(--s-danger-subtle, rgba(224, 122, 122, 0.07));
+  border-color: var(--s-danger-border, rgba(224, 122, 122, 0.20));
 }
 
 .tpl-root.tpl-pros-cons .tpl-pros-cons__heading {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 13px;
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 13px;
+  font-size: 17px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   text-transform: uppercase;
   color: var(--s-ink-muted, #7d7568);
@@ -4946,7 +5436,7 @@ To github.com:devfellowship&#x2F;app.git
 }
 
 .tpl-root.tpl-pros-cons .tpl-pros-cons__icon {
-  font-size: 16px;
+  font-size: 21px;
   font-style: normal;
 }
 
@@ -4956,13 +5446,13 @@ To github.com:devfellowship&#x2F;app.git
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 13px;
+  gap: 17px;
 }
 
 .tpl-root.tpl-pros-cons .tpl-pros-cons__item {
   position: relative;
-  padding-left: 20px;
-  font-size: 19px;
+  padding-left: 27px;
+  font-size: 25px;
   line-height: 1.35;
   color: var(--s-ink-secondary, #c9c0b4);
 }
@@ -4971,9 +5461,9 @@ To github.com:devfellowship&#x2F;app.git
   content: "";
   position: absolute;
   left: 0;
-  top: 10px;
-  width: 7px;
-  height: 7px;
+  top: 13px;
+  width: 9px;
+  height: 9px;
   border-radius: 999px;
   background: var(--s-ink-muted, #7d7568);
 }
@@ -5022,13 +5512,13 @@ To github.com:devfellowship&#x2F;app.git
             <span class="pill">density: medium</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-roadmap · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-roadmap · landscape — 1280×720 */
 
 .tpl-root.tpl-roadmap {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -5037,15 +5527,15 @@ To github.com:devfellowship&#x2F;app.git
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
 }
 
 .tpl-root.tpl-roadmap::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -5055,7 +5545,7 @@ To github.com:devfellowship&#x2F;app.git
 .tpl-root.tpl-roadmap .tpl-roadmap__title {
   flex: 0 0 auto;
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 38px;
+  font-size: 51px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -5067,7 +5557,7 @@ To github.com:devfellowship&#x2F;app.git
   min-height: 0;
   display: flex;
   align-items: stretch;
-  gap: 12px;
+  gap: 16px;
 }
 
 .tpl-root.tpl-roadmap .tpl-roadmap__phase {
@@ -5075,28 +5565,28 @@ To github.com:devfellowship&#x2F;app.git
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 22px 22px 24px;
+  gap: 21px;
+  padding: 29px 29px 32px;
   border-radius: var(--p-radius-xl, 14px);
   border: 1px solid var(--s-border-subtle, #2a2622);
   background: var(--s-surface-panel, #1f1c18);
 }
 
 .tpl-root.tpl-roadmap .tpl-roadmap__phase:first-child {
-  background: rgba(224, 122, 74, 0.08);
-  border-color: rgba(224, 122, 74, 0.22);
+  background: var(--s-brand-subtle, rgba(224, 122, 74, 0.10));
+  border-color: var(--s-brand-border, rgba(224, 122, 74, 0.22));
 }
 
 .tpl-root.tpl-roadmap .tpl-roadmap__phase-header {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 
 .tpl-root.tpl-roadmap .tpl-roadmap__phase-label {
   flex: 0 0 auto;
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 12px;
+  font-size: 16px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   text-transform: uppercase;
   color: var(--s-ink-muted, #7d7568);
@@ -5114,7 +5604,7 @@ To github.com:devfellowship&#x2F;app.git
 }
 
 .tpl-root.tpl-roadmap .tpl-roadmap__phase:first-child .tpl-roadmap__phase-line {
-  background: rgba(224, 122, 74, 0.30);
+  background: var(--s-brand-border, rgba(224, 122, 74, 0.22));
 }
 
 .tpl-root.tpl-roadmap .tpl-roadmap__bullets {
@@ -5123,13 +5613,13 @@ To github.com:devfellowship&#x2F;app.git
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 13px;
 }
 
 .tpl-root.tpl-roadmap .tpl-roadmap__bullet {
   position: relative;
-  padding-left: 18px;
-  font-size: 18px;
+  padding-left: 24px;
+  font-size: 24px;
   line-height: 1.35;
   color: var(--s-ink-secondary, #c9c0b4);
 }
@@ -5138,9 +5628,9 @@ To github.com:devfellowship&#x2F;app.git
   content: "";
   position: absolute;
   left: 0;
-  top: 10px;
-  width: 6px;
-  height: 6px;
+  top: 13px;
+  width: 8px;
+  height: 8px;
   border-radius: 999px;
   background: var(--s-ink-muted, #7d7568);
 }
@@ -5196,13 +5686,13 @@ To github.com:devfellowship&#x2F;app.git
             <span class="pill">density: low</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-cycle · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-cycle · landscape — 1280×720 */
 
 .tpl-root.tpl-cycle {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -5212,15 +5702,15 @@ To github.com:devfellowship&#x2F;app.git
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 32px;
+  gap: 43px;
 }
 
 .tpl-root.tpl-cycle::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -5230,7 +5720,7 @@ To github.com:devfellowship&#x2F;app.git
 .tpl-root.tpl-cycle .tpl-cycle__title {
   flex: 0 0 auto;
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 36px;
+  font-size: 48px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -5245,11 +5735,11 @@ To github.com:devfellowship&#x2F;app.git
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: 27px;
 }
 
 .tpl-root.tpl-cycle .tpl-cycle__loop-indicator {
-  font-size: 48px;
+  font-size: 64px;
   line-height: 1;
   color: var(--s-brand-solid, #E07A4A);
   opacity: 0.7;
@@ -5267,32 +5757,32 @@ To github.com:devfellowship&#x2F;app.git
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   min-width: 0;
 }
 
 .tpl-root.tpl-cycle .tpl-cycle__stage-node {
-  width: 110px;
-  height: 110px;
+  width: 147px;
+  height: 147px;
   border-radius: 50%;
-  border: 2px solid var(--s-border-strong, #3a3530);
+  border: 3px solid var(--s-border-strong, #3a3530);
   background: var(--s-surface-panel, #1f1c18);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px;
+  padding: 16px;
   box-sizing: border-box;
 }
 
 .tpl-root.tpl-cycle .tpl-cycle__stage:first-child .tpl-cycle__stage-node {
   border-color: var(--s-brand-solid, #E07A4A);
-  background: rgba(224, 122, 74, 0.10);
-  box-shadow: 0 0 24px rgba(224, 122, 74, 0.15);
+  background: var(--s-brand-subtle, rgba(224, 122, 74, 0.10));
+  box-shadow: 0 0 32px var(--s-brand-border, rgba(224, 122, 74, 0.22));
 }
 
 .tpl-root.tpl-cycle .tpl-cycle__stage-label {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 22px;
+  font-size: 29px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -5305,20 +5795,20 @@ To github.com:devfellowship&#x2F;app.git
 }
 
 .tpl-root.tpl-cycle .tpl-cycle__stage-note {
-  font-size: 13px;
+  font-size: 17px;
   color: var(--s-ink-muted, #7d7568);
   text-align: center;
-  max-width: 110px;
+  max-width: 147px;
   line-height: 1.3;
 }
 
 .tpl-root.tpl-cycle .tpl-cycle__arrow {
   flex: 0 0 auto;
   align-self: center;
-  font-size: 28px;
+  font-size: 37px;
   color: var(--s-ink-muted, #7d7568);
-  padding: 0 8px;
-  margin-bottom: 48px;
+  padding: 0 11px;
+  margin-bottom: 64px;
 }
 </style><div class="tpl-root tpl-cycle">
   <h2 class="tpl-cycle__title">The Continuous Improvement Loop</h2>
@@ -5372,14 +5862,14 @@ To github.com:devfellowship&#x2F;app.git
             <span class="pill">density: low</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-chapter-image · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-chapter-image · landscape — 1280×720 */
 
 .tpl-root.tpl-chapter-image {
   position: relative;
-  width: 960px;
-  height: 540px;
+  width: 1280px;
+  height: 720px;
   background: var(--s-surface-page, #0a0908);
-  color: #ffffff;
+  color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
   box-sizing: border-box;
   overflow: hidden;
@@ -5410,45 +5900,45 @@ To github.com:devfellowship&#x2F;app.git
 
 .tpl-root.tpl-chapter-image .tpl-chapter-image__content {
   position: absolute;
-  left: 72px;
+  left: 96px;
   top: 50%;
   transform: translateY(-50%);
   z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  max-width: 520px;
+  gap: 16px;
+  max-width: 693px;
 }
 
 .tpl-root.tpl-chapter-image .tpl-chapter-image__number {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 120px;
+  font-size: 160px;
   font-weight: var(--p-weight-700, 700);
   line-height: 0.85;
   letter-spacing: var(--p-tracking-tight, -0.4px);
-  color: var(--s-brand-solid, #E07A4A);
+  color: var(--s-brand-on-media, #f0a872);
   opacity: 0.55;
   display: block;
 }
 
 .tpl-root.tpl-chapter-image .tpl-chapter-image__title {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 72px;
+  font-size: 96px;
   font-weight: var(--p-weight-700, 700);
   line-height: 0.95;
   letter-spacing: var(--p-tracking-tight, -0.4px);
   margin: 0;
-  color: #ffffff;
+  color: var(--s-ink-on-media, #f6f1e7);
   text-wrap: balance;
 }
 
 .tpl-root.tpl-chapter-image .tpl-chapter-image__subtitle {
-  font-size: 22px;
+  font-size: 29px;
   font-weight: 400;
   line-height: 1.4;
-  color: rgba(255, 255, 255, 0.70);
+  color: var(--s-ink-on-media-muted, rgba(255, 255, 255, 0.70));
   margin: 0;
-  margin-top: 4px;
+  margin-top: 5px;
 }
 </style><div class="tpl-root tpl-chapter-image">
   <img src="https:&#x2F;&#x2F;images.unsplash.com&#x2F;photo-1461749280684-dccba630e2f6?w&#x3D;1200&amp;auto&#x3D;format&amp;fit&#x3D;crop" alt="A developer workstation with multiple monitors" class="tpl-chapter-image__bg" />
@@ -5475,13 +5965,13 @@ To github.com:devfellowship&#x2F;app.git
             <span class="pill">density: low</span>
           </div>
         </header>
-        <div class="card__stage"><div class="card__scale"><style>/* tpl-stat-grid · landscape — 960×540 */
+        <div class="card__stage"><div class="card__scale"><style>/* tpl-stat-grid · landscape — 1280×720 */
 
 .tpl-root.tpl-stat-grid {
   position: relative;
-  width: 960px;
-  height: 540px;
-  padding: 48px 64px;
+  width: 1280px;
+  height: 720px;
+  padding: 64px 85px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
@@ -5490,15 +5980,15 @@ To github.com:devfellowship&#x2F;app.git
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 37px;
 }
 
 .tpl-root.tpl-stat-grid::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 240, 220, 0.025) 1px, transparent 0);
-  background-size: 24px 24px;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
 }
@@ -5508,7 +5998,7 @@ To github.com:devfellowship&#x2F;app.git
 .tpl-root.tpl-stat-grid .tpl-stat-grid__title {
   flex: 0 0 auto;
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 34px;
+  font-size: 45px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-secondary, #c9c0b4);
@@ -5520,28 +6010,28 @@ To github.com:devfellowship&#x2F;app.git
   min-height: 0;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  gap: 21px;
 }
 
 .tpl-root.tpl-stat-grid .tpl-stat-grid__cell {
-  padding: 28px 24px;
+  padding: 37px 32px;
   border-radius: var(--p-radius-xl, 14px);
   border: 1px solid var(--s-border-subtle, #2a2622);
   background: var(--s-surface-panel, #1f1c18);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 11px;
   justify-content: flex-end;
 }
 
 .tpl-root.tpl-stat-grid .tpl-stat-grid__cell:first-child {
-  background: rgba(224, 122, 74, 0.08);
-  border-color: rgba(224, 122, 74, 0.22);
+  background: var(--s-brand-subtle, rgba(224, 122, 74, 0.10));
+  border-color: var(--s-brand-border, rgba(224, 122, 74, 0.22));
 }
 
 .tpl-root.tpl-stat-grid .tpl-stat-grid__value {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 72px;
+  font-size: 96px;
   font-weight: var(--p-weight-700, 700);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   line-height: 1;
@@ -5555,14 +6045,14 @@ To github.com:devfellowship&#x2F;app.git
 
 .tpl-root.tpl-stat-grid .tpl-stat-grid__label {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 13px;
+  font-size: 17px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   text-transform: uppercase;
   color: var(--s-ink-muted, #7d7568);
 }
 
 .tpl-root.tpl-stat-grid .tpl-stat-grid__caption {
-  font-size: 14px;
+  font-size: 19px;
   color: var(--s-ink-muted, #7d7568);
   line-height: 1.3;
 }

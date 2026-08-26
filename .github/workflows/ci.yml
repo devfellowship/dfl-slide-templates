@@ -30,6 +30,30 @@ jobs:
       - name: Run CSS lint
         run: npm run lint:css
 
+  automerge-rules:
+    name: Auto-merge rule engine
+    # The merge gate's own regression suite. It runs on every pull request, not
+    # only on one that touches the gate: the suite asserts against the REAL
+    # registry.json and the REAL .github/automerge-rules.conf, so a template PR
+    # that drifts them apart turns this job red. A merge rule with no test is
+    # the failure mode — a loose path rule would let an unreviewed CSS change
+    # reach every live deck.
+    # Public repo: self-hosted dfl-runner blocked (allows_public=false). Authorized Tainan TG 2026-06-06.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # No `npm ci`: the rule engine is dependency-free on purpose, so the gate
+      # never runs third-party code to decide whether to merge.
+      - name: Test the auto-merge rules
+        run: npm run test:automerge
+
   preview-regen:
     name: Canvas fill + previews
     runs-on: ubuntu-latest

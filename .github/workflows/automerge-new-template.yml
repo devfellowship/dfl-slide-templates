@@ -1,0 +1,220 @@
+name: Auto-merge new template
+
+# WHY THIS WORKFLOW EXISTS
+#   dfl-mcp-studio:src/lib/template-ref.ts resolves `main` to a commit SHA on a
+#   5-minute TTL, automatically. There is no pin to bump, so a merged template is
+#   servable within five minutes and this repository adds no latency at all. The
+#   entire wait for a new template is the human merge. This workflow removes that
+#   wait for the ONE case where it is safe — a brand-new template directory,
+#   which cannot break a deck that already exists — and leaves the human gate on
+#   everything that reaches a live deck.
+#   Plan: https://plans.devfellowship.com/20260822-branded-image-templates-deterministic-mcp (Phase 7, ADR-9)
+#
+# WHERE THE RULES LIVE
+#   `.github/automerge-rules.conf`. This workflow holds NO path knowledge. A
+#   future exception is a line in that file, never a patch here.
+#
+# 🚨 THIS REPOSITORY IS PUBLIC, SO A FORK PR IS A STRANGER'S CODE.
+#   Five deliberate choices follow from that:
+#
+#   1. The trigger is `pull_request`, NOT `pull_request_target` and NOT
+#      `workflow_run`. Both of those run in the BASE context with a write token
+#      on an event a stranger controls. `pull_request` from a fork gets a
+#      READ-ONLY token from GitHub itself, so the platform is a second lock
+#      behind the same-repo check below.
+#   2. The checkout is the BASE branch, never the head. No head code is ever
+#      executed in this job, and this job holds a write token. `npm ci` is never
+#      run here either — a head lockfile must not choose what code runs.
+#      The scripts are dependency-free node, on purpose.
+#   3. The head side is read as DATA only: the changed-file list, and the text of
+#      registry.json at the head SHA, which is JSON.parse'd.
+#   4. `same-repo-head` refuses any head outside this repository, compared as
+#      full repo names.
+#   5. `author-has-write` reads the collaborator-permission API. It is never
+#      inferred from the author name, and never from `author_association`.
+#
+# 🚨 A GREEN `preview-regen` JOB IS NOT EVIDENCE THAT THE PREVIEW RASTERS MATCH.
+#   Its "Check for preview drift" step emits `::warning::` and exits 0 on
+#   purpose, because CI fonts and Chromium differ from a local render. So a
+#   template whose PNG changed for a BAD reason still shows a green job. That is
+#   plan risk 8 and Verification criterion 2, still open. It is also exactly why
+#   this gate is scoped to a NEW directory: a new template has no previously
+#   approved raster to drift from. DO NOT widen this gate on the strength of that
+#   green.
+#
+# 🚨 THERE IS NO `|| true` IN THIS FILE, AND THERE MUST NEVER BE ONE.
+#   Every refusal path ends in "no merge". A fact that cannot be read is a
+#   refusal, not an allowance.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+# Default deny; the one job below grants itself the minimum it needs.
+permissions: {}
+
+concurrency:
+  group: automerge-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    # This exact name is excluded from the "is any check still running?" sweep,
+    # so the gate does not wait for itself. Keep the two in step.
+    name: Auto-merge gate
+    # Public repo: self-hosted dfl-runner blocked (allows_public=false). Authorized Tainan TG 2026-06-06.
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write # merge the pull request
+      pull-requests: write # comment the refusal
+      actions: read # read the CI run's jobs and their step conclusions
+      checks: read # read every check run on the head SHA
+    steps:
+      # The BASE branch tip, not `base.sha`: the question `new-template-dir-only`
+      # asks is "does this directory exist on main NOW?". A stale base.sha would
+      # answer it against an older main.
+      - name: Checkout base branch (never the head)
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # Same suite that runs in CI. If the gate's own rules do not hold, the gate
+      # does not run — it refuses by failing, which merges nothing.
+      - name: Self-test the rule engine
+        run: node .github/scripts/automerge-decide.test.mjs
+
+      - name: Decide
+        id: gate
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          set -uo pipefail
+          MAX_POLLS=60
+          SLEEP_SECONDS=20
+
+          for i in $(seq 1 "$MAX_POLLS"); do
+            if ! node .github/scripts/automerge-collect.mjs \
+                   --repo "$REPO" --pr "$PR" --base-checkout . \
+                   --self-check-name "Auto-merge gate" > case.json; then
+              echo "The collector could not read the facts. Refusing; nothing is merged."
+              printf 'decision=BLOCK\nrule=collector-failed\n' >> "$GITHUB_OUTPUT"
+              {
+                echo "who=Tainan (@taigfs)"
+                echo "reason=the gate could not read the pull request facts from the API, so the diff was never judged"
+              } >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+
+            if node .github/scripts/automerge-decide.mjs case.json \
+                 --conf .github/automerge-rules.conf > verdict.json; then
+              echo "ALLOW on poll $i"
+              break
+            fi
+
+            RETRYABLE="$(node -e 'process.stdout.write(String(JSON.parse(require("fs").readFileSync("verdict.json","utf8")).retryable === true))')"
+            RULE="$(node -e 'process.stdout.write(String(JSON.parse(require("fs").readFileSync("verdict.json","utf8")).rule))')"
+            echo "poll $i: BLOCK rule=$RULE retryable=$RETRYABLE"
+            # `retryable` means only "this fact may still change while CI runs".
+            # It never softens a refusal: every poll re-runs the full rule set.
+            if [ "$RETRYABLE" != "true" ]; then
+              break
+            fi
+            if [ "$i" -eq "$MAX_POLLS" ]; then
+              echo "Guards did not finish within the polling budget. Refusing."
+              break
+            fi
+            sleep "$SLEEP_SECONDS"
+          done
+
+          node -e '
+            const v = JSON.parse(require("fs").readFileSync("verdict.json", "utf8"));
+            const out = require("fs").createWriteStream(process.env.GITHUB_OUTPUT, { flags: "a" });
+            const one = (s) => String(s).replace(/[\r\n]+/g, " ");
+            out.write(`decision=${one(v.decision)}\n`);
+            out.write(`rule=${one(v.rule)}\n`);
+            out.write(`who=${one(v.who)}\n`);
+            out.write(`reason=${one(v.reason)}\n`);
+            out.end();
+          '
+          {
+            echo "### Auto-merge gate"
+            echo ""
+            node -e '
+              const v = JSON.parse(require("fs").readFileSync("verdict.json", "utf8"));
+              console.log(`**${v.decision}** — rule \`${v.rule}\``);
+              console.log("");
+              console.log(v.reason);
+              console.log("");
+              console.log(`Who decides instead: ${v.who}`);
+            '
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # Squash-merge, pinned to the SHA the verdict was formed on. If the head
+      # moved in the meantime the API answers 409 and nothing is merged; the next
+      # `synchronize` event judges the new SHA from scratch.
+      - name: Merge
+        if: steps.gate.outputs.decision == 'ALLOW'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          # Passed through the environment, never interpolated into the shell.
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          set -uo pipefail
+          if gh api -X PUT "repos/$REPO/pulls/$PR/merge" \
+               -f merge_method=squash \
+               -f sha="$HEAD_SHA" \
+               -f commit_title="$PR_TITLE (#$PR)" \
+               -f commit_message="Auto-merged by the automerge-new-template gate: a NEW templates/ directory plus one appended registry.json entry, with every blocking guard green on $HEAD_SHA. Rule file: .github/automerge-rules.conf"; then
+            echo "MERGED $HEAD_SHA" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "The merge call did not succeed, so nothing was merged. The head SHA probably moved; the next push is judged again." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # A fork PR holds a READ-ONLY token, so it cannot comment. The refusal is
+      # still recorded in the job summary above — the gate never merges silently
+      # and never fails open.
+      - name: Comment the refusal
+        if: >-
+          steps.gate.outputs.decision == 'BLOCK' &&
+          github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          RULE: ${{ steps.gate.outputs.rule }}
+          REASON: ${{ steps.gate.outputs.reason }}
+          WHO: ${{ steps.gate.outputs.who }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+        run: |
+          set -uo pipefail
+          MARKER="<!-- automerge-gate:rule=$RULE -->"
+          # One comment per rule per pull request. A repeated push does not repeat it.
+          if gh api "repos/$REPO/issues/$PR/comments" --paginate --jq '.[].body' | grep -qF "$MARKER"; then
+            echo "Already commented rule=$RULE on this pull request."
+            exit 0
+          fi
+          CONF_URL="https://github.com/$REPO/blob/$BASE_REF/.github/automerge-rules.conf"
+          {
+            printf '%s\n\n' "$MARKER"
+            printf '**This pull request will not auto-merge.** Rule `%s`.\n\n' "$RULE"
+            printf '%s\n\n' "$REASON"
+            printf '**Who merges it instead:** %s\n\n' "$WHO"
+            printf 'The rule is data, not code: see [`.github/automerge-rules.conf`](%s). ' "$CONF_URL"
+            printf 'Auto-merge covers exactly one shape — a **new** `templates/<new-id>/**` directory plus that '
+            printf "template's own entry **appended** to \`registry.json\`. Everything else is human-gated, because "
+            printf '`dfl-lesson-studio` and the studio MCP serve this registry live.\n'
+          } > comment.md
+          jq -n --rawfile body comment.md '{body: $body}' \
+            | gh api "repos/$REPO/issues/$PR/comments" --input -

@@ -320,7 +320,43 @@ themes exist, so a theme cannot be added to one and forgotten in the other.
 The GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push and pull request to `main`:
 
 - **lint-css** — runs the CSS scoping / canvas / theme-token linter.
+- **automerge-rules** — the merge gate's own regression suite
+  (`npm run test:automerge`).
 - **preview-regen** — canvas-fill guard, theme-conformance guard, then
   regenerates all previews using Playwright.
-  - On **pull requests**: fails if any preview image differs from what is committed (previews must be pre-generated locally).
-  - On **push to main**: automatically commits regenerated previews if they changed.
+  - On **pull requests**: it re-renders every preview and **warns** when an image
+    differs from the committed one, then uploads the regenerated set as the
+    `regenerated-previews` artifact.
+  - 🚨 **The drift step emits `::warning::` and exits 0. It is not a gate.** CI
+    fonts and Chromium differ from a local render, so a real difference and a
+    harmless one look the same today. Read a green `preview-regen` as "canvas
+    fill and theme conformance passed", never as "the rasters match".
+
+### Merge policy — a NEW template merges unattended
+
+`.github/workflows/automerge-new-template.yml` merges a pull request with no
+human when, and only when, the diff is confined to:
+
+- a **new** `templates/<new-id>/**` directory — one that does not exist on
+  `main` — where every file is `added`, **plus**
+- that same template's own entry **appended** to the end of
+  `registry.json[templates]`, with every pre-existing entry and every other
+  top-level key unchanged.
+
+Everything else stays human-gated, always: any change to an **existing**
+`templates/<id>/**`, anything under `themes/**` or `scripts/**`,
+`canvas.config.json`, `package.json`, `package-lock.json`, `.github/**`, any
+deletion or rename, and any other `registry.json` edit. One bad merge to an
+existing template changes every live deck that uses it; a new directory breaks
+nothing that exists.
+
+The rules are **data, not code**: they live in
+[`.github/automerge-rules.conf`](.github/automerge-rules.conf), the workflow
+holds no path knowledge, and a future exception is a line in that file. The
+default is **deny** — a path that matches no rule does not auto-merge.
+
+⚠️ **Step 4 of "Adding a new template" costs you the unattended merge.**
+`scripts/sample-data.ts` is human-gated, so a pull request that adds sample data
+is merged by a human like any other `scripts/**` change. A template with no
+sample data still passes every guard; its preview renders with empty slots. Ask
+for a human merge, or land the template first and the sample data after.

@@ -26,8 +26,10 @@ name: Auto-merge new template
 #      executed in this job, and this job holds a write token. `npm ci` is never
 #      run here either — a head lockfile must not choose what code runs.
 #      The scripts are dependency-free node, on purpose.
-#   3. The head side is read as DATA only: the changed-file list, and the text of
-#      registry.json at the head SHA, which is JSON.parse'd.
+#   3. The head side is read as DATA only: the changed-file list, the text of
+#      registry.json at the head SHA, and the text of the new template's
+#      config.yaml and sample.json at that same SHA. All of it is parsed as text
+#      and JSON, never imported and never executed.
 #   4. `same-repo-head` refuses any head outside this repository, compared as
 #      full repo names.
 #   5. `author-has-write` reads the collaborator-permission API. It is never

@@ -425,8 +425,26 @@ invariants and guard names alike. The workflow holds no path knowledge and no
 guard knowledge. The default is **deny** — a path that matches no rule does not
 auto-merge.
 
-⚠️ **Step 4 of "Adding a new template" costs you the unattended merge.**
-`scripts/sample-data.ts` is human-gated, so a pull request that adds sample data
-is merged by a human like any other `scripts/**` change. A template with no
-sample data still passes every guard; its preview renders with empty slots. Ask
-for a human merge, or land the template first and the sample data after.
+✅ **A new template ships its own sample data, and keeps the unattended merge.**
+Sample data lives at `templates/<id>/sample.json` — inside the very directory the
+gate auto-merges — so nothing about adding a template reaches the human-gated
+`scripts/**` any more. It used to: the source was `scripts/sample-data.ts`, and
+adding an entry there pulled the whole pull request under the human gate.
+
+🚨 **A new template must ship a NON-EMPTY sample source, or it does not merge.**
+The `non-empty-sample-source` invariant refuses a new template unless
+`templates/<id>/sample.json` holds at least one key, **or** at least one slot in
+`templates/<id>/config.yaml` carries a `sample:` value. With neither, Mustache
+fills every slot with the empty string: the committed preview is blank, and
+`check:canvas` / `check:theme` pass against an empty layout — green, and proving
+nothing about a populated render. A blank template merging unattended is worse
+than one that is blocked. Three details follow from how the renderer reads it:
+
+- A **present** `sample.json` is the whole answer at render time, never merged
+  with `config.yaml`. So an **empty** `sample.json` is refused even when every
+  slot in `config.yaml` carries a `sample:` value.
+- **One exemption:** a `config.yaml` whose `slots:` is empty declares nothing to
+  fill, so it needs no sample. That is `templates/blank/`, which ships no
+  `sample.json` on purpose.
+- The gate **fails closed.** A sample source it cannot read or cannot parse is a
+  refusal, never a pass.

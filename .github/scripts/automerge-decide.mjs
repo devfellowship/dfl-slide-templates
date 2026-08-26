@@ -28,6 +28,7 @@ export const KNOWN_INVARIANTS = [
   "no-deletions",
   "new-template-dir-only",
   "registry-single-append",
+  "non-empty-sample-source",
   "guards-green",
 ];
 
@@ -117,6 +118,153 @@ function registryShell(reg) {
   const shell = {};
   for (const k of Object.keys(reg).sort()) if (k !== "templates") shell[k] = reg[k];
   return shell;
+}
+
+/* ------------------------------------------------ config.yaml slot reader */
+
+/*
+ * A DELIBERATELY TINY YAML READER, for one question only: how many slots does
+ * this template declare, and how many of them carry a usable `sample:` value?
+ *
+ * It is hand-written because this gate NEVER runs `npm ci`. The workflow checks
+ * out the BASE branch and installs nothing, on purpose, so that a head lockfile
+ * cannot choose what code runs in a job that holds a write token. `yaml` is
+ * therefore not importable here, and it must not become importable.
+ *
+ * It reads the one shape every config.yaml in this repository uses: top-level
+ * scalar keys, `slots:` as a block sequence of mappings (or the empty flow
+ * sequence `[]`), block scalars (`|`, `>`) and nested block values. It does NOT
+ * implement YAML. Anything it does not recognise returns `{ error }`, and an
+ * error is a BLOCK — never "no sample found", and never a pass.
+ *
+ * It mirrors `scripts/render-page.ts:readConfigSample()`: a slot contributes a
+ * sample only when it declares BOTH a non-empty `name:` and a non-empty
+ * `sample:`. A rule that counted more than the renderer reads would let a
+ * blank preview through.
+ */
+
+/** `|`, `|-`, `>`, `>2`, `|+` … — a block scalar header, not a value. */
+const BLOCK_SCALAR = /^[|>][-+]?[0-9]*$/;
+
+/** Scalars that are written but hold nothing. `[]` is the one that matters. */
+const EMPTY_SCALARS = new Set(["", "[]", "{}", '""', "''", "~", "null", "Null", "NULL"]);
+
+const KEY_LINE = /^([A-Za-z0-9_.-]+):(.*)$/;
+
+export function parseConfigSlots(text) {
+  if (typeof text !== "string") return { error: "the file was not read as text" };
+
+  const lines = text.split("\n").map((l) => l.replace(/\r$/, ""));
+  const indentOf = (l) => l.length - l.replace(/^ +/, "").length;
+  const skippable = (l) => l.trim() === "" || l.trim().startsWith("#");
+  const snip = (s) => s.trim().slice(0, 60);
+
+  for (let n = 0; n < lines.length; n++) {
+    if (/^ *\t/.test(lines[n])) return { error: `line ${n + 1}: indented with a TAB, which YAML forbids` };
+  }
+
+  /* How far does a key's nested block or block scalar reach, and does it hold
+     anything at all? Used both to skip content and to answer "is this
+     `sample:` a header with a block under it, or an empty key?". */
+  const spanOf = (at, keyIndent, value) => {
+    if (value !== "" && !BLOCK_SCALAR.test(value)) return { hasBlock: false, next: at + 1 };
+    let k = at + 1;
+    let hasBlock = false;
+    while (k < lines.length && (skippable(lines[k]) || indentOf(lines[k]) > keyIndent)) {
+      if (!skippable(lines[k])) hasBlock = true;
+      k++;
+    }
+    return { hasBlock, next: k };
+  };
+
+  /* --- find the top-level `slots:` key ---------------------------------- */
+  /* Walked key by key, skipping the content of every block scalar, so that a
+     `slots:` line sitting inside prose is never mistaken for the real key. */
+  let i = 0;
+  let slotsAt = -1;
+  while (i < lines.length) {
+    if (skippable(lines[i])) { i++; continue; }
+    const ind = indentOf(lines[i]);
+    if (ind !== 0) {
+      return { error: `line ${i + 1}: unexpected indent ${ind} at the top level ('${snip(lines[i])}')` };
+    }
+    const m = KEY_LINE.exec(lines[i]);
+    if (!m) return { error: `line ${i + 1}: expected a top-level 'key:' line, got '${snip(lines[i])}'` };
+    if (m[1] === "slots") { slotsAt = i; break; }
+    i = spanOf(i, 0, m[2].trim()).next;
+  }
+  if (slotsAt < 0) return { error: "no top-level 'slots:' key" };
+
+  /* --- `slots: []` — the zero-slot spelling this repository uses --------- */
+  const inline = KEY_LINE.exec(lines[slotsAt])[2].trim();
+  if (inline === "[]") return { slots: 0, withSample: 0 };
+  if (inline !== "") {
+    return { error: `line ${slotsAt + 1}: 'slots:' has the inline value '${inline.slice(0, 40)}'; only a block sequence or [] is understood` };
+  }
+
+  /* --- the block sequence ----------------------------------------------- */
+  let j = slotsAt + 1;
+  while (j < lines.length && skippable(lines[j])) j++;
+  /* `slots:` with nothing under it declares no slot. Same outcome as `[]`. */
+  if (j >= lines.length || indentOf(lines[j]) === 0) return { slots: 0, withSample: 0 };
+
+  const seqIndent = indentOf(lines[j]);
+  if (!lines[j].slice(seqIndent).startsWith("- ")) {
+    return { error: `line ${j + 1}: 'slots:' is followed by '${snip(lines[j])}', which is not a '- ' sequence item` };
+  }
+  const mapIndent = seqIndent + 2;
+
+  let slots = 0;
+  let withSample = 0;
+  let item = null; // { hasName, hasSample }
+
+  const closeItem = () => {
+    if (item && item.hasName && item.hasSample) withSample++;
+    item = null;
+  };
+
+  while (j < lines.length) {
+    if (skippable(lines[j])) { j++; continue; }
+    const ind = indentOf(lines[j]);
+    if (ind === 0) break; // the next top-level key ends the sequence
+    if (ind < seqIndent) {
+      return { error: `line ${j + 1}: indent ${ind} is shallower than the slots sequence (${seqIndent}) but not top-level` };
+    }
+
+    let keyText;
+    if (ind === seqIndent) {
+      if (!lines[j].slice(seqIndent).startsWith("- ")) {
+        return { error: `line ${j + 1}: expected a '- ' sequence item at indent ${seqIndent}, got '${snip(lines[j])}'` };
+      }
+      closeItem();
+      slots++;
+      item = { hasName: false, hasSample: false };
+      keyText = lines[j].slice(mapIndent);
+    } else if (ind === mapIndent) {
+      if (!item) return { error: `line ${j + 1}: a mapping key appears before any '- ' sequence item` };
+      keyText = lines[j].slice(mapIndent);
+    } else {
+      return { error: `line ${j + 1}: indent ${ind} is neither the sequence indent (${seqIndent}) nor the mapping indent (${mapIndent})` };
+    }
+
+    const m = KEY_LINE.exec(keyText);
+    if (!m) return { error: `line ${j + 1}: expected a 'key: value' mapping, got '${snip(keyText)}'` };
+    const key = m[1];
+    const value = m[2].trim();
+    const span = spanOf(j, mapIndent, value);
+
+    if (key === "name" && !EMPTY_SCALARS.has(value) && !BLOCK_SCALAR.test(value)) item.hasName = true;
+    if (key === "sample") {
+      /* Non-empty inline scalar, or a block/nested value that actually holds
+         lines. `sample:` alone, or `sample: []`, holds nothing. */
+      item.hasSample = BLOCK_SCALAR.test(value) || value === "" ? span.hasBlock : !EMPTY_SCALARS.has(value);
+    }
+
+    j = span.next;
+  }
+  closeItem();
+
+  return { slots, withSample };
 }
 
 /* --------------------------------------------------------------- decision */
@@ -326,7 +474,117 @@ export function decide(kase, conf) {
     }
   }
 
-  /* --- 5. guards-green, on the HEAD SHA ---------------------------------- */
+  /* --- 5. non-empty-sample-source ---------------------------------------- */
+  /*
+   * A new template that ships no sample data renders every slot with the empty
+   * string. Its committed preview is blank, and `check:canvas` / `check:theme`
+   * then pass against an empty layout — green, and proving nothing about a
+   * populated render. A blank template merging unattended is worse than one
+   * that is blocked, so the gate refuses it here.
+   *
+   * The precedence MIRRORS `scripts/render-page.ts:resolveSampleData()`, and it
+   * must keep mirroring it: a PRESENT `sample.json` is the whole answer at
+   * render time, never merged with `config.yaml`. So an EMPTY `sample.json`
+   * blanks the render even when every slot in `config.yaml` carries a
+   * `sample:`. A rule that read the two as interchangeable would allow exactly
+   * the blank preview it exists to stop.
+   */
+  let sampleNote;
+  {
+    const r = inv("non-empty-sample-source");
+    const configPath = `templates/${newId}/config.yaml`;
+    const samplePath = `templates/${newId}/sample.json`;
+    /* Every templates/ path in this diff is `added` and the directory does not
+       exist on the base, both already established above. So the changed-file
+       list IS the complete listing of the new directory: a file absent from it
+       is absent from the template. */
+    const shipsConfig = files.some((f) => f.path === configPath);
+    const shipsSample = files.some((f) => f.path === samplePath);
+
+    if (!shipsConfig) {
+      return block(
+        "non-empty-sample-source",
+        `the new template ships no ${configPath}, so the gate cannot tell whether it declares any fillable slot. ${r.why}`,
+        r.who,
+      );
+    }
+
+    const cfg = kase.config_yaml_head;
+    if (!cfg || typeof cfg.text !== "string") {
+      return block(
+        "non-empty-sample-source",
+        `${configPath} could not be read at the head SHA${cfg && cfg.error ? ` (${cfg.error})` : ""}. ` +
+          `A gate that opens when it cannot see is not a gate.`,
+        r.who,
+      );
+    }
+    const slotsInfo = parseConfigSlots(cfg.text);
+    if (slotsInfo.error) {
+      return block(
+        "non-empty-sample-source",
+        `${configPath} could not be parsed: ${slotsInfo.error}. The sample source is therefore unknown, and unknown is a refusal.`,
+        r.who,
+      );
+    }
+
+    if (slotsInfo.slots === 0) {
+      /* The `blank` case, handled ON PURPOSE and not by accident: a template
+         that declares no slot has nothing to fill, so it needs no sample and
+         its preview is legitimately empty. `templates/blank/` on main ships no
+         sample.json for exactly this reason. */
+      sampleNote = `${configPath} declares zero slots, so this template has nothing to fill and needs no sample source`;
+    } else if (shipsSample) {
+      const smp = kase.sample_json_head;
+      if (!smp || typeof smp.text !== "string") {
+        return block(
+          "non-empty-sample-source",
+          `${samplePath} is in the diff but could not be read at the head SHA${smp && smp.error ? ` (${smp.error})` : ""}. ` +
+            `A gate that opens when it cannot see is not a gate.`,
+          r.who,
+        );
+      }
+      let parsed;
+      try {
+        parsed = JSON.parse(smp.text);
+      } catch (err) {
+        return block(
+          "non-empty-sample-source",
+          `${samplePath} is not valid JSON (${err && err.message}), so render-page.ts would throw and no preview could be produced.`,
+          r.who,
+        );
+      }
+      if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed)) {
+        return block(
+          "non-empty-sample-source",
+          `${samplePath} must contain a JSON object keyed by slot name, and render-page.ts throws on anything else.`,
+          r.who,
+        );
+      }
+      const keys = Object.keys(parsed);
+      if (keys.length === 0) {
+        return block(
+          "non-empty-sample-source",
+          `${samplePath} is an empty JSON object, and ${configPath} declares ${slotsInfo.slots} slot(s) to fill. ` +
+            `render-page.ts treats a PRESENT sample.json as the whole answer, so the per-slot \`sample:\` values in ` +
+            `config.yaml would NOT be used: every slot renders empty and the committed preview is blank. ${r.why}`,
+          r.who,
+        );
+      }
+      sampleNote = `${samplePath} supplies ${keys.length} slot value(s) for ${slotsInfo.slots} declared slot(s)`;
+    } else if (slotsInfo.withSample === 0) {
+      return block(
+        "non-empty-sample-source",
+        `the new template ships no ${samplePath}, and none of the ${slotsInfo.slots} slot(s) in ${configPath} carries a ` +
+          `\`sample:\` value. Every slot would render empty, the committed preview would be blank, and check:canvas / ` +
+          `check:theme would pass against an empty layout. ${r.why}`,
+        r.who,
+      );
+    } else {
+      sampleNote = `${configPath} carries a \`sample:\` value on ${slotsInfo.withSample} of its ${slotsInfo.slots} slot(s)`;
+    }
+  }
+
+  /* --- 6. guards-green, on the HEAD SHA ---------------------------------- */
 
   {
     const r = inv("guards-green");
@@ -391,7 +649,8 @@ export function decide(kase, conf) {
     who: "nobody — unattended merge",
     reason:
       `the diff adds only the NEW directory templates/${newId}/ (${templateFiles.length} added file(s)) ` +
-      `plus one appended registry.json entry for '${newId}', and every blocking guard is green on the head SHA.`,
+      `plus one appended registry.json entry for '${newId}'; ${sampleNote}; ` +
+      `and every blocking guard is green on the head SHA.`,
   };
 }
 

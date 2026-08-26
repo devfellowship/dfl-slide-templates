@@ -15,10 +15,10 @@
  * Run:  npm run test:automerge
  */
 
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync, existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { decide, loadConf, parseConf, globMatch } from "./automerge-decide.mjs";
+import { decide, loadConf, parseConf, globMatch, parseConfigSlots } from "./automerge-decide.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(here, "..", "..");
@@ -104,7 +104,7 @@ const GREEN = {
 const NEW_ID = "quote-portrait-xl";
 const newEntry = { id: NEW_ID, version: "1.0.0", category: "content", name: "Quote Portrait XL" };
 
-/** The happy shape: seven added files under one brand-new directory. */
+/** The happy shape: eight added files under one brand-new directory. */
 const newTemplateFiles = [
   "config.yaml",
   "landscape.css",
@@ -113,7 +113,65 @@ const newTemplateFiles = [
   "portrait.html",
   "preview-landscape.png",
   "preview-portrait.png",
+  "sample.json",
 ].map((f) => ({ status: "added", path: `templates/${NEW_ID}/${f}` }));
+
+/** The same eight files minus `sample.json`. */
+const filesWithoutSampleJson = newTemplateFiles.filter((f) => !f.path.endsWith("/sample.json"));
+
+/* ---- sample sources, as a real template ships them ----------------------- */
+
+const SAMPLE_JSON = JSON.stringify({ quote: "Ship the template, not the deck", attribution: "DFL" }, null, 2);
+
+/* Two slots, both with a `sample:`. The block scalar on the second slot holds a
+   line that LOOKS like a `sample:` key — a reader that scanned for the text
+   instead of the structure would count it, so it is here on purpose. */
+const CONFIG_WITH_SAMPLES = `id: ${NEW_ID}
+name: Quote Portrait XL
+version: "1.0.0"
+category: content
+slots:
+  - name: quote
+    type: text
+    required: true
+    description: "The quotation itself"
+    sample: "Ship the template, not the deck"
+  - name: attribution
+    type: text
+    required: false
+    description: |
+      Who said it. Example:
+        sample: "this line is prose inside a block scalar, not a key"
+    sample: "DFL"
+`;
+
+/* The same two slots, and not one `sample:` among them. */
+const CONFIG_NO_SAMPLES = `id: ${NEW_ID}
+name: Quote Portrait XL
+version: "1.0.0"
+category: content
+slots:
+  - name: quote
+    type: text
+    required: true
+    description: "The quotation itself"
+  - name: attribution
+    type: text
+    required: false
+    description: "Who said it"
+`;
+
+/* `templates/blank/` on main: nothing to fill, so nothing to sample. */
+const CONFIG_ZERO_SLOTS = `id: ${NEW_ID}
+name: Blank
+version: "1.0.0"
+category: layout
+slots: []
+`;
+
+const headText = (p, text) => ({ path: p, text, error: null });
+const CONFIG_PATH = `templates/${NEW_ID}/config.yaml`;
+const SAMPLE_PATH = `templates/${NEW_ID}/sample.json`;
 
 function baseCase(over = {}) {
   return {
@@ -129,6 +187,8 @@ function baseCase(over = {}) {
     files: [...newTemplateFiles, { status: "modified", path: "registry.json" }],
     registry_base: realRegistry,
     registry_head: { ...realRegistry, templates: [...realRegistry.templates, newEntry] },
+    config_yaml_head: headText(CONFIG_PATH, CONFIG_WITH_SAMPLES),
+    sample_json_head: headText(SAMPLE_PATH, SAMPLE_JSON),
     guards: GREEN,
     ...over,
   };
@@ -316,6 +376,207 @@ check(
   }),
   { decision: "BLOCK", rule: "registry-single-append" },
 );
+
+/* ====================== non-empty-sample-source =========================== */
+/*
+ * A new template that ships no sample data renders every slot with the empty
+ * string: its committed preview is blank, and `check:canvas` / `check:theme`
+ * pass against an empty layout. Green, and proving nothing. These cases are the
+ * reason that shape cannot merge unattended.
+ */
+
+check(
+  "a new template with a POPULATED sample.json merges",
+  baseCase(),
+  { decision: "ALLOW" },
+);
+
+check(
+  "a new template with no sample.json but per-slot sample: values in config.yaml merges",
+  baseCase({ files: [...filesWithoutSampleJson, { status: "modified", path: "registry.json" }], sample_json_head: null }),
+  { decision: "ALLOW" },
+);
+
+check(
+  "a new template whose sample.json is an EMPTY object refuses",
+  baseCase({ sample_json_head: headText(SAMPLE_PATH, "{}") , config_yaml_head: headText(CONFIG_PATH, CONFIG_NO_SAMPLES) }),
+  { decision: "BLOCK", rule: "non-empty-sample-source" },
+);
+
+check(
+  "an empty sample.json refuses EVEN WHEN config.yaml carries every slot sample — render-page.ts does not merge the two",
+  baseCase({ sample_json_head: headText(SAMPLE_PATH, "{}") }),
+  { decision: "BLOCK", rule: "non-empty-sample-source" },
+);
+
+check(
+  "a new template with NEITHER sample source refuses",
+  baseCase({
+    files: [...filesWithoutSampleJson, { status: "modified", path: "registry.json" }],
+    sample_json_head: null,
+    config_yaml_head: headText(CONFIG_PATH, CONFIG_NO_SAMPLES),
+  }),
+  { decision: "BLOCK", rule: "non-empty-sample-source" },
+);
+
+check(
+  "a ZERO-SLOT template with neither sample source merges — nothing to fill needs no sample",
+  baseCase({
+    files: [...filesWithoutSampleJson, { status: "modified", path: "registry.json" }],
+    sample_json_head: null,
+    config_yaml_head: headText(CONFIG_PATH, CONFIG_ZERO_SLOTS),
+  }),
+  { decision: "ALLOW" },
+);
+
+/* ---- fail closed: unread is never unblocked ----------------------------- */
+
+check(
+  "the new template ships no config.yaml at all",
+  baseCase({
+    files: [
+      ...newTemplateFiles.filter((f) => !f.path.endsWith("/config.yaml")),
+      { status: "modified", path: "registry.json" },
+    ],
+    config_yaml_head: null,
+  }),
+  { decision: "BLOCK", rule: "non-empty-sample-source" },
+);
+
+check(
+  "config.yaml is in the diff but could not be read at the head SHA",
+  baseCase({ config_yaml_head: { path: CONFIG_PATH, text: null, error: "GitHub answered 404" } }),
+  { decision: "BLOCK", rule: "non-empty-sample-source" },
+);
+
+check(
+  "sample.json is in the diff but could not be read at the head SHA",
+  baseCase({ sample_json_head: { path: SAMPLE_PATH, text: null, error: "GitHub answered 502" } }),
+  { decision: "BLOCK", rule: "non-empty-sample-source" },
+);
+
+check(
+  "sample.json is not valid JSON",
+  baseCase({ sample_json_head: headText(SAMPLE_PATH, "{ quote: no quotes here }") }),
+  { decision: "BLOCK", rule: "non-empty-sample-source" },
+);
+
+check(
+  "sample.json is a JSON array, not an object keyed by slot name",
+  baseCase({ sample_json_head: headText(SAMPLE_PATH, '["quote"]') }),
+  { decision: "BLOCK", rule: "non-empty-sample-source" },
+);
+
+check(
+  "config.yaml is a shape the reader does not understand",
+  baseCase({
+    files: [...filesWithoutSampleJson, { status: "modified", path: "registry.json" }],
+    sample_json_head: null,
+    config_yaml_head: headText(CONFIG_PATH, `id: ${NEW_ID}\nslots: [{name: quote}]\n`),
+  }),
+  { decision: "BLOCK", rule: "non-empty-sample-source" },
+);
+
+check(
+  "deleting the sample invariant from the conf BREAKS the gate, it does not relax it",
+  baseCase(),
+  { decision: "BLOCK", rule: "conf-incomplete" },
+  parseConf(readFileSync(CONF_PATH, "utf8").split("\n").filter((l) => !l.startsWith("invariant|non-empty-sample-source")).join("\n")),
+);
+
+/* ---- the config.yaml reader, against the REAL templates ----------------- */
+/*
+ * The reader is hand-written, because this gate never runs `npm ci` and cannot
+ * import `yaml`. So it is asserted against every config.yaml this repository
+ * actually ships: a reader that mis-parsed one of them would either refuse a
+ * good template or, worse, count a sample that is not there.
+ */
+{
+  const templatesDir = path.join(repoRoot, "templates");
+  const ids = readdirSync(templatesDir, { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name).sort();
+
+  ran++;
+  const unreadable = [];
+  const blankPreviewRisk = [];
+  for (const id of ids) {
+    const parsed = parseConfigSlots(readFileSync(path.join(templatesDir, id, "config.yaml"), "utf8"));
+    if (parsed.error) {
+      unreadable.push(`${id}: ${parsed.error}`);
+      continue;
+    }
+    /* Every shipped template must satisfy the invariant it now enforces:
+       zero slots, or a sample source. `blank` is the zero-slot one. */
+    const hasSampleJson = existsSync(path.join(templatesDir, id, "sample.json"));
+    if (parsed.slots > 0 && !hasSampleJson && parsed.withSample === 0) blankPreviewRisk.push(id);
+  }
+  if (unreadable.length) {
+    failures++;
+    console.log(`FAIL  parseConfigSlots could not read ${unreadable.length} shipped config.yaml: ${unreadable.join("; ")}`);
+  } else if (blankPreviewRisk.length) {
+    failures++;
+    console.log(`FAIL  shipped template(s) with slots but no sample source: ${blankPreviewRisk.join(", ")}`);
+  } else {
+    console.log(`ok    parseConfigSlots reads all ${ids.length} shipped config.yaml, and every one satisfies non-empty-sample-source`);
+  }
+
+  /* `blank` is the ONE zero-slot template on main, and the reason the exemption
+     exists. If it ever gains a slot, it needs a sample source like the rest. */
+  ran++;
+  const blank = parseConfigSlots(readFileSync(path.join(templatesDir, "blank", "config.yaml"), "utf8"));
+  if (blank.error || blank.slots !== 0) {
+    failures++;
+    console.log(`FAIL  templates/blank/config.yaml should declare zero slots, got ${JSON.stringify(blank)}`);
+  } else {
+    console.log("ok    templates/blank/ declares zero slots, which is why it may ship no sample.json");
+  }
+}
+
+/* ---- the reader's own edge cases ---------------------------------------- */
+{
+  const readerCases = [
+    ["slots: []", `id: x\nslots: []\n`, { slots: 0, withSample: 0 }],
+    ["slots: with nothing under it", `id: x\nslots:\n`, { slots: 0, withSample: 0 }],
+    [
+      "a `sample:` line inside a block scalar is prose, not a key",
+      `id: x\nslots:\n  - name: a\n    description: |\n      prose\n        sample: "not a key"\n    type: text\n`,
+      { slots: 1, withSample: 0 },
+    ],
+    ["a nested block `sample:` counts", `id: x\nslots:\n  - name: a\n    sample:\n      - text: "hi"\n`, { slots: 1, withSample: 1 }],
+    ["an empty `sample:` key does not count", `id: x\nslots:\n  - name: a\n    sample:\n`, { slots: 1, withSample: 0 }],
+    ["`sample: []` holds nothing", `id: x\nslots:\n  - name: a\n    sample: []\n`, { slots: 1, withSample: 0 }],
+    ["a sample with no slot name is unusable", `id: x\nslots:\n  - type: text\n    sample: "hi"\n`, { slots: 1, withSample: 0 }],
+    ["comments and blank lines are ignored", `id: x\nslots:\n  # why\n  - name: a\n    sample: "v"\n\n`, { slots: 1, withSample: 1 }],
+  ];
+  for (const [label, text, expected] of readerCases) {
+    ran++;
+    const got = parseConfigSlots(text);
+    if (got.error || got.slots !== expected.slots || got.withSample !== expected.withSample) {
+      failures++;
+      console.log(`FAIL  reader: ${label} -> ${JSON.stringify(got)}, expected ${JSON.stringify(expected)}`);
+    } else {
+      console.log(`ok    reader: ${label} -> ${JSON.stringify(got)}`);
+    }
+  }
+
+  /* A shape it does not understand must ERROR, which the decider turns into a
+     refusal. Silently returning "no sample" would be the fail-open. */
+  const mustError = [
+    ["a TAB indent", `id: x\nslots:\n\t- name: a\n`],
+    ["a flow sequence", `id: x\nslots: [{name: a}]\n`],
+    ["an indent that fits no level", `id: x\nslots:\n  - name: a\n      stray: 1\n`],
+    ["no slots key at all", `id: x\nname: y\n`],
+  ];
+  for (const [label, text] of mustError) {
+    ran++;
+    const got = parseConfigSlots(text);
+    if (!got.error) {
+      failures++;
+      console.log(`FAIL  reader: ${label} should error, got ${JSON.stringify(got)}`);
+    } else {
+      console.log(`ok    reader errors on ${label}: ${got.error}`);
+    }
+  }
+}
 
 /* --------------------------------- guards -------------------------------- */
 

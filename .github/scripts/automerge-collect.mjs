@@ -7,10 +7,12 @@
  * only place a verdict is formed, which is what keeps the verdict unit-testable
  * with no network.
  *
- * IT NEVER EXECUTES HEAD CODE. The head side is read as two pieces of DATA
- * only: the changed-file list, and the text of `registry.json` at the head SHA,
- * which is JSON.parse'd. No head checkout, no `npm ci` of a head lockfile, no
- * head script ever runs in this job — and this job holds a write token.
+ * IT NEVER EXECUTES HEAD CODE. The head side is read as FOUR pieces of DATA
+ * only: the changed-file list, the text of `registry.json` at the head SHA, and
+ * the text of the new template's `config.yaml` and `sample.json` at that same
+ * SHA. All four are text; the decider parses them. No head checkout, no `npm ci`
+ * of a head lockfile, no head script ever runs in this job — and this job holds
+ * a write token. Nothing here is `import`ed, `eval`ed or executed.
  *
  * Usage:
  *   GITHUB_TOKEN=... node automerge-collect.mjs \
@@ -121,8 +123,8 @@ try {
   process.stderr.write(`note: base registry.json unreadable: ${err.message}\n`);
 }
 
-/* Head side: TWO pieces of data, no code. Skipped entirely for a fork, whose
-   head SHA is not an object of this repository. */
+/* Head side: DATA, never code. Skipped entirely for a fork, whose head SHA is
+   not an object of this repository. */
 let registryHead = null;
 if (sameRepo) {
   const text = await softGh(`/repos/${REPO}/contents/registry.json?ref=${headSha}`, { raw: true });
@@ -133,6 +135,43 @@ if (sameRepo) {
       process.stderr.write(`note: head registry.json is not valid JSON: ${err.message}\n`);
     }
   }
+}
+
+/* The new template's own two files, read as TEXT for `non-empty-sample-source`.
+   A template that ships no sample data renders every slot empty, so its preview
+   is blank and the guards pass against an empty layout. The decider does all the
+   judging; this only carries the bytes, and an unreadable file carries an error
+   string rather than a permissive default. */
+async function readHeadText(filePath) {
+  try {
+    /* Encoded segment by segment: a branch may name a file anything, and a raw
+       `?` or `#` in a path would otherwise rewrite this URL. */
+    const encoded = filePath.split("/").map(encodeURIComponent).join("/");
+    const text = await gh(`/repos/${REPO}/contents/${encoded}?ref=${headSha}`, { raw: true });
+    return { path: filePath, text, error: null };
+  } catch (err) {
+    process.stderr.write(`note: ${err.message}\n`);
+    return { path: filePath, text: null, error: `GitHub answered ${err.status ?? "an error"} for ${filePath} at ${headSha}` };
+  }
+}
+
+/* Derived only to know WHICH two files to read. `new-template-dir-only` is
+   judged in the decider and nowhere else; if the diff names anything other than
+   exactly one template directory, the decider refuses before it reads these. */
+const touchedIds = [
+  ...new Set(files.filter((f) => f.path.startsWith("templates/")).map((f) => f.path.split("/")[1]).filter(Boolean)),
+];
+const newTemplateId = touchedIds.length === 1 ? touchedIds[0] : null;
+
+let configYamlHead = null;
+let sampleJsonHead = null;
+if (sameRepo && newTemplateId) {
+  const configPath = `templates/${newTemplateId}/config.yaml`;
+  const samplePath = `templates/${newTemplateId}/sample.json`;
+  /* Only files the diff actually adds are fetched: a 404 for a file that was
+     never in the PR is not a fact worth collecting. */
+  if (files.some((f) => f.path === configPath)) configYamlHead = await readHeadText(configPath);
+  if (files.some((f) => f.path === samplePath)) sampleJsonHead = await readHeadText(samplePath);
 }
 
 /* ------------------------------------------------------------- the guards */
@@ -215,6 +254,8 @@ process.stdout.write(
       base_template_ids: baseTemplateIds,
       registry_base: registryBase,
       registry_head: registryHead,
+      config_yaml_head: configYamlHead,
+      sample_json_head: sampleJsonHead,
       guards,
     },
     null,

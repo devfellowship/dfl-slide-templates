@@ -4,7 +4,9 @@
  * Renders EVERY registered template in EVERY registered theme, in both
  * orientations — exactly as the deck runtime does — but paints the page behind
  * the slide a deliberately hostile magenta. Then it reads back computed styles
- * and asserts six things per render.
+ * and asserts six things per render, plus a seventh about the deck chrome —
+ * the classes the render-view injects, which no template emits and which
+ * therefore no per-render assertion can see.
  *
  * WHY EVERY THEME, NOT JUST ONE. Until 2026-08-12 this guard rendered one
  * theme (`devfellowship`) and asserted against one hardcoded surface colour.
@@ -59,6 +61,19 @@
  *      (Burned exactly this way while writing the light theme, 2026-08-12: the
  *      phrase "--s-* / --p-* tokens" in the header comment cost the file its
  *      entire token block, and the theme rendered as if it defined nothing.)
+ *
+ *   7. DECK CHROME — the kicker bar, the brand lockup, the social handle and
+ *      the derived slide index (`01/09`) are chassis, not slots: ADR-7 of the
+ *      plan makes the render-view inject them and derive the index from
+ *      `order_index` and the sibling count. So NO TEMPLATE EMITS THEM, which
+ *      makes them invisible to assertions 1 to 6 — all four theme files could
+ *      drop the block and 368 renders would still pass. This one renders the
+ *      documented markup itself and asserts (a) statically, that no template
+ *      emits a deck-chrome class, (b) that every theme styles every class in
+ *      its own tokens and its own accent, and (c) that the GEOMETRY is
+ *      identical across themes, which is Verification criterion 4 of the plan
+ *      ("a theme swap changes colour and type, never geometry") as an
+ *      assertion rather than a hope.
  *
  * Pairs with rules 5, 6 and 7 in `scripts/lint-css.mjs`, which catch the same
  * classes of bug statically and without a browser. Same two-guard shape as the
@@ -156,6 +171,158 @@ function contractTokens(): string[] {
     }
   }
   return [...tokens].sort();
+}
+
+/**
+ * DECK CHROME — the classes the render-view injects around a slide, which no
+ * template may emit (ADR-7 of the plan; see the block at the foot of every
+ * theme file for the full rationale).
+ *
+ * WHY THEY NEED THEIR OWN ASSERTION. Assertions 1 to 6 all measure a RENDERED
+ * TEMPLATE, and no template emits these classes — by design, because
+ * `preview-gen.ts` renders a template standalone with no composition and an
+ * index inside a template would bake a wrong "01/01" into every golden PNG.
+ * So the deck chrome is invisible to every other guard in this file: all four
+ * theme files could lose the block, or one of them could keep it while the
+ * other three dropped it, and 368 renders would still pass. This assertion
+ * renders the documented markup itself.
+ *
+ * This constant MUST mirror the markup contract written in the theme files.
+ */
+const DECK_CHROME_MARKUP = [
+  '<div class="dfl-deck-kicker">',
+  '  <span class="dfl-deck-lockup">ITERA<span class="dfl-deck-lockup-mark">/</span></span>',
+  '  <span class="dfl-deck-handle">@devfellowship</span>',
+  '  <span class="dfl-deck-index">',
+  '    <span class="dfl-deck-index-current">01</span>',
+  '    <span class="dfl-deck-index-sep">/</span>',
+  '    <span class="dfl-deck-index-total">09</span>',
+  "  </span>",
+  "</div>",
+].join("\n");
+
+/** Every deck-chrome class, and the one thing each is REQUIRED to establish. */
+const DECK_CHROME_CLASSES = [
+  "dfl-deck-kicker",
+  "dfl-deck-lockup",
+  "dfl-deck-lockup-mark",
+  "dfl-deck-handle",
+  "dfl-deck-index",
+  "dfl-deck-index-current",
+  "dfl-deck-index-sep",
+  "dfl-deck-index-total",
+] as const;
+
+/**
+ * The properties that make the chrome's GEOMETRY. Read for every class in
+ * every theme and required to match exactly across themes: Verification
+ * criterion 4 of the plan is "a theme swap changes colour and type, never
+ * geometry", and this is that sentence as an assertion. Colour and
+ * font-family are deliberately absent — those are the two things a theme IS
+ * allowed to change.
+ */
+const DECK_CHROME_GEOMETRY = [
+  "display",
+  "alignItems",
+  "justifyContent",
+  "gap",
+  "flexShrink",
+  "minHeight",
+  "paddingBottom",
+  "marginLeft",
+  "marginRight",
+  "borderBottomWidth",
+  "borderBottomStyle",
+  "fontSize",
+  "fontWeight",
+  "letterSpacing",
+  "lineHeight",
+  "textTransform",
+  "whiteSpace",
+  "fontVariantNumeric",
+] as const;
+
+/**
+ * The hard half of ADR-7, checked statically: no template may emit a
+ * deck-chrome class. A template that did would render a blank or a wrong
+ * index into its own committed golden PNG, because a preview has no
+ * composition around it to derive the index from.
+ */
+function templatesEmittingDeckChrome(): string[] {
+  const offenders: string[] = [];
+  const dir = path.join(REPO_ROOT, "templates");
+  for (const id of fs.readdirSync(dir)) {
+    for (const orientation of ORIENTATIONS) {
+      for (const ext of ["html", "css"]) {
+        const file = path.join(dir, id, `${orientation}.${ext}`);
+        if (!fs.existsSync(file)) continue;
+        const src = fs.readFileSync(file, "utf8");
+        for (const cls of DECK_CHROME_CLASSES)
+          if (src.includes(cls)) offenders.push(`${id}/${orientation}.${ext} (${cls})`);
+      }
+    }
+  }
+  return offenders;
+}
+
+/**
+ * Render the deck-chrome markup under one theme and read back what it
+ * actually computes to. Returns the geometry map (compared across themes) and
+ * the colour / type facts each class is required to establish.
+ */
+async function measureDeckChrome(
+  browser: Browser,
+  theme: RegistryTheme
+): Promise<{
+  geometry: Record<string, Record<string, string>>;
+  colors: Record<string, string>;
+  borderColors: Record<string, string>;
+  fonts: Record<string, string>;
+  brandSolid: string;
+}> {
+  const page = await browser.newPage();
+  await page.setViewportSize(CANVAS.landscape);
+  await page.setContent(buildHtmlPage("blank", "landscape", theme.id), {
+    waitUntil: "domcontentloaded",
+  });
+  const out = await page.evaluate(
+    ({ markup, classes, props }) => {
+      const root = document.querySelector(".tpl-root") as HTMLElement;
+      root.insertAdjacentHTML("afterbegin", markup);
+      const geometry: Record<string, Record<string, string>> = {};
+      const colors: Record<string, string> = {};
+      const borderColors: Record<string, string> = {};
+      const fonts: Record<string, string> = {};
+      for (const cls of classes) {
+        const el = root.querySelector(`.${cls}`) as HTMLElement | null;
+        if (!el) continue;
+        const cs = getComputedStyle(el);
+        geometry[cls] = {};
+        for (const p of props) geometry[cls][p] = (cs as any)[p] as string;
+        // Both are read for every class. Shadowing one with the other would
+        // silently stop checking it — the kicker's border colour and its
+        // inherited ink are two different ways for the chrome to go off-brand.
+        colors[cls] = cs.color;
+        if (parseFloat(cs.borderBottomWidth) > 0)
+          borderColors[cls] = cs.borderBottomColor;
+        fonts[cls] = cs.fontFamily.split(",")[0].replace(/["']/g, "").trim();
+      }
+      return {
+        geometry,
+        colors,
+        borderColors,
+        fonts,
+        brandSolid: getComputedStyle(root).getPropertyValue("--s-brand-solid").trim(),
+      };
+    },
+    {
+      markup: DECK_CHROME_MARKUP,
+      classes: DECK_CHROME_CLASSES as unknown as string[],
+      props: DECK_CHROME_GEOMETRY as unknown as string[],
+    }
+  );
+  await page.close();
+  return out;
 }
 
 /** Templates whose CSS reads at least one `--s-brand-*` token. */
@@ -273,6 +440,22 @@ async function main(): Promise<void> {
   const findings: Finding[] = [];
   const themeErrors: string[] = [];
 
+  // 7a. DECK CHROME — the hard half of ADR-7, and it is static.
+  const chromeOffenders = templatesEmittingDeckChrome();
+  if (chromeOffenders.length) {
+    themeErrors.push(
+      `${chromeOffenders.length} template file(s) emit a deck-chrome class, ` +
+        `which ADR-7 forbids: ${chromeOffenders.join(", ")}.\n` +
+        `      The render-view injects the kicker, the lockup, the handle and ` +
+        `the index; it derives "01/09" from order_index and the sibling count. ` +
+        `A preview renders a template STANDALONE, with no composition, so an ` +
+        `index inside a template bakes a blank or a wrong "01/01" into the ` +
+        `committed golden PNG.`
+    );
+  }
+  /** Per-theme geometry of the deck chrome, compared after the loop. */
+  const chromeGeometry: Record<string, Record<string, Record<string, string>>> = {};
+
   for (const theme of themes) {
     if (!THEME_CONTRACT[theme.id]) {
       themeErrors.push(
@@ -324,6 +507,52 @@ async function main(): Promise<void> {
     const forbiddenSurfaces = new Map(
       Object.entries(forbidden.surfaces).map(([hex, why]) => [rgbTriple(hex)!, { hex, why }])
     );
+
+    // 7b. DECK CHROME — every class the render-view injects must be styled by
+    //     THIS theme. No template emits them, so nothing else here can see
+    //     them: a theme that lost the block would pass all 368 renders.
+    const chrome = await measureDeckChrome(browser, theme);
+    chromeGeometry[theme.id] = chrome.geometry;
+    for (const cls of DECK_CHROME_CLASSES) {
+      if (!chrome.geometry[cls]) {
+        themeErrors.push(
+          `theme "${theme.id}" (${theme.file}) does not style .${cls}. The ` +
+            `render-view injects it around every slide, so an unstyled class ` +
+            `renders as unthemed inline text on this brand only.`
+        );
+        continue;
+      }
+      const font = chrome.fonts[cls];
+      if (font && !ALLOWED_FONTS.has(font)) {
+        themeErrors.push(
+          `theme "${theme.id}": .${cls} renders in "${font}", which is not one ` +
+            `of the brand type families (${[...ALLOWED_FONTS].join(", ")}).`
+        );
+      }
+      for (const [role, color] of [
+        ["ink", chrome.colors[cls]],
+        ["border", chrome.borderColors[cls]],
+      ] as const) {
+        if (!color) continue;
+        if (paletteTriples.has(`${rgbTriple(color)}@${alphaOf(color)}`)) continue;
+        themeErrors.push(
+          `theme "${theme.id}": .${cls} paints ${color} (${role}), which theme ` +
+            `"${theme.id}" does not define. Read one of its tokens.`
+        );
+      }
+    }
+    // The lockup's accent glyph is a BRAND RULE, not a style preference: Itera
+    // guide 6.1 — "Não troque a cor do slash. Slash Itera = evergreen #3fd17f.
+    // Sempre." Expressed generically, the mark is this theme's accent.
+    const markColor = chrome.colors["dfl-deck-lockup-mark"];
+    if (markColor && rgbTriple(markColor) !== rgbTriple(chrome.brandSolid)) {
+      themeErrors.push(
+        `theme "${theme.id}": .dfl-deck-lockup-mark paints ${markColor}, not ` +
+          `this theme's --s-brand-solid (${chrome.brandSolid}). The lockup mark ` +
+          `carries the accent — on Itera the slash is evergreen "sempre" ` +
+          `(guide 6.1), and every brand's mark follows the same rule.`
+      );
+    }
 
     for (const { id } of registry.templates) {
       for (const orientation of ORIENTATIONS) {
@@ -510,6 +739,32 @@ async function main(): Promise<void> {
 
   await browser.close();
 
+  // 7c. DECK CHROME — geometry parity. Verification criterion 4 of the plan:
+  //     "a theme swap changes colour and type, NEVER geometry". The deck-chrome
+  //     block is byte-identical in every theme file on purpose, and this is the
+  //     assertion that keeps it that way even if someone edits one copy.
+  //     Skipped under --theme, which measures one theme and so has no pair.
+  const chromeThemeIds = Object.keys(chromeGeometry);
+  if (chromeThemeIds.length > 1) {
+    const [ref, ...rest] = chromeThemeIds;
+    for (const other of rest) {
+      for (const cls of DECK_CHROME_CLASSES) {
+        const a = chromeGeometry[ref][cls];
+        const b = chromeGeometry[other][cls];
+        if (!a || !b) continue;
+        for (const prop of DECK_CHROME_GEOMETRY) {
+          if (a[prop] === b[prop]) continue;
+          themeErrors.push(
+            `deck chrome geometry differs between themes "${ref}" and ` +
+              `"${other}": .${cls} { ${prop} } is ${a[prop]} vs ${b[prop]}. A ` +
+              `theme changes colour and type, never geometry — so the ` +
+              `deck-chrome block must stay byte-identical in every theme file.`
+          );
+        }
+      }
+    }
+  }
+
   if (jsonPath) {
     fs.writeFileSync(path.resolve(jsonPath), JSON.stringify(findings, null, 2));
     console.log(`Wrote theme measurement report to ${jsonPath}`);
@@ -557,7 +812,9 @@ async function main(): Promise<void> {
   console.log(
     `\nTheme-conformance check passed — ${summary}, all on theme.\n` +
       `Themes: ${themes.map((t) => `${t.id} (${t.mode})`).join(", ")}\n` +
-      `Contract: ${tokens.length} tokens, every one defined by every theme.`
+      `Contract: ${tokens.length} tokens, every one defined by every theme.\n` +
+      `Deck chrome: ${DECK_CHROME_CLASSES.length} classes, styled by every ` +
+      `theme, identical geometry, emitted by no template.`
   );
 }
 

@@ -52,15 +52,54 @@ function check(name, kase, expect, confOverride = conf) {
 
 /* ------------------------------------------------------------ fixtures --- */
 
+/* Built FROM the conf, so a guard line added to the conf and never resolved by
+   the collector shows up here as a refusal rather than passing unnoticed. */
+const guardResults = (state = "success") =>
+  conf.rules.guard.map((g) => ({ job: g.pattern, step: g.who === "-" ? null : g.who, state }));
+
+/* Change one guard's state, or drop it entirely, by conf index. */
+const withGuard = (i, state) => {
+  const rs = guardResults();
+  if (state === "ABSENT") rs.splice(i, 1);
+  else rs[i].state = state;
+  return { ...GREEN, results: rs };
+};
+
 const GREEN = {
   head_sha: "cafe1234",
-  lint_css_job: "success",
-  preview_regen_job: "success",
-  check_canvas_step: "success",
-  check_theme_step: "success",
+  results: guardResults(),
   failing_checks: [],
   pending_checks: [],
 };
+
+/* The conf must actually declare the guards this repository blocks on. */
+{
+  ran++;
+  const declared = conf.rules.guard.map((g) => `${g.pattern}${g.who === "-" ? "" : " > " + g.who}`);
+  const wanted = [
+    "Lint CSS scoping",
+    "Auto-merge rule engine",
+    "Canvas fill + previews > Check canvas fill",
+  ];
+  const absent = wanted.filter((w) => !declared.includes(w));
+  const themeGuard = conf.rules.guard.find(
+    (g) => g.pattern === "Canvas fill + previews" && g.who.startsWith("Check theme conformance"),
+  );
+  if (absent.length || !themeGuard) {
+    failures++;
+    console.log(`FAIL  conf guard lines: missing ${[...absent, themeGuard ? null : "check:theme step"].filter(Boolean).join(", ")}`);
+  } else {
+    console.log(`ok    the conf declares ${conf.rules.guard.length} guard lines, including check:canvas and check:theme by step name`);
+  }
+  /* The drift step can never fail, so it must never be a guard. */
+  ran++;
+  if (conf.rules.guard.some((g) => g.who.includes("preview drift"))) {
+    failures++;
+    console.log("FAIL  'Check for preview drift' is listed as a guard, but it emits ::warning:: and exits 0 — it can never fail");
+  } else {
+    console.log("ok    'Check for preview drift' is NOT a guard (it emits ::warning:: and exits 0)");
+  }
+}
 
 const NEW_ID = "quote-portrait-xl";
 const newEntry = { id: NEW_ID, version: "1.0.0", category: "content", name: "Quote Portrait XL" };
@@ -280,33 +319,55 @@ check(
 
 /* --------------------------------- guards -------------------------------- */
 
-check("lint-css red", baseCase({ guards: { ...GREEN, lint_css_job: "failure" } }), { decision: "BLOCK", rule: "guards-green", retryable: false });
+check("the first guard is red", baseCase({ guards: withGuard(0, "failure") }), { decision: "BLOCK", rule: "guards-green", retryable: false });
 check(
-  "lint-css still running is retryable, never mergeable",
-  baseCase({ guards: { ...GREEN, lint_css_job: "in_progress" } }),
+  "the first guard is still running — retryable, never mergeable",
+  baseCase({ guards: withGuard(0, "in_progress") }),
   { decision: "BLOCK", rule: "guards-green", retryable: true },
+);
+check(
+  "a guard the collector could not resolve at all is ABSENT, and absent is not passing",
+  baseCase({ guards: withGuard(0, "ABSENT") }),
+  { decision: "BLOCK", rule: "guards-green" },
+);
+check(
+  "a guard line with no result list at all",
+  baseCase({ guards: { ...GREEN, results: undefined } }),
+  { decision: "BLOCK", rule: "guards-green", retryable: true },
+);
+check(
+  "a conf with no guard line proves nothing green",
+  baseCase(),
+  { decision: "BLOCK", rule: "guards-green" },
+  parseConf(readFileSync(CONF_PATH, "utf8").split("\n").filter((l) => !l.startsWith("guard|")).join("\n")),
 );
 check(
   "a human-gated path is NEVER retryable — polling must not soften a refusal",
   baseCase({ files: [{ status: "modified", path: "themes/itera.css" }] }),
   { decision: "BLOCK", rule: "human-gated-path", retryable: false },
 );
-check("preview-regen red", baseCase({ guards: { ...GREEN, preview_regen_job: "failure" } }), { decision: "BLOCK", rule: "guards-green" });
-check(
-  "the check:canvas STEP was renamed away, so it cannot be found",
-  baseCase({ guards: { ...GREEN, check_canvas_step: null } }),
-  { decision: "BLOCK", rule: "guards-green" },
-);
-check(
-  "the check:theme STEP failed — not retryable",
-  baseCase({ guards: { ...GREEN, check_theme_step: "failure" } }),
-  { decision: "BLOCK", rule: "guards-green", retryable: false },
-);
-check(
-  "the check:theme STEP was renamed away, so it cannot be found",
-  baseCase({ guards: { ...GREEN, check_theme_step: undefined } }),
-  { decision: "BLOCK", rule: "guards-green" },
-);
+{
+  /* Every guard line, one at a time: red, renamed-away, and pending. */
+  const last = conf.rules.guard.length - 1;
+  for (let i = 0; i <= last; i++) {
+    const g = conf.rules.guard[i];
+    const label = `${g.pattern}${g.who === "-" ? "" : " > " + g.who}`;
+    check(`guard ${i} red   (${label})`, baseCase({ guards: withGuard(i, "failure") }), {
+      decision: "BLOCK",
+      rule: "guards-green",
+      retryable: false,
+    });
+    check(`guard ${i} renamed away (${label})`, baseCase({ guards: withGuard(i, "ABSENT") }), {
+      decision: "BLOCK",
+      rule: "guards-green",
+    });
+    check(`guard ${i} pending (${label})`, baseCase({ guards: withGuard(i, "queued") }), {
+      decision: "BLOCK",
+      rule: "guards-green",
+      retryable: true,
+    });
+  }
+}
 check(
   "guards were read for a different SHA than the head",
   baseCase({ guards: { ...GREEN, head_sha: "deadbeef" } }),

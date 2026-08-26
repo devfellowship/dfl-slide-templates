@@ -67,7 +67,7 @@ export function globMatch(glob, filePath) {
 /* ------------------------------------------------------------------- conf */
 
 export function parseConf(text) {
-  const rules = { human: [], automerge: [], invariant: [] };
+  const rules = { human: [], automerge: [], invariant: [], guard: [] };
   const errors = [];
   text.split("\n").forEach((raw, idx) => {
     const line = raw.trim();
@@ -342,22 +342,29 @@ export function decide(kase, conf) {
         true,
       );
     }
-    /* Named individually so that a REMOVED or RENAMED guard fails closed
-       instead of silently passing. */
-    const required = [
-      ["lint_css_job", "the lint-css job (Lint CSS scoping)"],
-      ["preview_regen_job", "the preview-regen job (Canvas fill + previews)"],
-      ["check_canvas_step", "the 'Check canvas fill' step inside preview-regen"],
-      ["check_theme_step", "the 'Check theme conformance' step inside preview-regen"],
-    ];
-    for (const [key, label] of required) {
-      if (g[key] !== "success") {
+    /* The guards are DATA: every `guard` line in the conf must resolve to a
+       successful job or step on the head SHA. A renamed step therefore fails
+       closed (absent is not passing) and is fixed by editing one conf line. */
+    if (!conf.rules.guard.length) {
+      return block("guards-green", "automerge-rules.conf declares no guard line, so nothing can be proven green", r.who);
+    }
+    const results = Array.isArray(g.results) ? g.results : null;
+    if (!results) {
+      return block("guards-green", "the guard results were not collected as a list", r.who, true);
+    }
+    for (const guard of conf.rules.guard) {
+      const isJob = guard.who === "-";
+      const label = isJob ? `the '${guard.pattern}' job` : `the '${guard.who}' step inside the '${guard.pattern}' job`;
+      const hit = results.find((x) => x.job === guard.pattern && (isJob ? !x.step : x.step === guard.who));
+      const state = hit ? hit.state : undefined;
+      if (state !== "success") {
         return block(
           "guards-green",
-          `${label} is '${g[key] ?? "absent"}' on the head SHA, not 'success'. ` +
-            `An absent guard is not a passing guard.`,
+          `${label} is '${state ?? "absent"}' on the head SHA, not 'success'. ` +
+            `An absent guard is not a passing guard: if the job or the step was renamed, ` +
+            `fix the matching guard line in automerge-rules.conf.`,
           r.who,
-          PENDING_STATES.has(g[key]),
+          PENDING_STATES.has(state),
         );
       }
     }

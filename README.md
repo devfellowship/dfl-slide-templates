@@ -350,10 +350,18 @@ deletion or rename, and any other `registry.json` edit. One bad merge to an
 existing template changes every live deck that uses it; a new directory breaks
 nothing that exists.
 
+It also requires every `guard` line in the rule file to be green **on the head
+SHA** — today the `Lint CSS scoping` job, the `Auto-merge rule engine` job, and
+the `Check canvas fill` and `Check theme conformance` **steps** inside
+`Canvas fill + previews`, each resolved by display name. A guard that cannot be
+found is reported **absent**, and absent is not passing: renaming a CI step
+refuses every auto-merge until the matching conf line is updated.
+
 The rules are **data, not code**: they live in
-[`.github/automerge-rules.conf`](.github/automerge-rules.conf), the workflow
-holds no path knowledge, and a future exception is a line in that file. The
-default is **deny** — a path that matches no rule does not auto-merge.
+[`.github/automerge-rules.conf`](.github/automerge-rules.conf) — globs,
+invariants and guard names alike. The workflow holds no path knowledge and no
+guard knowledge. The default is **deny** — a path that matches no rule does not
+auto-merge.
 
 ⚠️ **Step 4 of "Adding a new template" costs you the unattended merge.**
 `scripts/sample-data.ts` is human-gated, so a pull request that adds sample data

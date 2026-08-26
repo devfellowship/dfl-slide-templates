@@ -19,6 +19,7 @@
 
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import path from "node:path";
+import { parseConf } from "./automerge-decide.mjs";
 
 const arg = (name, fallback) => {
   const i = process.argv.indexOf(`--${name}`);
@@ -31,6 +32,7 @@ const BASE = arg("base-checkout", ".");
 /* The gate's own check run. Excluded from the "is anything still running?"
    sweep, because it is running right now — otherwise it waits for itself. */
 const SELF_CHECK_NAME = arg("self-check-name", "Auto-merge gate");
+const CONF = arg("conf", path.join(path.dirname(new URL(import.meta.url).pathname), "..", "automerge-rules.conf"));
 const TOKEN = process.env.GITHUB_TOKEN;
 
 if (!REPO || !PR || !TOKEN) {
@@ -135,59 +137,52 @@ if (sameRepo) {
 
 /* ------------------------------------------------------------- the guards */
 /*
- * We resolve the three BLOCKING guards by NAME, individually:
+ * The guards are DATA. Every `guard|<job>|<step or ->|<why>` line in
+ * `.github/automerge-rules.conf` is resolved here by GitHub display name, across
+ * every workflow run for the head SHA. A job or step that cannot be found is
+ * reported as ABSENT, and the decider refuses on it — absence is not a pass. A
+ * renamed CI step is therefore a one-line conf change, not a code change.
  *
- *   - the `lint-css` job                -> "Lint CSS scoping"
- *   - the `preview-regen` job           -> "Canvas fill + previews"
- *   - its step "Check canvas fill"      -> npm run check:canvas
- *   - its step "Check theme conformance"-> npm run check:theme
- *
- * 🚨 THE `preview-regen` JOB BEING GREEN IS NOT EVIDENCE THAT THE PREVIEW
- * RASTERS MATCH. Its "Check for preview drift" step emits `::warning::` and
- * exits 0 on purpose (CI fonts and Chromium differ from a local render), so a
+ * 🚨 A GREEN `Canvas fill + previews` JOB IS NOT EVIDENCE THAT THE PREVIEW
+ * RASTERS MATCH. Its "Check for preview drift" step emits `::warning::` and exits
+ * 0 on purpose, because CI fonts and Chromium differ from a local render. So a
  * template whose PNG changed for a BAD reason still shows a green job. That is
- * plan risk 8 and Verification criterion 2, and it is exactly why this gate is
- * scoped to a NEW directory: for a new template there is no previously approved
- * raster to drift from. Do not widen this gate on the strength of that green.
- *
- * We assert the two STEPS by name, not only the job, so that deleting or
- * renaming a guard step fails closed instead of inheriting the job's green.
+ * plan risk 8 and Verification criterion 2, and it is why the drift step is NOT
+ * a guard line and why this gate is scoped to a NEW directory: a new template
+ * has no previously approved raster to drift from. Do not widen this gate on the
+ * strength of that green.
  */
-const CI_WORKFLOW_PATH = ".github/workflows/ci.yml";
-const LINT_JOB = "Lint CSS scoping";
-const PREVIEW_JOB = "Canvas fill + previews";
-const CANVAS_STEP = "Check canvas fill";
-const THEME_STEP = "Check theme conformance";
-
-const guards = { head_sha: headSha, failing_checks: [], pending_checks: [] };
+const guardLines = parseConf(readFileSync(CONF, "utf8")).rules.guard;
+const guards = { head_sha: headSha, results: [], failing_checks: [], pending_checks: [] };
 
 if (sameRepo) {
+  /* Every run for this SHA, newest first. No workflow-path assumption: a guard
+     is found by its job name wherever it lives. */
   const runsResp = await softGh(`/repos/${REPO}/actions/runs?head_sha=${headSha}&per_page=100`);
-  const ciRuns = ((runsResp && runsResp.workflow_runs) || []).filter((r) => r.path === CI_WORKFLOW_PATH);
-  /* Newest attempt wins: a re-run supersedes the run it re-ran. */
-  ciRuns.sort((a, b) => new Date(b.created_at) - new Date(a.created_at) || b.id - a.id);
-  const ciRun = ciRuns[0];
+  const runs = ((runsResp && runsResp.workflow_runs) || []).slice();
+  runs.sort((a, b) => new Date(b.created_at) - new Date(a.created_at) || b.id - a.id);
 
-  if (!ciRun) {
-    process.stderr.write(`note: no ${CI_WORKFLOW_PATH} run found for ${headSha}\n`);
-  } else {
-    guards.ci_run_url = ciRun.html_url;
-    const jobsResp = await softGh(`/repos/${REPO}/actions/runs/${ciRun.id}/jobs?per_page=100`);
+  const jobsByName = new Map(); // first (newest) wins, so a re-run supersedes
+  const runUrls = [];
+  for (const run of runs) {
+    const jobsResp = await softGh(`/repos/${REPO}/actions/runs/${run.id}/jobs?per_page=100`);
     const jobs = (jobsResp && jobsResp.jobs) || [];
-    const jobState = (job) => (job ? (job.status === "completed" ? job.conclusion : job.status) : null);
-    const lintJob = jobs.find((j) => j.name === LINT_JOB);
-    const previewJob = jobs.find((j) => j.name === PREVIEW_JOB);
-    guards.lint_css_job = jobState(lintJob);
-    guards.preview_regen_job = jobState(previewJob);
+    if (jobs.length) runUrls.push(run.html_url);
+    for (const job of jobs) {
+      if (!jobsByName.has(job.name)) jobsByName.set(job.name, job);
+    }
+  }
+  guards.run_urls = runUrls;
 
-    const stepState = (job, stepName) => {
-      if (!job) return null;
-      const step = (job.steps || []).find((s) => s.name === stepName);
-      if (!step) return null;
-      return step.status === "completed" ? step.conclusion : step.status;
-    };
-    guards.check_canvas_step = stepState(previewJob, CANVAS_STEP);
-    guards.check_theme_step = stepState(previewJob, THEME_STEP);
+  const state = (o) => (o ? (o.status === "completed" ? o.conclusion : o.status) : null);
+  for (const line of guardLines) {
+    const job = jobsByName.get(line.pattern);
+    if (line.who === "-") {
+      guards.results.push({ job: line.pattern, step: null, state: state(job) });
+      continue;
+    }
+    const step = job ? (job.steps || []).find((st) => st.name === line.who) : null;
+    guards.results.push({ job: line.pattern, step: line.who, state: state(step) });
   }
 
   /* Everything else reported on the head SHA. Strict CI-green policy: a red or

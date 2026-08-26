@@ -3,7 +3,9 @@
  *
  * Renders EVERY template in the DevFellowship theme into a single
  * self-contained HTML page (one card per template, landscape preview),
- * pulling the same SAMPLE_DATA + per-template CSS the preview generator uses.
+ * pulling the same sample data + per-template CSS the preview generator uses.
+ * It shares `resolveSampleData` with `render-page.ts`, so the showcase and the
+ * previews can never disagree about what a template is filled with.
  *
  * Output: showcase.html at the repo root (gitignored-friendly; we commit it
  * so GitHub serves it and the plan can link the uploaded copy).
@@ -13,7 +15,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import Mustache from "mustache";
-import { SAMPLE_DATA } from "./sample-data";
+import { resolveSampleData } from "./render-page";
 
 const REPO_ROOT = path.resolve(__dirname, "..");
 const REGISTRY_PATH = path.join(REPO_ROOT, "registry.json");
@@ -37,7 +39,7 @@ function renderOne(id: string): string {
   const dir = path.join(REPO_ROOT, "templates", id);
   const html = fs.readFileSync(path.join(dir, "landscape.html"), "utf8");
   const css = fs.readFileSync(path.join(dir, "landscape.css"), "utf8");
-  const data = SAMPLE_DATA[id] ?? {};
+  const { data } = resolveSampleData(id);
   return `<style>${css}</style>${Mustache.render(html, data)}`;
 }
 

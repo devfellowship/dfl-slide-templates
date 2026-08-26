@@ -1,0 +1,6 @@
+{
+  "chapterNo": "03",
+  "eyebrow": "Module · Backend foundations",
+  "title": "Designing for failure",
+  "description": "Distributed systems fail. This chapter walks through the patterns we use at scale — circuit breakers, retries, idempotency keys."
+}

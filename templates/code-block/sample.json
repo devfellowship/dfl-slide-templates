@@ -1,0 +1,5 @@
+{
+  "title": "Rendering a Template",
+  "language": "typescript",
+  "code": "import Mustache from 'mustache';\nimport * as fs from 'fs';\n\nconst template = fs.readFileSync('landscape.html', 'utf8');\nconst output = Mustache.render(template, {\n  title: 'Hello, World!',\n  subtitle: 'My first slide',\n});\n\nconsole.log(output);"
+}

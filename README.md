@@ -230,13 +230,37 @@ Use absolute `px` dimensions on `.tpl-root` so screenshots are pixel-perfect.
 1. Pick a unique kebab-case `id` (e.g. `my-new-template`).
 2. Create `templates/my-new-template/`:
    - `config.yaml` — fill in `id`, `name`, `version`, `category`, and `slots`.
+     Give **every** slot a `sample:` value.
    - `landscape.html` / `portrait.html` — Mustache fragments.
    - `landscape.css` / `portrait.css` — scoped stylesheets.
+   - `sample.json` — the data the preview and the guards render with.
 3. Register the template in `registry.json`.
-4. Add sample data for the preview script in `scripts/preview-gen.ts` (`SAMPLE_DATA` map).
-5. Run `npm run preview` to generate preview images.
-6. Run `npm run lint:css` to verify CSS scoping.
+4. Run `npm run preview` to generate preview images.
+5. Run `npm run lint:css` to verify CSS scoping.
+6. Run `npm run check:canvas` and `npm run check:theme`.
 7. Commit everything including the generated `preview-*.png` files.
+
+### Where sample data lives, and why it is not in `scripts/`
+
+`templates/<id>/sample.json` holds the Mustache data for one template — a JSON
+object keyed by slot name. The resolution order in `scripts/render-page.ts` is:
+
+1. `templates/<id>/sample.json`;
+2. the per-slot `sample:` values in that template's `config.yaml`;
+3. `{}`.
+
+Each step is a fallback for a **missing** source, never a merge of two partial
+ones. If `sample.json` exists it is the whole answer, even when it omits a
+slot — so a template can render a slot deliberately empty. Step 2 and step 3
+both print a `[sample]` line, so a template with no real sample source is
+visible in the log instead of quietly blank.
+
+Sample data used to live in `scripts/sample-data.ts`. That put it under the
+human merge gate that protects `scripts/**`, so a template merged without a
+human still had no sample data: every slot rendered empty, the committed
+preview was blank, and `check:canvas` / `check:theme` passed against an empty
+layout. Keeping the sample data next to the HTML and the CSS removes that
+whole class of green-but-blank template.
 
 ---
 

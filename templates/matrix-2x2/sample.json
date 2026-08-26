@@ -1,0 +1,23 @@
+{
+  "title": "Effort vs. Impact",
+  "xAxisLabel": "Effort →",
+  "yAxisLabel": "Impact →",
+  "quadrants": [
+    {
+      "label": "Quick Wins",
+      "note": "High impact, low effort"
+    },
+    {
+      "label": "Major Projects",
+      "note": "High impact, high effort"
+    },
+    {
+      "label": "Fill-ins",
+      "note": "Low impact, low effort"
+    },
+    {
+      "label": "Thankless Tasks",
+      "note": "Low impact, high effort"
+    }
+  ]
+}

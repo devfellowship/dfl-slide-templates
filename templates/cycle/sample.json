@@ -1,0 +1,21 @@
+{
+  "title": "The Continuous Improvement Loop",
+  "stages": [
+    {
+      "label": "Plan",
+      "note": "Define goals and scope"
+    },
+    {
+      "label": "Build",
+      "note": "Develop and integrate"
+    },
+    {
+      "label": "Ship",
+      "note": "Deploy to production"
+    },
+    {
+      "label": "Learn",
+      "note": "Measure and analyse"
+    }
+  ]
+}

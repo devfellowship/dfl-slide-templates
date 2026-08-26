@@ -1,0 +1,47 @@
+{
+  "title": "Product Roadmap",
+  "phases": [
+    {
+      "label": "Now",
+      "bullets": [
+        {
+          "text": "Ship onboarding v2"
+        },
+        {
+          "text": "Fix auth edge cases"
+        },
+        {
+          "text": "Mobile responsive pass"
+        }
+      ]
+    },
+    {
+      "label": "Next",
+      "bullets": [
+        {
+          "text": "Payments integration"
+        },
+        {
+          "text": "Team workspaces"
+        },
+        {
+          "text": "Advanced analytics"
+        }
+      ]
+    },
+    {
+      "label": "Later",
+      "bullets": [
+        {
+          "text": "Native mobile apps"
+        },
+        {
+          "text": "API v2 public beta"
+        },
+        {
+          "text": "White-label offering"
+        }
+      ]
+    }
+  ]
+}

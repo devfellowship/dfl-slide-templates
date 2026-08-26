@@ -1,0 +1,25 @@
+{
+  "title": "Launch Checklist",
+  "items": [
+    {
+      "text": "CI pipeline passing",
+      "done": true
+    },
+    {
+      "text": "Staging deploy verified",
+      "done": true
+    },
+    {
+      "text": "Feature flags enabled",
+      "done": true
+    },
+    {
+      "text": "Rollback plan documented",
+      "done": false
+    },
+    {
+      "text": "On-call notified",
+      "done": false
+    }
+  ]
+}

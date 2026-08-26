@@ -1,0 +1,9 @@
+{
+  "title": "Mobile vs Desktop Experience",
+  "leftUrl": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&auto=format&fit=crop",
+  "leftAlt": "Dashboard on desktop browser",
+  "leftLabel": "Desktop",
+  "rightUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&auto=format&fit=crop",
+  "rightAlt": "Dashboard on mobile device",
+  "rightLabel": "Mobile"
+}

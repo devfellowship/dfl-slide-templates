@@ -1,0 +1,21 @@
+{
+  "eyebrow": "Claude Code 101",
+  "title": "Three pillars",
+  "cards": [
+    {
+      "iconUrl": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&auto=format&fit=crop",
+      "title": "Read",
+      "caption": "Understands your whole codebase"
+    },
+    {
+      "iconUrl": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&auto=format&fit=crop",
+      "title": "Plan",
+      "caption": "Breaks work into clear steps"
+    },
+    {
+      "iconUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&auto=format&fit=crop",
+      "title": "Ship",
+      "caption": "Writes, tests, and opens the PR"
+    }
+  ]
+}

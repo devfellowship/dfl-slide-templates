@@ -1,0 +1,31 @@
+{
+  "title": "Should we migrate to a monorepo?",
+  "pros": [
+    {
+      "text": "Unified dependency management across all services"
+    },
+    {
+      "text": "Easier cross-package refactoring and code sharing"
+    },
+    {
+      "text": "Single CI pipeline reduces configuration overhead"
+    },
+    {
+      "text": "Atomic commits spanning multiple packages"
+    }
+  ],
+  "cons": [
+    {
+      "text": "Initial migration effort is significant"
+    },
+    {
+      "text": "Build times increase without granular caching"
+    },
+    {
+      "text": "Requires tooling discipline (Turborepo / Nx)"
+    },
+    {
+      "text": "Harder to enforce team boundaries"
+    }
+  ]
+}

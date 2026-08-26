@@ -1,0 +1,25 @@
+{
+  "title": "Q2 Metrics at a Glance",
+  "stats": [
+    {
+      "value": "1,248",
+      "label": "Active Fellows",
+      "caption": "+18% vs last quarter"
+    },
+    {
+      "value": "94%",
+      "label": "Completion Rate",
+      "caption": "Avg across all cohorts"
+    },
+    {
+      "value": "9.4",
+      "label": "Avg NPS Score",
+      "caption": "Target: 9.0"
+    },
+    {
+      "value": "38",
+      "label": "Partner Companies",
+      "caption": "5 new this quarter"
+    }
+  ]
+}

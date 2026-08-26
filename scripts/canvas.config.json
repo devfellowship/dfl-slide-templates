@@ -1,12 +1,18 @@
 {
   "$comment": [
-    "Canonical slide design canvas — the single source of truth for both the",
-    "static guard (scripts/lint-css.mjs, rule 4) and the runtime geometry guard",
-    "(scripts/check-canvas.ts).",
+    "Canonical slide design canvases — the single source of truth for both the",
+    "static guard (scripts/lint-css.mjs, rules 0 and 4) and the runtime geometry",
+    "guard (scripts/check-canvas.ts).",
     "",
-    "This canvas is HALF of a cross-repo contract; the other half is",
-    "\"counterpart\" below. The two must describe the same number. Enforcement",
-    "is deliberately asymmetric:",
+    "\"canvases\" is the declared list. Every id in it MUST have a sibling block",
+    "of the same name with a positive integer width and height. A template opts",
+    "in to a canvas with `canvases: [...]` in its config.yaml; when that key is",
+    "absent the template is taken to declare \"defaultCanvases\" below, so the 46",
+    "templates that pre-date the third canvas stay valid with no edit.",
+    "",
+    "These canvases are HALF of a cross-repo contract; the other half is",
+    "\"counterparts\" below. Every copy must describe the same numbers.",
+    "Enforcement is deliberately asymmetric:",
     "",
     "  - The BLOCKING comparison runs in dfl-lesson-studio",
     "    (scripts/check-canvas-contract.mjs). It can fetch this file",
@@ -14,18 +20,27 @@
     "    possible without exposing a token to a public repo.",
     "  - This repo LEADS. A canvas change lands here first (config + rescaling",
     "    every template in one PR, as #69 did); dfl-lesson-studio follows with a",
-    "    one-line constant change and is red until it does. A blocking gate on",
-    "    both sides would deadlock the first half of any canvas change.",
+    "    constant change and is red until it does. A blocking gate on both sides",
+    "    would deadlock the first half of any canvas change.",
+    "  - dfl-render (dfl-services:services/dfl-render/src/lib/capture-slide.ts)",
+    "    held a THIRD, undeclared copy of these numbers until 2026-08-26, with",
+    "    nothing scanning it. It is listed below so the copy is inside the",
+    "    contract rather than beside it.",
     "",
-    "What this repo can verify locally — and now does, as rule 0 of",
-    "lint-css.mjs — is that portrait is exactly landscape transposed, and that",
-    "the counterpart block is still here. Both were prose before.",
+    "What this repo can verify locally — and does, as rule 0 of lint-css.mjs —",
+    "is that every declared canvas is well-formed, that the landscape/portrait",
+    "PAIR is still a transpose (dfl-lesson-studio derives portrait that way), and",
+    "that the counterpart block is still here. Note that the transpose rule is a",
+    "property of that ONE pair, not of the canvas list: social-portrait is 4:5",
+    "and transposes nothing.",
     "",
     "fluidTemplates are the ONLY templates allowed to size to their container",
-    "instead of the fixed canvas. It is a local decision with no counterpart in",
+    "instead of a fixed canvas. It is a local decision with no counterpart in",
     "the app, and is NOT part of the contract. Keep the list tiny and justified —",
     "each entry needs a rationale below."
   ],
+  "canvases": ["landscape", "portrait", "social-portrait"],
+  "defaultCanvases": ["landscape", "portrait"],
   "landscape": {
     "width": 1280,
     "height": 720
@@ -34,16 +49,41 @@
     "width": 720,
     "height": 1280
   },
-  "counterpart": {
-    "repo": "devfellowship/dfl-lesson-studio",
-    "path": "src/lib/utils/dimensions.ts",
-    "symbols": [
-      "LANDSCAPE_WIDTH",
-      "LANDSCAPE_HEIGHT"
-    ],
-    "portraitIsTransposed": true,
-    "enforcedBy": "devfellowship/dfl-lesson-studio: scripts/check-canvas-contract.mjs (blocking)"
+  "social-portrait": {
+    "width": 1080,
+    "height": 1350
   },
+  "canvasRationale": {
+    "landscape": "The 16:9 lesson/deck canvas. Every template declares it.",
+    "portrait": "9:16, landscape transposed. The vertical lesson canvas; dfl-lesson-studio derives it from LANDSCAPE_WIDTH/HEIGHT rather than storing it.",
+    "social-portrait": "1080x1350, 4:5 — the Instagram portrait post. It is NOT a transpose of anything, which is why rule 0 checks well-formedness per canvas and the transpose only for the landscape/portrait pair. OPT-IN per template (config.yaml `canvases:`): a mandatory third canvas would cost an HTML, a CSS and a golden PNG across all 46 templates for no gain. Plan 20260822-branded-image-templates-deterministic-mcp, ADR-8."
+  },
+  "pairIsTransposed": {
+    "landscape": "portrait"
+  },
+  "counterparts": [
+    {
+      "repo": "devfellowship/dfl-lesson-studio",
+      "path": "src/lib/utils/dimensions.ts",
+      "symbols": [
+        "LANDSCAPE_WIDTH",
+        "LANDSCAPE_HEIGHT",
+        "SOCIAL_PORTRAIT_WIDTH",
+        "SOCIAL_PORTRAIT_HEIGHT"
+      ],
+      "portraitIsTransposed": true,
+      "enforcedBy": "devfellowship/dfl-lesson-studio: scripts/check-canvas-contract.mjs (blocking)"
+    },
+    {
+      "repo": "devfellowship/dfl-services",
+      "path": "services/dfl-render/src/lib/capture-slide.ts",
+      "symbols": [
+        "CANVAS"
+      ],
+      "portraitIsTransposed": false,
+      "enforcedBy": "devfellowship/dfl-services: services/dfl-render/src/lib/canvas-contract.test.ts (blocking, fetches this file)"
+    }
+  ],
   "fluidTemplates": [
     "blank"
   ],

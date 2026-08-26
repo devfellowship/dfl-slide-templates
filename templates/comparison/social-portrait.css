@@ -1,0 +1,121 @@
+/* tpl-comparison · social-portrait — 1080×1350 (4:5, Instagram portrait post) */
+
+.tpl-root.tpl-comparison.tpl-comparison--social {
+  position: relative;
+  width: 1080px;
+  height: 1350px;
+  padding: 104px 96px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.tpl-root.tpl-comparison.tpl-comparison--social::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-comparison.tpl-comparison--social > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-comparison.tpl-comparison--social .tpl-comparison__title {
+  flex: 0 0 auto;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 72px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  line-height: 1.05;
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+}
+
+.tpl-root.tpl-comparison.tpl-comparison--social .tpl-comparison__panels {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 26px;
+}
+
+.tpl-root.tpl-comparison.tpl-comparison--social .tpl-comparison__panel {
+  flex: 1 1 0;
+  min-height: 0;
+  padding: 48px 52px;
+  border-radius: var(--p-radius-xl, 14px);
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  background: var(--s-surface-panel, #141210);
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  overflow: hidden;
+}
+
+.tpl-root.tpl-comparison.tpl-comparison--social .tpl-comparison__panel--right {
+  background: var(--s-brand-subtle, rgba(224, 122, 74, 0.10));
+  border-color: var(--s-brand-border, rgba(224, 122, 74, 0.22));
+}
+
+.tpl-root.tpl-comparison.tpl-comparison--social .tpl-comparison__label {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 26px;
+  letter-spacing: var(--p-tracking-wider, 0.8px);
+  text-transform: uppercase;
+  color: var(--s-ink-muted, #7d7568);
+}
+
+.tpl-root.tpl-comparison.tpl-comparison--social .tpl-comparison__panel--right .tpl-comparison__label {
+  color: var(--s-brand-fg, #f0a872);
+}
+
+.tpl-root.tpl-comparison.tpl-comparison--social .tpl-comparison__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.tpl-root.tpl-comparison.tpl-comparison--social .tpl-comparison__item {
+  position: relative;
+  padding-left: 40px;
+  font-size: 36px;
+  line-height: 1.32;
+  color: var(--s-ink-secondary, #c9c0b4);
+}
+
+.tpl-root.tpl-comparison.tpl-comparison--social .tpl-comparison__item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 20px;
+  width: 14px;
+  height: 14px;
+  border-radius: var(--p-radius-pill, 999px);
+  background: var(--s-ink-muted, #7d7568);
+}
+
+.tpl-root.tpl-comparison.tpl-comparison--social .tpl-comparison__panel--right .tpl-comparison__item::before {
+  background: var(--s-brand-solid, #E07A4A);
+}
+
+.tpl-root.tpl-comparison.tpl-comparison--social .tpl-comparison__vs {
+  flex: 0 0 auto;
+  align-self: center;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 44px;
+  font-weight: var(--p-weight-700, 700);
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  color: var(--s-ink-muted, #7d7568);
+}

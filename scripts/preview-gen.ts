@@ -2,9 +2,9 @@ import { chromium } from "playwright";
 import * as path from "path";
 import {
   CANVAS,
-  ORIENTATIONS,
   REPO_ROOT,
   buildHtmlPage,
+  canvasesOf,
   readRegistry,
 } from "./render-page";
 
@@ -16,7 +16,10 @@ async function main(): Promise<void> {
     const { id } = entry;
     console.log(`Generating previews for: ${id}`);
 
-    for (const name of ORIENTATIONS) {
+    // Iterate what THIS template declares, not a hardcoded pair. A template
+    // that opts in to `social-portrait` gains a third golden PNG; the 46 that
+    // do not are untouched, which is the point of the opt-in (ADR-8).
+    for (const name of canvasesOf(id)) {
       const { width, height } = CANVAS[name];
       const html = buildHtmlPage(id, name);
       const page = await browser.newPage();

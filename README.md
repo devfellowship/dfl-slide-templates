@@ -9,19 +9,22 @@ A library of reusable slide templates for the DFL presentation engine. Each temp
 ```
 templates/
   <id>/
-    config.yaml           # slot schema + metadata
-    landscape.html        # Mustache HTML for 960×540 layout
-    landscape.css         # CSS scoped to .tpl-root (landscape)
-    portrait.html         # Mustache HTML for 540×960 layout
-    portrait.css          # CSS scoped to .tpl-root (portrait)
-    preview-landscape.png # auto-generated preview (do not edit by hand)
-    preview-portrait.png  # auto-generated preview (do not edit by hand)
+    config.yaml                  # slot schema + metadata + `canvases:` (opt-in)
+    landscape.html               # Mustache HTML for the 1280×720 canvas
+    landscape.css                # CSS scoped to .tpl-root (landscape)
+    portrait.html                # Mustache HTML for the 720×1280 canvas
+    portrait.css                 # CSS scoped to .tpl-root (portrait)
+    social-portrait.html         # OPTIONAL — 1080×1350 (4:5, Instagram post)
+    social-portrait.css          # OPTIONAL — only if `canvases:` declares it
+    preview-landscape.png        # auto-generated preview (do not edit by hand)
+    preview-portrait.png         # auto-generated preview (do not edit by hand)
+    preview-social-portrait.png  # auto-generated, only for declaring templates
 scripts/
   preview-gen.ts          # Playwright screenshot script
   lint-css.mjs            # CSS scoping + canvas + theme-token/completeness linter
   check-canvas.ts         # runtime guard: does .tpl-root fill the canvas?
   check-theme.ts          # runtime guard: every template × every theme
-  canvas.config.json      # canonical design canvas + fluid-template allowlist
+  canvas.config.json      # the declared design canvases + fluid-template allowlist
   theme.config.json       # per-theme contract: brand families, forbidden colours, exceptions
 themes/
   default.css             # complete LIGHT theme
@@ -108,6 +111,83 @@ Additional rules enforced by the CSS linter (`npm run lint:css`):
 - Every `--s-*` / `--p-*` token a template reads must exist in the theme.
 
 ---
+
+## Design canvases
+
+There are **three** canvases, declared in `scripts/canvas.config.json`:
+
+| id | size | aspect | who declares it |
+|---|---|---|---|
+| `landscape` | 1280×720 | 16:9 | every template |
+| `portrait` | 720×1280 | 9:16 | every template |
+| `social-portrait` | 1080×1350 | 4:5 | **opt-in** — 9 templates today |
+
+### The canvas is OPT-IN per template
+
+A template declares which canvases it ships:
+
+```yaml
+canvases: [landscape, portrait, social-portrait]
+```
+
+**Omit the key and you get `[landscape, portrait]`** — the `defaultCanvases`
+from `canvas.config.json`. That default is why adding a third canvas cost zero
+edits to the 46 templates that pre-dated it. A mandatory third canvas would have
+cost an HTML, a CSS and a golden PNG times 46, for a carousel that needs nine.
+
+`lint:css` rule 8 checks both directions: a declared canvas must have its two
+files, and a canvas-named file must be declared. A file nobody declares is not
+harmless — the renderer REFUSES that canvas, so the CSS looks live and is not.
+
+### An undeclared canvas ERRORS. It never falls back.
+
+Requesting `social-portrait` on a template that does not declare it returns an
+error and produces **no PNG**. There is no fallback to the nearest canvas, and
+there must never be one: a fallback yields a real image at the wrong aspect
+ratio, and nothing downstream can tell that from a correct render. It is not
+blank, it does not error, it uploads fine — it just ships wrong.
+
+This is enforced in three places, on purpose:
+`buildHtmlPage` in `scripts/render-page.ts` (local guards),
+`templateSourcesFor` in `dfl-lesson-studio` (the render-view, which sets
+`__SLIDE_ERROR__` before the screenshot), and the zod schema on
+`POST /capture/slide` in `dfl-render` (an id outside the contract, rejected 400).
+
+### `social-portrait` is not a transpose, and that mattered
+
+`portrait` is `landscape` transposed, and `dfl-lesson-studio` DERIVES it that
+way rather than storing it. `lint-css.mjs` rule 0 used to assert that relation
+for the whole config — so `1080×1350`, which transposes nothing, was rejected by
+construction.
+
+Rule 0 now asserts the two claims separately: **every** canvas has positive
+integer dimensions, and the `landscape`/`portrait` **pair specifically** stays a
+transpose. The pair list is data (`pairIsTransposed`), not an `if`. The pair
+check was not weakened — it is the half that catches someone editing `portrait`
+to `720×1440`.
+
+### The canvas is a cross-repo contract with THREE copies
+
+| repo | file | role |
+|---|---|---|
+| `dfl-slide-templates` | `scripts/canvas.config.json` | **leads** — a canvas lands here first |
+| `dfl-lesson-studio` | `src/lib/utils/dimensions.ts` | blocking: `scripts/check-canvas-contract.mjs` |
+| `dfl-services` | `services/dfl-render/src/lib/canvas.ts` | blocking: `src/lib/canvas-contract.test.ts` |
+
+Exactly **one direction blocks**: a canvas this repo declares that a follower
+does not know turns that follower red. The reverse only warns. Gating both
+directions would deadlock the first half of every canvas change — neither repo
+could merge first.
+
+So a canvas change is an ordered three-PR sequence: land here, then
+`dfl-lesson-studio`, then `dfl-services`. The followers are red in between, and
+that is the correct state: the alarm sits on the side that can fix it in one
+edit.
+
+⚠️ `dfl-render` held its copy **outside** the contract until 2026-08-26 — a
+private const with a comment for enforcement and nothing scanning it. That is
+the `fleet-health` runtime-state failure class, and it is why `counterparts` is
+now a list and why membership in it is itself asserted.
 
 ## Theming
 
@@ -233,6 +313,9 @@ Use absolute `px` dimensions on `.tpl-root` so screenshots are pixel-perfect.
      Give **every** slot a `sample:` value.
    - `landscape.html` / `portrait.html` — Mustache fragments.
    - `landscape.css` / `portrait.css` — scoped stylesheets.
+   - Optionally `canvases:` plus `<canvas>.html` / `<canvas>.css` for a third
+     canvas — see "Design canvases" below. Omit the key and you get
+     landscape + portrait, which is what 37 of the 46 templates do.
    - `sample.json` — the data the preview and the guards render with.
 3. Register the template in `registry.json`.
 4. Run `npm run preview` to generate preview images.
@@ -337,7 +420,7 @@ Preview images are saved as `templates/<id>/preview-landscape.png` and `template
 
 ```bash
 npm run lint:css      # static: scoping, @layer, :host, canvas, theme tokens, theme completeness
-npm run check:canvas  # runtime: does .tpl-root fill 1280x720 / 720x1280?
+npm run check:canvas  # runtime: does .tpl-root fill the canvas it was rendered at?
 npm run check:theme   # runtime: every template × EVERY theme (368 renders today)
 ```
 
@@ -348,7 +431,8 @@ All three exit 1 on failure and all three run in CI.
 
 ### What `check:theme` asserts
 
-It renders **every template × every theme × both orientations** over a hostile
+It renders **every template × every theme × every canvas that template
+declares** over a hostile
 magenta page, then reads back computed styles. Per render:
 
 1. **Surface** — `.tpl-root` is opaque and its background is *this* theme's

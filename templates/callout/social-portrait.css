@@ -1,0 +1,83 @@
+/* tpl-callout · social-portrait — 1080×1350 (4:5, Instagram portrait post) */
+
+.tpl-root.tpl-callout.tpl-callout--social {
+  position: relative;
+  width: 1080px;
+  height: 1350px;
+  padding: 120px 96px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tpl-root.tpl-callout.tpl-callout--social::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-callout.tpl-callout--social > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-callout.tpl-callout--social .tpl-callout__card {
+  padding: 72px 80px;
+  border: 1px solid var(--s-brand-border, rgba(224, 122, 74, 0.22));
+  background: var(--s-brand-subtle, rgba(224, 122, 74, 0.10));
+  border-radius: var(--p-radius-xl, 14px);
+  max-width: 888px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.tpl-root.tpl-callout.tpl-callout--social .tpl-callout__icon {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--p-radius-md, 6px);
+  background: var(--s-brand-solid, #E07A4A);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--s-ink-inverse, #0a0908);
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 42px;
+  font-weight: var(--p-weight-700, 700);
+  flex: 0 0 auto;
+}
+
+.tpl-root.tpl-callout.tpl-callout--social .tpl-callout__eyebrow {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 24px;
+  letter-spacing: var(--p-tracking-wider, 0.8px);
+  text-transform: uppercase;
+  color: var(--s-brand-fg, #f0a872);
+}
+
+.tpl-root.tpl-callout.tpl-callout--social .tpl-callout__title {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 82px;
+  font-weight: var(--p-weight-700, 700);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  line-height: 1.03;
+  margin: 0;
+  color: var(--s-ink-primary, #f6f1e7);
+  overflow-wrap: break-word;
+  text-wrap: balance;
+}
+
+.tpl-root.tpl-callout.tpl-callout--social .tpl-callout__body {
+  font-size: 38px;
+  color: var(--s-ink-secondary, #c9c0b4);
+  line-height: 1.48;
+  margin: 0;
+}

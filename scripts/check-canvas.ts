@@ -1,9 +1,10 @@
 /**
  * Canvas-fill guard (runtime / DOM geometry).
  *
- * Renders every registered template at the canonical design canvas and
+ * Renders every registered template at EVERY canvas that template declares
+ * (`canvases:` in its config.yaml, defaulting to landscape + portrait) and
  * measures the ACTUAL laid-out box of `.tpl-root`. Fails if a template does
- * not fill the canvas.
+ * not fill the canvas it was rendered at.
  *
  * Why this exists: 33 of 46 templates shipped declaring `960x540` (landscape)
  * or `540x960` (portrait) — exactly 75% linear, ~56% of the area — so slide
@@ -24,10 +25,11 @@ import { chromium } from "playwright";
 import * as fs from "fs";
 import {
   CANVAS,
+  CANVAS_IDS,
+  CanvasId,
   FLUID_TEMPLATES,
-  ORIENTATIONS,
-  Orientation,
   buildHtmlPage,
+  canvasesOf,
   readRegistry,
 } from "./render-page";
 
@@ -36,7 +38,7 @@ const TOLERANCE_PX = 1;
 
 interface Measurement {
   id: string;
-  orientation: Orientation;
+  canvas: CanvasId;
   expected: { width: number; height: number };
   actual: { width: number; height: number };
   fillRatio: number;
@@ -53,11 +55,11 @@ async function main(): Promise<void> {
   const results: Measurement[] = [];
 
   for (const { id } of registry.templates) {
-    for (const orientation of ORIENTATIONS) {
-      const expected = CANVAS[orientation];
+    for (const canvas of canvasesOf(id)) {
+      const expected = CANVAS[canvas];
       const page = await browser.newPage();
       await page.setViewportSize(expected);
-      await page.setContent(buildHtmlPage(id, orientation), {
+      await page.setContent(buildHtmlPage(id, canvas), {
         waitUntil: "networkidle",
       });
 
@@ -72,7 +74,7 @@ async function main(): Promise<void> {
       if (!actual) {
         results.push({
           id,
-          orientation,
+          canvas,
           expected,
           actual: { width: 0, height: 0 },
           fillRatio: 0,
@@ -90,7 +92,7 @@ async function main(): Promise<void> {
 
       results.push({
         id,
-        orientation,
+        canvas,
         expected,
         actual,
         fillRatio,
@@ -118,13 +120,13 @@ async function main(): Promise<void> {
   for (const r of results) {
     if (FLUID_TEMPLATES.has(r.id)) {
       console.log(
-        `  ~  ${r.id} (${r.orientation}) — fluid by design, skipped ` +
+        `  ~  ${r.id} (${r.canvas}) — fluid by design, skipped ` +
           `(${r.actual.width}x${r.actual.height})`
       );
     } else if (r.ok) {
-      console.log(`  ✓  ${r.id} (${r.orientation}) — ${r.actual.width}x${r.actual.height}`);
+      console.log(`  ✓  ${r.id} (${r.canvas}) — ${r.actual.width}x${r.actual.height}`);
     } else {
-      console.error(`  ✗  ${r.id} (${r.orientation}) — ${r.reason}`);
+      console.error(`  ✗  ${r.id} (${r.canvas}) — ${r.reason}`);
     }
   }
 
@@ -132,9 +134,9 @@ async function main(): Promise<void> {
     console.error(
       `\nCanvas-fill check FAILED — ${violations.length} of ${results.length} ` +
         `renders do not fill the design canvas.\n\n` +
-        `Every template's .tpl-root must lay out at exactly ` +
-        `${CANVAS.landscape.width}x${CANVAS.landscape.height} (landscape) / ` +
-        `${CANVAS.portrait.width}x${CANVAS.portrait.height} (portrait).\n` +
+        `Every template's .tpl-root must lay out at exactly the canvas its ` +
+        `file is named after — ` +
+        `${CANVAS_IDS.map((c) => `${CANVAS[c].width}x${CANVAS[c].height} (${c})`).join(" / ")}.\n` +
         `If a template is genuinely meant to size to its container, add it to ` +
         `FLUID_TEMPLATES in scripts/render-page.ts with a written rationale.`
     );

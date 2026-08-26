@@ -80,7 +80,40 @@ jobs:
           ref: ${{ github.event.pull_request.base.ref }}
           persist-credentials: false
 
+      # BOOTSTRAP. The engine is read from the BASE branch, so on a pull request
+      # opened BEFORE the engine reached `main` there is nothing to run. That is
+      # a clean "no merge", not a failure: a red job on every unrelated pull
+      # request would be noise, and the safe outcome is already the default.
+      - name: Check that the gate engine exists on the base branch
+        id: bootstrap
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+        run: |
+          set -uo pipefail
+          MISSING=""
+          for f in .github/automerge-rules.conf \
+                   .github/scripts/automerge-decide.mjs \
+                   .github/scripts/automerge-decide.test.mjs \
+                   .github/scripts/automerge-collect.mjs; do
+            if [ ! -f "$f" ]; then
+              MISSING="$MISSING $f"
+            fi
+          done
+          if [ -z "$MISSING" ]; then
+            echo "engine_present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "engine_present=false" >> "$GITHUB_OUTPUT"
+            {
+              echo "### Auto-merge gate"
+              echo ""
+              echo "**No merge.** The gate engine is not on \`$BASE_REF\` yet (missing:$MISSING)."
+              echo ""
+              echo "Nothing is merged and nothing is wrong. A human merges this pull request."
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Set up Node
+        if: steps.bootstrap.outputs.engine_present == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: "20"
@@ -88,10 +121,12 @@ jobs:
       # Same suite that runs in CI. If the gate's own rules do not hold, the gate
       # does not run — it refuses by failing, which merges nothing.
       - name: Self-test the rule engine
+        if: steps.bootstrap.outputs.engine_present == 'true'
         run: node .github/scripts/automerge-decide.test.mjs
 
       - name: Decide
         id: gate
+        if: steps.bootstrap.outputs.engine_present == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
@@ -162,7 +197,9 @@ jobs:
       # moved in the meantime the API answers 409 and nothing is merged; the next
       # `synchronize` event judges the new SHA from scratch.
       - name: Merge
-        if: steps.gate.outputs.decision == 'ALLOW'
+        if: >-
+          steps.bootstrap.outputs.engine_present == 'true' &&
+          steps.gate.outputs.decision == 'ALLOW'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
@@ -187,6 +224,7 @@ jobs:
       # and never fails open.
       - name: Comment the refusal
         if: >-
+          steps.bootstrap.outputs.engine_present == 'true' &&
           steps.gate.outputs.decision == 'BLOCK' &&
           github.event.pull_request.head.repo.full_name == github.repository
         env:

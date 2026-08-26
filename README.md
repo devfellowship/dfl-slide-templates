@@ -274,12 +274,50 @@ whole class of green-but-blank template.
 3. Keep the three `.dfl-*` chassis rules, including `flex-shrink: 0` and
    `min-height: 1px` on `.dfl-section-rule` — templates emit those classes in
    their markup and only the theme styles them.
-4. Add one entry to `themes` in `registry.json`.
-5. Add one `themes.<id>` entry to `scripts/theme.config.json` listing the
+4. Keep the **deck-chrome block** at the foot of the file, unchanged. It is
+   byte-identical in every theme file on purpose (see below); copy it, do not
+   rewrite it.
+5. Add one entry to `themes` in `registry.json`.
+6. Add one `themes.<id>` entry to `scripts/theme.config.json` listing the
    colours forbidden on that brand, each with the guide sentence that says so.
-6. `npm run lint:css && npm run check:theme`.
+7. `npm run lint:css && npm run check:theme`.
 
 No application code changes. Consumers read the `themes` array.
+
+### Deck chrome — a template must never emit it
+
+The furniture around a slide — the kicker bar, the brand lockup, the social
+handle, and the slide index `01/09` — is **deck-level, not slide-level**. The
+render-view injects it and **derives** the index from `order_index` and the
+sibling count, so inserting a slide renumbers the whole deck with no author
+edit. That is ADR-7 of
+[the plan](https://plans.devfellowship.com/20260822-branded-image-templates-deterministic-mcp).
+
+| Class | What it is |
+|---|---|
+| `.dfl-deck-kicker` | The bar the other three sit in |
+| `.dfl-deck-lockup` | The wordmark |
+| `.dfl-deck-lockup-mark` | The wordmark's accent glyph — Itera's slash |
+| `.dfl-deck-handle` | The `@handle` |
+| `.dfl-deck-index` | The index wrapper |
+| `.dfl-deck-index-current` / `-sep` / `-total` | `01` `/` `09` |
+
+Two rules, both enforced by `npm run check:theme` (assertion 7):
+
+- **No template may emit one of these classes.** `npm run preview` renders a
+  template standalone, with no composition around it, so a template that
+  printed its own index would bake a blank — or a wrong `01/01` — into its
+  committed golden PNG.
+- **The block is byte-identical in every theme file.** Geometry comes from the
+  `--p-*` primitives, which every theme defines with the same numbers; colour
+  and type come from `--s-*` semantics, which is what a brand redefines. So a
+  theme swap changes colour and type and never geometry, and the guard compares
+  the computed geometry across themes to keep it that way.
+
+Because no template emits these classes, no other assertion in
+`check-theme.ts` can see them: all four theme files could drop the block and
+368 renders would still pass. Assertion 7 renders the documented markup
+itself.
 
 ---
 

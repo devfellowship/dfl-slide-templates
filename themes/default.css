@@ -300,3 +300,145 @@
   );
   margin: 18px 0 28px;
 }
+
+/* ─── Deck chrome (the render-view injects it; no template may emit it) ──
+ *
+ * This is the furniture that belongs to the DECK rather than to the slide:
+ * the kicker bar across the top, the brand lockup, the social handle, and
+ * the slide index — "01/09".
+ *
+ * WHY THE INDEX IS NOT A SLOT. ADR-7 of
+ * https://plans.devfellowship.com/20260822-branded-image-templates-deterministic-mcp
+ * makes the index a value the render-view DERIVES from `order_index` and the
+ * sibling count. A slot would make the author type nine strings and renumber
+ * every one of them by hand on each insert, and a typed index can drift from
+ * the deck it describes. A derived one cannot.
+ *
+ * WHY NO TEMPLATE MAY EMIT THESE CLASSES. This is a hard rule, not a style
+ * note. `scripts/preview-gen.ts` renders one template STANDALONE, with no
+ * composition around it, so a template that printed its own index would bake
+ * a blank — or a wrong "01/01" — into every committed golden PNG, in both
+ * orientations, for all four themes. The render-view owns the markup. The
+ * theme owns only what it looks like.
+ *
+ * THE MARKUP CONTRACT the render-view fills:
+ *
+ *   <div class="dfl-deck-kicker">
+ *     <span class="dfl-deck-lockup">ITERA<span class="dfl-deck-lockup-mark">
+ *       &#47;</span></span>
+ *     <span class="dfl-deck-handle">@devfellowship</span>
+ *     <span class="dfl-deck-index">
+ *       <span class="dfl-deck-index-current">01</span>
+ *       <span class="dfl-deck-index-sep">&#47;</span>
+ *       <span class="dfl-deck-index-total">09</span>
+ *     </span>
+ *   </div>
+ *
+ * The lockup WORD is content, so the render-view supplies it. Only the accent
+ * glyph is a separate element, because its colour is a brand rule: the Itera
+ * guide 6.1 says "Não troque a cor do slash. Slash Itera = evergreen #3fd17f.
+ * Sempre." Reading `--s-brand-solid` honours that on Itera and gives DFL and
+ * Revera their own accent for free, with no theme-specific `content` in CSS.
+ *
+ * WHY THIS BLOCK IS BYTE-IDENTICAL IN ALL FOUR THEME FILES. Verification
+ * criterion 4 of that plan: a theme swap changes colour and type, NEVER
+ * geometry. The strongest way to prove that is to make the geometry the same
+ * TEXT in every theme, so a reviewer can diff the four files and see it.
+ * Every geometric value here is a `--p-` primitive, and the numeric `--p-`
+ * scales are already byte-identical across the four themes; every colour and
+ * every family is an `--s-` semantic token, which is what each brand
+ * redefines. So this block needs no per-theme edit, and it must not get one.
+ *
+ * ACCENT RATIONING. Itera guide 3.3 allows exactly one green per surface and
+ * lists the lockup slash as one of its sanctioned homes. So the slash is the
+ * only accented element in this block: the index and the handle are muted
+ * chrome on purpose. Do not "improve" the index by painting it the accent —
+ * that spends the ration the slide's own key number needs. */
+
+.tpl-root .dfl-deck-kicker {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--p-space-4);
+  /* The bar is often a flex item in a fixed-height column root. Without these
+   * two, flex-shrink distributes any content overflow into the chrome and the
+   * bar collapses — the same failure mode the .dfl-section-rule comment above
+   * documents, one level up. A `border-bottom` cannot go sub-pixel the way a
+   * 1px flex ITEM can, which is why the hairline here is a border. */
+  flex-shrink: 0;
+  min-height: var(--p-space-6);
+  padding-bottom: var(--p-space-2);
+  border-bottom: 1px solid var(--s-border-subtle);
+  /* The bar establishes the chrome's OWN inherited type and ink, so a bare
+   * text node the render-view drops into it is themed rather than the browser
+   * default. Without these two the container inherited Times New Roman and
+   * black, and assertion 7 in scripts/check-theme.ts failed on all four
+   * themes — which is how they came to be here. */
+  font-family: var(--s-font-mono);
+  color: var(--s-ink-muted);
+}
+
+.tpl-root .dfl-deck-lockup {
+  display: inline-flex;
+  align-items: baseline;
+  font-family: var(--s-font-display);
+  font-weight: var(--p-weight-700);
+  font-size: var(--p-text-20);
+  line-height: 1.1;
+  letter-spacing: var(--p-tracking-tight);
+  text-transform: uppercase;
+  color: var(--s-ink-primary);
+  /* Guide 5.2: nothing enters the lockup's clear space, which is the cap
+   * height of the first letter. At 20px display type that is ~14px. */
+  margin-right: var(--p-space-3);
+  white-space: nowrap;
+}
+
+/* The accent glyph of the lockup — Itera's slash, and each other brand's own
+ * mark. NEVER hardcode the glyph here: it is content, not style. */
+.tpl-root .dfl-deck-lockup-mark {
+  color: var(--s-brand-solid);
+}
+
+.tpl-root .dfl-deck-handle {
+  font-family: var(--s-font-mono);
+  font-size: var(--p-text-12);
+  font-weight: var(--p-weight-500);
+  letter-spacing: var(--p-tracking-wider);
+  line-height: 1.2;
+  text-transform: lowercase;
+  color: var(--s-ink-muted);
+  white-space: nowrap;
+}
+
+.tpl-root .dfl-deck-index {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  margin-left: auto;
+  font-family: var(--s-font-mono);
+  font-size: var(--p-text-12);
+  font-weight: var(--p-weight-500);
+  letter-spacing: var(--p-tracking-wider);
+  line-height: 1.2;
+  /* Tabular figures, so "01/09" and "09/09" occupy the same box. A derived
+   * index changes on every slide; a proportional figure set would shift the
+   * chrome slide to slide, and a render is supposed to be deterministic. */
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  /* Same reason as the kicker: the three spans below carry the digits, but the
+   * wrapper must still be themed so a bare separator character is not black. */
+  color: var(--s-ink-muted);
+}
+
+.tpl-root .dfl-deck-index-current {
+  color: var(--s-ink-secondary);
+}
+
+.tpl-root .dfl-deck-index-sep {
+  color: var(--s-ink-disabled);
+}
+
+.tpl-root .dfl-deck-index-total {
+  color: var(--s-ink-muted);
+}

@@ -2,7 +2,7 @@
  * Theme-conformance guard (runtime / computed styles).
  *
  * Renders EVERY registered template in EVERY registered theme, in both
- * orientations — exactly as the deck runtime does — but paints the page behind
+ * canvases — exactly as the deck runtime does — but paints the page behind
  * the slide a deliberately hostile magenta. Then it reads back computed styles
  * and asserts six things per render, plus a seventh about the deck chrome —
  * the classes the render-view injects, which no template emits and which
@@ -18,7 +18,7 @@
  * The theme picker looked like it did nothing. One theme under test proves one
  * theme; the fallback makes the untested themes look fine.
  *
- * The assertions, per (template × orientation × theme):
+ * The assertions, per (template × canvas × theme):
  *
  *   1. SURFACE — `.tpl-root` paints an OPAQUE background, and that background
  *      is THIS theme's `--s-surface-page`, read back from the injected CSS
@@ -90,11 +90,12 @@ import * as fs from "fs";
 import * as path from "path";
 import {
   CANVAS,
-  ORIENTATIONS,
-  Orientation,
+  CANVAS_IDS,
+  CanvasId,
   REPO_ROOT,
   RegistryTheme,
   buildHtmlPage,
+  canvasesOf,
   readRegistry,
   readThemes,
 } from "./render-page";
@@ -120,7 +121,7 @@ const THEME_CONTRACT = THEME_CONFIG.themes as Record<string, ForbiddenSpec>;
 
 interface Finding {
   id: string;
-  orientation: Orientation;
+  canvas: CanvasId;
   themeId: string;
   rootBackground: string;
   fonts: string[];
@@ -161,8 +162,8 @@ function contractTokens(): string[] {
   const tokens = new Set<string>();
   const dir = path.join(REPO_ROOT, "templates");
   for (const id of fs.readdirSync(dir)) {
-    for (const orientation of ORIENTATIONS) {
-      const file = path.join(dir, id, `${orientation}.css`);
+    for (const canvas of canvasesOf(id)) {
+      const file = path.join(dir, id, `${canvas}.css`);
       if (!fs.existsSync(file)) continue;
       for (const m of fs
         .readFileSync(file, "utf8")
@@ -252,13 +253,13 @@ function templatesEmittingDeckChrome(): string[] {
   const offenders: string[] = [];
   const dir = path.join(REPO_ROOT, "templates");
   for (const id of fs.readdirSync(dir)) {
-    for (const orientation of ORIENTATIONS) {
+    for (const canvas of canvasesOf(id)) {
       for (const ext of ["html", "css"]) {
-        const file = path.join(dir, id, `${orientation}.${ext}`);
+        const file = path.join(dir, id, `${canvas}.${ext}`);
         if (!fs.existsSync(file)) continue;
         const src = fs.readFileSync(file, "utf8");
         for (const cls of DECK_CHROME_CLASSES)
-          if (src.includes(cls)) offenders.push(`${id}/${orientation}.${ext} (${cls})`);
+          if (src.includes(cls)) offenders.push(`${id}/${canvas}.${ext} (${cls})`);
       }
     }
   }
@@ -330,8 +331,8 @@ function templatesReadingAccent(): Set<string> {
   const ids = new Set<string>();
   const dir = path.join(REPO_ROOT, "templates");
   for (const id of fs.readdirSync(dir)) {
-    for (const orientation of ORIENTATIONS) {
-      const file = path.join(dir, id, `${orientation}.css`);
+    for (const canvas of canvasesOf(id)) {
+      const file = path.join(dir, id, `${canvas}.css`);
       if (!fs.existsSync(file)) continue;
       if (/var\(\s*--s-brand-/.test(fs.readFileSync(file, "utf8"))) ids.add(id);
     }
@@ -340,8 +341,8 @@ function templatesReadingAccent(): Set<string> {
 }
 
 /** Swap the preview page background for the hostile one. */
-function hostilePage(id: string, orientation: Orientation, themeId: string): string {
-  return buildHtmlPage(id, orientation, themeId).replace(
+function hostilePage(id: string, canvas: CanvasId, themeId: string): string {
+  return buildHtmlPage(id, canvas, themeId).replace(
     /background: #0a0908;/,
     `background: ${HOSTILE_PAGE_BG};`
   );
@@ -555,10 +556,10 @@ async function main(): Promise<void> {
     }
 
     for (const { id } of registry.templates) {
-      for (const orientation of ORIENTATIONS) {
+      for (const canvas of canvasesOf(id)) {
         const page = await browser.newPage();
-        await page.setViewportSize(CANVAS[orientation]);
-        await page.setContent(hostilePage(id, orientation, theme.id), {
+        await page.setViewportSize(CANVAS[canvas]);
+        await page.setContent(hostilePage(id, canvas, theme.id), {
           waitUntil: "networkidle",
         });
 
@@ -628,7 +629,7 @@ async function main(): Promise<void> {
         if (!measured) {
           findings.push({
             id,
-            orientation,
+            canvas,
             themeId: theme.id,
             rootBackground: "",
             fonts: [],
@@ -725,7 +726,7 @@ async function main(): Promise<void> {
 
         findings.push({
           id,
-          orientation,
+          canvas,
           themeId: theme.id,
           rootBackground: measured.background,
           fonts: measured.families,
@@ -780,12 +781,12 @@ async function main(): Promise<void> {
     }
     if (f.violations.length === 0) {
       console.log(
-        `  ✓  ${f.id} (${f.orientation}) — ${f.rootBackground}` +
+        `  ✓  ${f.id} (${f.canvas}) — ${f.rootBackground}` +
           (f.fonts.length ? ` · ${f.fonts.join(" · ")}` : "")
       );
     } else {
       for (const v of f.violations) {
-        console.error(`  ✗  ${f.id} (${f.orientation}) [${f.themeId}] — ${v}`);
+        console.error(`  ✗  ${f.id} (${f.canvas}) [${f.themeId}] — ${v}`);
       }
     }
   }
@@ -793,7 +794,8 @@ async function main(): Promise<void> {
   const failed = findings.filter((f) => f.violations.length > 0);
   const summary =
     `${findings.length} renders — ${registry.templates.length} templates × ` +
-    `${themes.length} theme(s) × ${ORIENTATIONS.length} orientations`;
+    `${themes.length} theme(s) × the canvases each template declares ` +
+    `(of ${CANVAS_IDS.length}: ${CANVAS_IDS.join(", ")})`;
 
   if (failed.length > 0 || themeErrors.length > 0) {
     console.error(

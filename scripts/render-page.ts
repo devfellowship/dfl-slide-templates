@@ -1,7 +1,8 @@
 /**
  * Shared slide-render helpers.
  *
- * Single source of truth for (a) the canonical design canvas, (b) which
+ * Single source of truth for (a) the declared design canvases and which of
+ * them each template opts in to, (b) which
  * templates render dark / under the DFL Design System, (c) where a template's
  * sample data comes from, and (d) how a template is assembled into a
  * standalone HTML page.
@@ -20,22 +21,58 @@ import CANVAS_CONFIG from "./canvas.config.json";
 export const REPO_ROOT = path.resolve(__dirname, "..");
 export const REGISTRY_PATH = path.join(REPO_ROOT, "registry.json");
 
-export type Orientation = "landscape" | "portrait";
+export interface CanvasBox {
+  width: number;
+  height: number;
+}
 
 /**
- * Canonical design canvas. Defined once in `scripts/canvas.config.json` and
+ * A canvas id. It is a plain string, not a two-value union, because the list of
+ * canvases is DATA — `scripts/canvas.config.json`'s `canvases` array. Adding
+ * the fourth canvas must not need a type edit in four scripts.
+ *
+ * `Orientation` survives as an alias so the two ids that used to be the whole
+ * story keep reading naturally where the code genuinely means "which way up".
+ */
+export type CanvasId = string;
+export type Orientation = CanvasId;
+
+/**
+ * Canonical design canvases. Defined once in `scripts/canvas.config.json` and
  * shared with the static guard in `lint-css.mjs`, so the two guards can never
  * disagree about what "filling the canvas" means.
  */
-export const CANVAS: Record<Orientation, { width: number; height: number }> = {
-  landscape: CANVAS_CONFIG.landscape,
-  portrait: CANVAS_CONFIG.portrait,
-};
+export const CANVAS: Record<CanvasId, CanvasBox> = Object.fromEntries(
+  (CANVAS_CONFIG.canvases as CanvasId[]).map((id) => [
+    id,
+    (CANVAS_CONFIG as unknown as Record<string, CanvasBox>)[id],
+  ])
+);
+
+/** Every declared canvas, in declaration order. */
+export const CANVAS_IDS: CanvasId[] = CANVAS_CONFIG.canvases as CanvasId[];
+
+/**
+ * What a template is taken to declare when its `config.yaml` omits `canvases:`.
+ *
+ * This default is the whole reason a third canvas cost zero edits to the 46
+ * templates that pre-date it: `social-portrait` is OPT-IN. A mandatory third
+ * canvas would have cost an HTML, a CSS and a golden PNG times 46, for a
+ * carousel that needs nine of them. Plan
+ * 20260822-branded-image-templates-deterministic-mcp, ADR-8.
+ */
+export const DEFAULT_CANVAS_IDS: CanvasId[] =
+  CANVAS_CONFIG.defaultCanvases as CanvasId[];
 
 export const LANDSCAPE_WIDTH = CANVAS.landscape.width;
 export const LANDSCAPE_HEIGHT = CANVAS.landscape.height;
 
-export const ORIENTATIONS: Orientation[] = ["landscape", "portrait"];
+/**
+ * @deprecated The hardcoded pair. Kept only so an out-of-tree reader does not
+ * break; every guard in this repo iterates `canvasesOf(templateId)` instead,
+ * because which canvases a template has is now a per-template question.
+ */
+export const ORIENTATIONS: CanvasId[] = DEFAULT_CANVAS_IDS;
 
 /**
  * Templates that intentionally size themselves to their container instead of
@@ -234,17 +271,91 @@ export function resolveSampleData(templateId: string): ResolvedSample {
   return { data: {}, source: "none" };
 }
 
+/**
+ * Which canvases a template declares.
+ *
+ * Order: the `canvases:` list in `templates/<id>/config.yaml`, else
+ * `defaultCanvases` from `scripts/canvas.config.json`. Absence of the key is
+ * NOT an error — it is how the 46 pre-existing templates declare the two
+ * canvases they have always had.
+ *
+ * This function is deliberately strict about a BAD list and silent about an
+ * ABSENT one, because the two mean different things: a missing key is a
+ * template that never opted in, and a list naming a canvas that does not exist
+ * is a typo that would otherwise render nothing and report success.
+ * `lint-css.mjs` rule 8 asserts the same thing statically; this is the runtime
+ * half, so a guard invoked directly cannot skip it.
+ */
+export function canvasesOf(templateId: string): CanvasId[] {
+  const configPath = path.join(REPO_ROOT, "templates", templateId, "config.yaml");
+  if (!fs.existsSync(configPath)) return DEFAULT_CANVAS_IDS;
+
+  const config = parseYaml(fs.readFileSync(configPath, "utf8")) as
+    | { canvases?: unknown }
+    | null
+    | undefined;
+  const declared = config?.canvases;
+  if (declared === undefined) return DEFAULT_CANVAS_IDS;
+
+  if (!Array.isArray(declared) || declared.length === 0) {
+    throw new Error(
+      `templates/${templateId}/config.yaml: \`canvases:\` must be a non-empty ` +
+        `list of canvas ids. Omit the key to accept the default ` +
+        `(${DEFAULT_CANVAS_IDS.join(", ")}).`
+    );
+  }
+  for (const id of declared) {
+    if (typeof id !== "string" || !CANVAS[id]) {
+      throw new Error(
+        `templates/${templateId}/config.yaml declares canvas ` +
+          `${JSON.stringify(id)}, which scripts/canvas.config.json does not ` +
+          `list. Declared canvases are ${CANVAS_IDS.join(", ")}.`
+      );
+    }
+  }
+  return declared as CanvasId[];
+}
+
+/**
+ * Does this template declare that canvas?
+ *
+ * The callers of this must ERROR on `false` and must never substitute another
+ * canvas. A nearest-canvas fallback would ship a 1280x720 raster as though it
+ * were a 1080x1350 Instagram post — wrong aspect, silently, which is precisely
+ * the failure ADR-8 forbids and Verification criterion 12 tests for.
+ */
+export function templateDeclaresCanvas(
+  templateId: string,
+  canvas: CanvasId
+): boolean {
+  return canvasesOf(templateId).includes(canvas);
+}
+
 export function buildHtmlPage(
   templateId: string,
-  orientation: Orientation,
+  canvas: CanvasId,
   themeId: string = THEME_ID
 ): string {
   const dir = path.join(REPO_ROOT, "templates", templateId);
+
+  // REFUSE, never substitute. An undeclared canvas is an error here for the
+  // same reason it is an error at the render service: falling back to the
+  // nearest canvas produces a plausible PNG at the wrong aspect ratio, and
+  // nothing downstream can tell that from a correct one.
+  if (!templateDeclaresCanvas(templateId, canvas)) {
+    throw new Error(
+      `template "${templateId}" does not declare the "${canvas}" canvas — it ` +
+        `declares ${canvasesOf(templateId).join(", ")}. Add "${canvas}" to ` +
+        `\`canvases:\` in its config.yaml and author ${canvas}.html / ` +
+        `${canvas}.css. There is deliberately NO fallback to another canvas.`
+    );
+  }
+
   const htmlTemplate = fs.readFileSync(
-    path.join(dir, `${orientation}.html`),
+    path.join(dir, `${canvas}.html`),
     "utf8"
   );
-  const css = fs.readFileSync(path.join(dir, `${orientation}.css`), "utf8");
+  const css = fs.readFileSync(path.join(dir, `${canvas}.css`), "utf8");
   const { data } = resolveSampleData(templateId);
   const renderedHtml = Mustache.render(htmlTemplate, data);
   const themeCss = fs.readFileSync(
@@ -262,7 +373,7 @@ export function buildHtmlPage(
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>${templateId} – ${orientation}</title>
+  <title>${templateId} – ${canvas}</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; height: 100%; background: ${bgColor}; }

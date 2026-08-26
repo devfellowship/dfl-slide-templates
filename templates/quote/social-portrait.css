@@ -1,0 +1,80 @@
+/* tpl-quote · social-portrait — 1080×1350 (4:5, Instagram portrait post) */
+
+.tpl-root.tpl-quote.tpl-quote--social {
+  position: relative;
+  width: 1080px;
+  height: 1350px;
+  padding: 120px 96px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tpl-root.tpl-quote.tpl-quote--social::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: var(--s-texture-dot-size, 32px) var(--s-texture-dot-size, 32px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-quote.tpl-quote--social > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-quote.tpl-quote--social .tpl-quote__inner {
+  max-width: 820px;
+  text-align: center;
+}
+
+.tpl-root.tpl-quote.tpl-quote--social .tpl-quote__mark {
+  font-family: var(--s-font-editorial, Georgia, 'Times New Roman', serif);
+  font-size: 140px;
+  line-height: 0.5;
+  color: var(--s-brand-solid, #E07A4A);
+  margin-bottom: 44px;
+  display: block;
+}
+
+.tpl-root.tpl-quote.tpl-quote--social .tpl-quote__text {
+  font-family: var(--s-font-editorial, Georgia, 'Times New Roman', serif);
+  font-size: 50px;
+  font-weight: var(--p-weight-400, 400);
+  font-style: italic;
+  line-height: 1.42;
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0 0 48px 0;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+}
+
+.tpl-root.tpl-quote.tpl-quote--social .tpl-quote__attribution {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.tpl-root.tpl-quote.tpl-quote--social .tpl-quote__author {
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  font-size: 32px;
+  font-weight: var(--p-weight-600, 600);
+  color: var(--s-ink-primary, #f6f1e7);
+  display: block;
+}
+
+.tpl-root.tpl-quote.tpl-quote--social .tpl-quote__source {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 23px;
+  font-weight: var(--p-weight-500, 500);
+  letter-spacing: var(--p-tracking-wider, 0.8px);
+  text-transform: uppercase;
+  color: var(--s-ink-muted, #7d7568);
+  display: block;
+}

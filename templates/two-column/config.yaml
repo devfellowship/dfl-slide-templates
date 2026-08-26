@@ -2,6 +2,10 @@ id: two-column
 name: Two Column
 version: "1.0.0"
 category: layout
+# Design canvases this template ships. Absent = [landscape, portrait]
+# (scripts/canvas.config.json defaultCanvases). social-portrait is 1080x1350
+# (4:5, Instagram portrait) and is OPT-IN — plan ADR-8.
+canvases: [landscape, portrait, social-portrait]
 slots:
   - name: title
     type: text

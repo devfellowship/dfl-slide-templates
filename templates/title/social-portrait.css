@@ -1,0 +1,71 @@
+/*
+ * tpl-title · social-portrait — 1080×1350 (4:5, Instagram portrait post)
+ *
+ * NOT a scale of either sibling. 1080×1350 has 1.5x the horizontal room of the
+ * 720×1280 portrait canvas and only 1.055x the vertical, so the type grows on
+ * the horizontal axis and the vertical rhythm stays near portrait's. Scaling
+ * portrait by 1.5 uniformly would need 1920px of height and clip.
+ */
+
+.tpl-root.tpl-title.tpl-title--social {
+  position: relative;
+  width: 1080px;
+  height: 1350px;
+  padding: 120px 96px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.tpl-root.tpl-title.tpl-title--social::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: var(--s-texture-dot-size, 32px) var(--s-texture-dot-size, 32px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-title.tpl-title--social > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-title.tpl-title--social .tpl-title__inner {
+  max-width: 840px;
+}
+
+.tpl-root.tpl-title.tpl-title--social .tpl-title__heading {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 116px;
+  font-weight: var(--p-weight-700, 700);
+  letter-spacing: -3px;
+  line-height: 1.0;
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+}
+
+.tpl-root.tpl-title.tpl-title--social .tpl-title__heading::after {
+  content: "";
+  display: block;
+  width: 144px;
+  height: 3px;
+  margin: 44px auto 0;
+  background: var(--s-brand-solid, #E07A4A);
+}
+
+.tpl-root.tpl-title.tpl-title--social .tpl-title__subtitle {
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  font-size: 40px;
+  font-weight: var(--p-weight-400, 400);
+  color: var(--s-ink-secondary, #c9c0b4);
+  line-height: 1.42;
+  margin: 44px 0 0 0;
+}

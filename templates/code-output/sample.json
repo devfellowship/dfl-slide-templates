@@ -1,0 +1,6 @@
+{
+  "title": "Running the deploy script",
+  "code": "git add .\ngit commit -m \"feat: add auth\"\ngit push origin main",
+  "language": "bash",
+  "output": "[main 3f8a2c1] feat: add auth\n 3 files changed, 42 insertions(+)\nBranch 'main' set up to track remote.\nTo github.com:devfellowship/app.git\n   a1b2c3d..3f8a2c1  main -> main"
+}

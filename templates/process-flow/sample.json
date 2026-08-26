@@ -1,0 +1,21 @@
+{
+  "title": "Onboarding Flow",
+  "steps": [
+    {
+      "label": "Sign up",
+      "note": "Email + password"
+    },
+    {
+      "label": "Profile setup",
+      "note": "Role, skills, goals"
+    },
+    {
+      "label": "Course match",
+      "note": "AI recommendation"
+    },
+    {
+      "label": "First lesson",
+      "note": "Watch & complete"
+    }
+  ]
+}

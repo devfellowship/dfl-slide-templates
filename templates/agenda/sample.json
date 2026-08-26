@@ -1,0 +1,22 @@
+{
+  "title": "Today's Agenda",
+  "eyebrow": "Module 2",
+  "items": [
+    {
+      "label": "Intro & context",
+      "note": "5 min"
+    },
+    {
+      "label": "Core concept walkthrough",
+      "note": "15 min"
+    },
+    {
+      "label": "Live demo",
+      "note": "10 min"
+    },
+    {
+      "label": "Q&A",
+      "note": "10 min"
+    }
+  ]
+}

@@ -38,7 +38,7 @@
  * It did not fail the export guard, because a flex item's `min-width: auto`
  * floors it at min-content: the box widened to the longest WORD and the
  * statement set in a ragged column a quarter of the slide wide. It failed to
- * FIT: this template's own SAMPLE_DATA statement ("AI won't replace developers
+ * FIT: this template's own sample statement ("AI won't replace developers
  * — developers using AI will replace those who don't.") set on TEN lines,
  * 866.9px tall on a 720px canvas, and stood 104.4px past both edges. The
  * committed preview-landscape.png on main is that render.

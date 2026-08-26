@@ -1,0 +1,22 @@
+{
+  "title": "Team Structure",
+  "root": "CTO",
+  "children": [
+    {
+      "label": "Frontend",
+      "note": "3 engineers"
+    },
+    {
+      "label": "Backend",
+      "note": "4 engineers"
+    },
+    {
+      "label": "Design",
+      "note": "2 designers"
+    },
+    {
+      "label": "DevOps",
+      "note": "1 engineer"
+    }
+  ]
+}

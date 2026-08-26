@@ -2,17 +2,19 @@
  * Shared slide-render helpers.
  *
  * Single source of truth for (a) the canonical design canvas, (b) which
- * templates render dark / under the DFL Design System, and (c) how a template
- * is assembled into a standalone HTML page.
+ * templates render dark / under the DFL Design System, (c) where a template's
+ * sample data comes from, and (d) how a template is assembled into a
+ * standalone HTML page.
  *
- * Consumed by `preview-gen.ts` (screenshots) and `check-canvas.ts` (geometry
- * guard) so the guard measures exactly what the preview renders.
+ * Consumed by `preview-gen.ts` (screenshots), `check-canvas.ts` (geometry
+ * guard), `check-theme.ts` (theme guard) and `showcase-gen.ts`, so all four
+ * fill a template with exactly the same data the preview renders.
  */
 
 import * as fs from "fs";
 import * as path from "path";
 import Mustache from "mustache";
-import { SAMPLE_DATA } from "./sample-data";
+import { parse as parseYaml } from "yaml";
 import CANVAS_CONFIG from "./canvas.config.json";
 
 export const REPO_ROOT = path.resolve(__dirname, "..");
@@ -114,6 +116,124 @@ export function readThemes(): RegistryTheme[] {
  */
 export const THEME_ID = "devfellowship";
 
+/**
+ * Where a template's sample data comes from, and why it is not in `scripts/`.
+ *
+ * Sample data used to live in `scripts/sample-data.ts`, keyed by template id.
+ * That put it under the human merge gate that (correctly) protects
+ * `scripts/**` — the determinism machinery. A template that auto-merged
+ * therefore arrived with NO sample data: Mustache filled every slot with the
+ * empty string, its committed preview was blank, and `check:canvas` /
+ * `check:theme` passed against an empty layout. A blank template merging
+ * green is worse than one that is blocked.
+ *
+ * So the sample data now lives WITH the template, at
+ * `templates/<id>/sample.json` — the same auto-mergeable directory as its
+ * HTML and CSS. A new template ships its own sample data, and no PR has to
+ * reach into `scripts/` to make a populated render possible.
+ */
+export type SampleData = Record<string, unknown>;
+
+export type SampleSource = "sample.json" | "config.yaml" | "none";
+
+export interface ResolvedSample {
+  data: SampleData;
+  source: SampleSource;
+}
+
+interface ConfigSlot {
+  name?: string;
+  sample?: unknown;
+}
+
+/**
+ * Read the per-slot `sample:` values out of `templates/<id>/config.yaml`.
+ *
+ * Every template's config already declares a `sample:` for each slot — it is
+ * the contract an authoring LLM reads. Nothing rendered it until now.
+ *
+ * Returns `undefined` when there is no config file at all, so the caller can
+ * tell "no such source" apart from "a source that declares no slots" (which
+ * is a legitimate, complete answer for `blank`).
+ */
+function readConfigSample(dir: string): SampleData | undefined {
+  const configPath = path.join(dir, "config.yaml");
+  if (!fs.existsSync(configPath)) return undefined;
+  const config = parseYaml(fs.readFileSync(configPath, "utf8")) as
+    | { slots?: ConfigSlot[] }
+    | null
+    | undefined;
+  const slots = config?.slots;
+  if (!Array.isArray(slots)) return undefined;
+  const data: SampleData = {};
+  for (const slot of slots) {
+    if (!slot || typeof slot.name !== "string") continue;
+    if (slot.sample === undefined) continue;
+    data[slot.name] = slot.sample;
+  }
+  return data;
+}
+
+/**
+ * Resolve a template's sample data.
+ *
+ * Order: `templates/<id>/sample.json` → the per-slot `sample:` values in that
+ * template's `config.yaml` → `{}`.
+ *
+ * Each step is a fallback for a MISSING source, never a merge of two partial
+ * ones. If `sample.json` exists it is the whole answer, even if it omits a
+ * slot — otherwise a half-populated render would look authored, and the
+ * template author would have no way to render a slot deliberately empty.
+ */
+export function resolveSampleData(templateId: string): ResolvedSample {
+  const dir = path.join(REPO_ROOT, "templates", templateId);
+
+  const samplePath = path.join(dir, "sample.json");
+  if (fs.existsSync(samplePath)) {
+    const raw = fs.readFileSync(samplePath, "utf8");
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(raw);
+    } catch (err) {
+      throw new Error(
+        `templates/${templateId}/sample.json is not valid JSON: ` +
+          `${(err as Error).message}`
+      );
+    }
+    if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed)) {
+      throw new Error(
+        `templates/${templateId}/sample.json must contain a JSON object ` +
+          `keyed by slot name.`
+      );
+    }
+    return { data: parsed as SampleData, source: "sample.json" };
+  }
+
+  // Log AT the fallback, not after it. A template with a thin sample source
+  // renders quietly blank, so the only way that is ever noticed is if the
+  // resolver says so while it happens.
+  const fromConfig = readConfigSample(dir);
+  if (fromConfig) {
+    const slotCount = Object.keys(fromConfig).length;
+    console.warn(
+      slotCount > 0
+        ? `[sample] ${templateId}: no sample.json — falling back to the ` +
+            `per-slot \`sample:\` values in config.yaml (${slotCount} slot(s)).`
+        : `[sample] ${templateId}: no sample.json, and config.yaml declares ` +
+            `no fillable slot. Rendering with no data — expected only for a ` +
+            `deliberately empty template.`
+    );
+    return { data: fromConfig, source: "config.yaml" };
+  }
+
+  console.warn(
+    `[sample] ${templateId}: NO sample source (no sample.json, and ` +
+      `config.yaml is missing or declares no slots). Every slot will render ` +
+      `empty and the preview will be blank.`
+  );
+  return { data: {}, source: "none" };
+}
+
 export function buildHtmlPage(
   templateId: string,
   orientation: Orientation,
@@ -125,7 +245,7 @@ export function buildHtmlPage(
     "utf8"
   );
   const css = fs.readFileSync(path.join(dir, `${orientation}.css`), "utf8");
-  const data = SAMPLE_DATA[templateId] ?? {};
+  const { data } = resolveSampleData(templateId);
   const renderedHtml = Mustache.render(htmlTemplate, data);
   const themeCss = fs.readFileSync(
     path.join(REPO_ROOT, "themes", `${themeId}.css`),

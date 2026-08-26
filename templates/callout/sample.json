@@ -1,0 +1,6 @@
+{
+  "icon": "!",
+  "eyebrow": "Key takeaway",
+  "title": "Templates are CSS, not magic.",
+  "body": "Every Lesson Studio template ships as a single HTML/CSS file with a documented data contract. Swap themes by swapping one stylesheet."
+}

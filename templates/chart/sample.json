@@ -1,0 +1,5 @@
+{
+  "title": "Monthly Active Users",
+  "chartType": "bar",
+  "data": "{\"labels\":[\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\"],\"datasets\":[{\"label\":\"MAU\",\"data\":[1200,1900,2400,2200,2800,3100]}]}"
+}

@@ -1,0 +1,28 @@
+{
+  "eyebrow": "Process",
+  "title": "Record & publish flow",
+  "items": [
+    {
+      "num": "01",
+      "title": "Plan",
+      "body": "Outline the lesson in our editor with AI assistance.",
+      "state": "done"
+    },
+    {
+      "num": "02",
+      "title": "Record",
+      "body": "Screen + webcam capture, multi-take support.",
+      "state": "active"
+    },
+    {
+      "num": "03",
+      "title": "Edit",
+      "body": "Auto-cut silences, generate captions, B-roll."
+    },
+    {
+      "num": "04",
+      "title": "Publish",
+      "body": "Ship to fellows + companies with one click."
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "imageUrl": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&auto=format&fit=crop",
+  "imageAlt": "A dashboard interface with analytics charts",
+  "title": "Key areas to note",
+  "pins": [
+    {
+      "number": "1",
+      "label": "Conversion funnel entry",
+      "x": "22",
+      "y": "35"
+    },
+    {
+      "number": "2",
+      "label": "Drop-off spike",
+      "x": "55",
+      "y": "60"
+    },
+    {
+      "number": "3",
+      "label": "Re-engagement zone",
+      "x": "78",
+      "y": "25"
+    }
+  ]
+}

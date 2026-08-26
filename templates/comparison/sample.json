@@ -1,0 +1,27 @@
+{
+  "title": "Manual vs Agentic",
+  "leftLabel": "Before",
+  "rightLabel": "After",
+  "leftItems": [
+    {
+      "text": "Copy-paste from docs by hand"
+    },
+    {
+      "text": "Context lives only in your head"
+    },
+    {
+      "text": "Repetitive boilerplate every time"
+    }
+  ],
+  "rightItems": [
+    {
+      "text": "Agent reads the docs for you"
+    },
+    {
+      "text": "Context persists across sessions"
+    },
+    {
+      "text": "Boilerplate generated on demand"
+    }
+  ]
+}

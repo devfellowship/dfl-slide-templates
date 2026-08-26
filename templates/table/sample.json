@@ -1,0 +1,83 @@
+{
+  "title": "Q1 Performance",
+  "headers": [
+    {
+      "label": "Metric"
+    },
+    {
+      "label": "Target"
+    },
+    {
+      "label": "Actual"
+    },
+    {
+      "label": "Status"
+    }
+  ],
+  "rows": [
+    {
+      "cells": [
+        {
+          "value": "Revenue"
+        },
+        {
+          "value": "$1.2M"
+        },
+        {
+          "value": "$1.35M"
+        },
+        {
+          "value": "On track"
+        }
+      ]
+    },
+    {
+      "cells": [
+        {
+          "value": "Users"
+        },
+        {
+          "value": "5,000"
+        },
+        {
+          "value": "4,820"
+        },
+        {
+          "value": "Near target"
+        }
+      ]
+    },
+    {
+      "cells": [
+        {
+          "value": "NPS"
+        },
+        {
+          "value": "42"
+        },
+        {
+          "value": "47"
+        },
+        {
+          "value": "Exceeded"
+        }
+      ]
+    },
+    {
+      "cells": [
+        {
+          "value": "Uptime"
+        },
+        {
+          "value": "99.9%"
+        },
+        {
+          "value": "99.97%"
+        },
+        {
+          "value": "Exceeded"
+        }
+      ]
+    }
+  ]
+}

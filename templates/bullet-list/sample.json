@@ -1,0 +1,17 @@
+{
+  "title": "Key Highlights",
+  "items": [
+    {
+      "text": "Fully customisable slide templates"
+    },
+    {
+      "text": "Mustache-powered token substitution"
+    },
+    {
+      "text": "Landscape and portrait orientations"
+    },
+    {
+      "text": "Automated preview generation"
+    }
+  ]
+}

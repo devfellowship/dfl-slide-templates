@@ -7,7 +7,8 @@
     "check:canvas": "ts-node scripts/check-canvas.ts",
     "showcase": "ts-node scripts/showcase-gen.ts",
     "lint:css": "node scripts/lint-css.mjs",
-    "check:theme": "ts-node scripts/check-theme.ts"
+    "check:theme": "ts-node scripts/check-theme.ts",
+    "test:automerge": "node .github/scripts/automerge-decide.test.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.44.0",

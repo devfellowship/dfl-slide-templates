@@ -53,12 +53,13 @@
    *   500 itera-evergreen  #3FD17F  primary · CTA · "aplicação em prod"
    *   400 evergreen-hi     #62D996  text on dark · hover · ring
    *   900 evergreen-soft   #1C3A2A  subtle background · row highlight
-   * 600 is the one derived value: a pressed state, one step down on the same
-   * channel ratios the DFL amber ramp uses from 500 to 600. The guide names no
-   * pressed state, and no template reads --s-brand-pressed today. */
+   * There is no derived stop any more. A 600 (#36b064) used to live here as a
+   * pressed state, one step down on the DFL amber ramp's 500-to-600 channel
+   * ratios. No brand guide published that value, and guide 6.2 bans "Múltiplos
+   * verdes", so it is gone. --s-brand-pressed now points at the published 900.
+   * Every stop in this ramp is a value the Itera guide names. */
   --p-evergreen-400: #62D996;
   --p-evergreen-500: #3FD17F;
-  --p-evergreen-600: #36b064;
   --p-evergreen-900: #1C3A2A;
 
   /* Color · Clay — Itera's second authored colour, and it is NOT an accent.
@@ -155,7 +156,13 @@
    * surface (guide 3.4). */
   --s-brand-solid:   var(--p-evergreen-500);
   --s-brand-hover:   var(--p-evergreen-400);
-  --s-brand-pressed: var(--p-evergreen-600);
+  /* ⚠️ 900 is the guide's "subtle background · row highlight" stop, not a
+   * pressed-CTA stop, and it is far darker than #3FD17F. It is used here
+   * because it is published and #36b064 was not (plan ADR-11). No template
+   * reads --s-brand-pressed today, so the visual impact is zero. The first
+   * template that genuinely needs a pressed state will look wrong, and the
+   * Itera guide will have to publish a real pressed value before then. */
+  --s-brand-pressed: var(--p-evergreen-900);
   --s-brand-fg:      var(--p-evergreen-400);
   --s-brand-subtle:  rgba(63, 209, 127, 0.10);
   --s-brand-border:  rgba(63, 209, 127, 0.22);

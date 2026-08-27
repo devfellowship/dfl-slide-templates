@@ -478,36 +478,159 @@ The GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push and 
     harmless one look the same today. Read a green `preview-regen` as "canvas
     fill and theme conformance passed", never as "the rasters match".
 
-### Merge policy — a NEW template merges unattended
+### Merge policy — auto-merge is the NORM, and the rule file is a deny-list
+
+🚦 **This inverted on 2026-08-27.** Until then the gate was default-deny with one
+hole — a brand-new `templates/<new-id>/**` directory — and everything else was
+human-gated. Tainan decided the opposite:
+
+> "It's ok to auto merge this here, why not?" — Tainan, 2026-08-27
+
+The evidence he decided on is this repo's own CI. `lint:css`, `check:canvas` and
+`check:theme` are **all blocking**, and `check:theme` renders **every template ×
+every theme × every declared canvas** — 404 renders today — over a hostile
+magenta page, then reads back the computed styles. A theme change or a CSS change
+that breaks a template goes red **before** it can merge. Plan
+[ADR-14](https://plans.devfellowship.com/20260822-branded-image-templates-deterministic-mcp).
+
+The other half of the reason: the old `human|` lines were **not enforced**.
+`pr-merge-sweeper` reads `skills/safe-admin-merge/protected_paths.conf`, where
+this repo has no entry, and it merged CI-green claude-main pull requests every
+~3 minutes regardless. On 2026-08-26 this gate refused PR #86 with
+`rule=human-gated-path` and the sweeper merged it six minutes later. A rule
+nobody enforces is worse than no rule: it reads as protection that is not there.
+
+#### What still needs a human
 
 `.github/workflows/automerge-new-template.yml` merges a pull request with no
-human when, and only when, the diff is confined to:
+human unless a changed path matches the **deny-list** in
+[`.github/automerge-rules.conf`](.github/automerge-rules.conf):
 
-- a **new** `templates/<new-id>/**` directory — one that does not exist on
-  `main` — where every file is `added`, **plus**
-- that same template's own entry **appended** to the end of
-  `registry.json[templates]`, with every pre-existing entry and every other
-  top-level key unchanged.
+| Path | Why a green CI proves nothing here |
+|---|---|
+| `scripts/**` | It **is** the determinism machinery. The guards run the **head** copy, so a pull request that weakens `lint-css.mjs` turns that guard green. CI structurally cannot catch it. |
+| `.github/**` | The gate itself. It judges a pull request with the **base** copy of these files, so a weakened head conf would be applied unattended to the **next** pull request. |
+| `package.json`, `package-lock.json`, `tsconfig.json` | They decide what every guard command actually runs, and which code it executes. |
+| `canvas.config.json`, `scripts/canvas.config.json` | A cross-repo contract, and the counterpart check that catches a desync lives in the **other** repo. |
+| `studio/**` | Deployed code with no test suite: Studio CI proves lint, typecheck and build only. |
+| `supabase/**` | The `publish-template` edge function is the write path **into** this repository, and no job here tests it. |
+| `renovate.json` | It configures what lands unattended, so auto-merging it is the same self-reference as auto-merging the gate. |
+| `.gitignore` | It can hide a file from the diff, and a path that never appears is judged by no rule. |
 
-Everything else stays human-gated, always: any change to an **existing**
-`templates/<id>/**`, anything under `themes/**` or `scripts/**`,
-`canvas.config.json`, `package.json`, `package-lock.json`, `.github/**`, any
-deletion or rename, and any other `registry.json` edit. One bad merge to an
-existing template changes every live deck that uses it; a new directory breaks
-nothing that exists.
+⚠️ **These lines are enforced by THIS gate, not fleet-wide.** `pr-merge-sweeper`
+does not read this file, so for a claude-main-authored pull request they are a
+declaration this gate honours and the sweeper can still bypass. They are a real
+brake for every other author, and they stop **this** gate from merging the guard
+machinery unattended. Do not describe them as a guarantee.
 
-It also requires every `guard` line in the rule file to be green **on the head
-SHA** — today the `Lint CSS scoping` job, the `Auto-merge rule engine` job, and
-the `Check canvas fill` and `Check theme conformance` **steps** inside
-`Canvas fill + previews`, each resolved by display name. A guard that cannot be
-found is reported **absent**, and absent is not passing: renaming a CI step
-refuses every auto-merge until the matching conf line is updated.
+**Everything else auto-merges** with green guards: `themes/**`, an edit to an
+existing `templates/<id>/**`, `registry.json`, `README.md`, `showcase.html`, and
+any new file shape.
 
-The rules are **data, not code**: they live in
-[`.github/automerge-rules.conf`](.github/automerge-rules.conf) — globs,
-invariants and guard names alike. The workflow holds no path knowledge and no
-guard knowledge. The default is **deny** — a path that matches no rule does not
-auto-merge.
+#### To hold ONE pull request for review, label it `hold`
+
+That is the `no-hold-label` invariant, and it is the per-PR review mechanism
+ADR-14 leaves in place now that the path list is a deny-list. The label set is
+the same one `pr-merge-sweeper` honours — `hold`, `do-not-merge`, `do_not_merge`,
+`hold-for-review`, `no-merge`, `wip` — so **one label holds a pull request
+against both**. Removing the label re-judges the pull request, because the
+workflow also triggers on `unlabeled`.
+
+#### The safety invariants — none of them was relaxed
+
+ADR-14 relaxed **review** rules. It relaxed no safety rule. Every one of these
+still refuses, in every change class:
+
+- **`same-repo-head`** — this repository is **PUBLIC**, so a fork pull request is
+  a stranger's code. Compared as full repo names. This is the most important line
+  in the rule file and it may never be relaxed.
+- **`author-has-write`** — read from the collaborator-permission API, never from
+  the author name and never from `author_association`.
+- **`not-draft`**, **`no-hold-label`** — the author's own declaration that the
+  pull request is not ready.
+- **`no-deletions`** — a deletion or a rename removes a path something live may
+  read, and no guard here renders a file that is gone. This carries much more
+  weight now that the path list is a deny-list.
+- **`registry-no-metadata-loss`** — see below.
+- **`guards-green`** — every `guard` line in the rule file must resolve to a
+  successful job or step **on the head SHA**, and no other check run on that SHA
+  may be failing or still running. Today: the `Lint CSS scoping` job, the
+  `Auto-merge rule engine` job, and the `Check canvas fill` and
+  `Check theme conformance` **steps** inside `Canvas fill + previews`, each
+  resolved by display name. A guard that cannot be found is reported **absent**,
+  and absent is not passing: renaming a CI step refuses every auto-merge until
+  the matching conf line is updated.
+
+#### Two change classes, and three invariants that are conditional
+
+The gate classifies every diff before it judges it:
+
+- **`new-template`** — at least one changed path sits inside `templates/<id>/`
+  where `<id>` does **not** exist on the base commit.
+- **`change`** — everything else.
+
+`new-template-dir-only`, `registry-single-append` and `non-empty-sample-source`
+apply to the **first class only**. They were never review requirements: they were
+the *scope* of the old narrow hole, plus the structural rules that make a
+brand-new template well-formed. A CSS fix to an existing template is judged by
+none of them. A brand-new template is judged by all three:
+
+- exactly **one** template directory, and it must be the new one, with every one
+  of its files `added`;
+- `registry.json` gains **exactly one** entry, **appended at the end**, whose id
+  is the new template's, with every pre-existing entry and every other top-level
+  key unchanged;
+- the template ships a non-empty sample source.
+
+🚨 **A mixed diff still refuses.** A pull request that adds a new template **and**
+touches an existing one is in the `new-template` class, so `new-template-dir-only`
+refuses it. Without that, a new template could dodge the other two invariants
+simply by touching a second directory. Split the pull request.
+
+Every verdict names the class and says explicitly which invariants were `n/a`, so
+a class-scoped skip can never be read as a check that passed.
+
+#### `registry.json` may be edited now — and `registry-no-metadata-loss` guards it
+
+`registry.json` is served live by the studio MCP and by `dfl-lesson-studio`. CI
+already covers the parts that break a render: `check:theme` fails when
+`templates/` and `registry.json` disagree about which templates exist, and
+`lint:css` fails when `registry.json` and `scripts/theme.config.json` disagree
+about which themes exist.
+
+What no guard sees is the **discoverability metadata** — `when_to_use`,
+`avoid_when`, `tags`. Drop those and all four guards stay green while
+`search_templates` silently stops ranking the template for its own phrase.
+`update_template` does exactly that today. So the gate refuses any diff that
+makes an entry, an entry key or a top-level key **disappear or become empty**. A
+*changed* value is allowed: a version bump is legitimate and is visible in the
+diff.
+
+#### The rules are data, not code
+
+Globs, invariants and guard names all live in
+[`.github/automerge-rules.conf`](.github/automerge-rules.conf). The workflow
+holds no path knowledge and no guard knowledge, so a renamed CI step or a new
+exception is a **one-line change** to that file.
+
+The conf **fails closed in both directions**. The gate refuses if the file is
+missing, unparseable, lists an invariant the decider does not implement, or
+**omits one it does**. Deleting an `invariant` line to relax the gate does not
+relax it — it breaks it.
+
+The default is now **allow**, expressed as one `automerge|**` line. The old
+default-deny refusal (`rule=unlisted-path`) is still implemented and still fires
+the moment somebody narrows that catch-all, which is what makes narrowing the
+file a safe operation and widening it the one that needs an argument.
+
+#### Every rule has a test, and that property is itself tested
+
+`npm run test:automerge` runs the gate's own suite (`Auto-merge rule engine` in
+CI, and again inside the gate job before it decides). Two meta-checks make the
+discipline mechanical rather than a matter of review: every invariant the decider
+implements must appear as the expected rule of at least one **BLOCK** case, and
+every `human|` glob in the conf must be proven to refuse. Add a rule without a
+test and the suite goes red naming the rule.
 
 ✅ **A new template ships its own sample data, and keeps the unattended merge.**
 Sample data lives at `templates/<id>/sample.json` — inside the very directory the
@@ -532,3 +655,21 @@ than one that is blocked. Three details follow from how the renderer reads it:
   `sample.json` on purpose.
 - The gate **fails closed.** A sample source it cannot read or cannot parse is a
   refusal, never a pass.
+
+#### What nobody guards, now that more merges unattended
+
+Two honest costs of ADR-14, recorded here rather than discovered later:
+
+- **A theme can be token-correct and off-brand.** Verification criterion 5 of the
+  plan — "the theme matches its brand guide" — has **no tool**. `lint:css` bans
+  four specific hexes per theme and asserts token completeness; nothing diffs a
+  theme against `brand.devfellowship.com`. So a theme change that is
+  token-complete, renders green across 404 renders and paints an **off-brand**
+  colour now merges unattended. The fix is that checker, not a human gate the
+  sweeper bypasses anyway.
+- **A preview raster can drift for a bad reason.** The `Check for preview drift`
+  step emits `::warning::` and exits 0, so it is deliberately **not** a guard. The
+  old gate was scoped to a **new** directory, which has no approved raster to
+  drift from, so this cost nothing. An **edit** to an existing template now
+  auto-merges. The fix is the three-step sequence in plan criterion 2: vendor the
+  sample images, build the cross-engine diff, then flip the step to blocking.

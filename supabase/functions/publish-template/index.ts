@@ -1,4 +1,9 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import {
+  applyRegistryEntry,
+  registryPatchFor,
+  RegistryMergeError,
+} from './registry-merge.mjs'
 
 const OWNER = 'devfellowship'
 const REPO = 'dfl-slide-templates'
@@ -15,7 +20,18 @@ interface PublishPayload {
   id: string
   description: string
   files: Array<{ path: string; content: string }>
-  registryEntry?: { id: string; version: string; category: string }
+  /**
+   * An RFC 7396 merge patch for this id's `registry.json` entry — NOT a
+   * replacement. Every field the caller omits is PRESERVED; a field set to
+   * `null` is deleted. See `registry-merge.mjs` for the full contract and why
+   * deletion stays expressible.
+   *
+   * The type is deliberately open. `registry.json` is `$schema_version: 2`
+   * with ten fields per template, it will grow more, and the previous
+   * three-field type is exactly what made this endpoint destroy the seven
+   * fields `search_templates` ranks on (plan Gap 4).
+   */
+  registryEntry?: Record<string, unknown>
 }
 
 async function githubApi(path: string, options: RequestInit = {}) {
@@ -85,23 +101,53 @@ Deno.serve(async (req) => {
 
     const allFiles = [...files]
 
-    if (registryEntry) {
+    /*
+     * ── registry.json ────────────────────────────────────────────────────
+     *
+     * This block used to REPLACE the whole entry with whatever the caller
+     * sent. `update_template` sends `{ id, version, category }`, and
+     * `registry.json` carries seven more fields per template — `name`,
+     * `when_to_use`, `avoid_when`, `media_profile`, `text_density`, `layout`,
+     * `tags` — which are precisely the fields `dfl-mcp-studio:rank.ts` scores
+     * on. So a version bump over MCP made the template unfindable by
+     * `search_templates`, and a template created over MCP was born
+     * unrankable. No guard in this repo reads that metadata, so every check
+     * stayed green. Plan Gap 4 / risk 6.
+     *
+     * It now MERGES, as text, and the merge is the whole fix: a three-field
+     * patch from an OLD caller preserves the other seven. That is why this
+     * change is safe to deploy before `dfl-mcp-server` widens its side.
+     *
+     * A THEME now registers itself too. `update_theme` wrote
+     * `themes/<id>.css` and never touched `registry.json`, whose own
+     * `themes_doc` calls that array the source of truth and which
+     * `list_themes` reads. A theme published over MCP therefore did not
+     * appear in the catalogue — the same defect class, on the theme side.
+     * `file` is derived from the id so it can never disagree with the path
+     * this same request writes.
+     */
+    const registryTarget = registryPatchFor(type, id, registryEntry)
+
+    let registryOutcome: { action: string; warnings: string[] } | undefined
+
+    if (registryTarget) {
       const registryRaw = await githubApi(
         `/contents/registry.json?ref=${BASE_BRANCH}`,
       )
-      const currentRegistry = JSON.parse(atob(registryRaw.content))
-      const idx = currentRegistry.templates.findIndex(
-        (t: { id: string }) => t.id === registryEntry.id,
+      // `atob` is byte-wise, so a multi-byte character (registry.json holds
+      // em-dashes) must be decoded as UTF-8 rather than read as latin-1.
+      const registryText = new TextDecoder().decode(
+        Uint8Array.from(atob(registryRaw.content), (c) => c.charCodeAt(0)),
       )
-      if (idx >= 0) {
-        currentRegistry.templates[idx] = registryEntry
-      } else {
-        currentRegistry.templates.push(registryEntry)
+      const merged = applyRegistryEntry(
+        registryText,
+        registryTarget.arrayKey,
+        registryTarget.patch,
+      )
+      registryOutcome = { action: merged.action, warnings: merged.warnings }
+      if (merged.action !== 'unchanged') {
+        allFiles.push({ path: 'registry.json', content: merged.text })
       }
-      allFiles.push({
-        path: 'registry.json',
-        content: JSON.stringify(currentRegistry, null, 2) + '\n',
-      })
     }
 
     // 1. Get main branch ref
@@ -182,9 +228,18 @@ Deno.serve(async (req) => {
       prUrl: pr.html_url,
       prNumber: pr.number,
       branch: branchName,
+      // Additive. `registry.action` says whether the entry was created,
+      // updated or already correct; `registry.warnings` names a new template
+      // that arrived with nothing for `search_templates` to rank on.
+      registry: registryOutcome,
     })
   } catch (err) {
     console.error('Publish error:', err)
+    // A registry merge refusal is the CALLER's problem to fix — a missing
+    // theme name, an ambiguous id — so it must not read as a server fault.
+    if (err instanceof RegistryMergeError) {
+      return jsonResponse({ error: err.message }, 400)
+    }
     return jsonResponse(
       { error: err instanceof Error ? err.message : 'Internal error' },
       500,

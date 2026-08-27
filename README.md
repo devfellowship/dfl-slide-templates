@@ -360,7 +360,8 @@ whole class of green-but-blank template.
 4. Keep the **deck-chrome block** at the foot of the file, unchanged. It is
    byte-identical in every theme file on purpose (see below); copy it, do not
    rewrite it.
-5. Add one entry to `themes` in `registry.json`.
+5. Add one entry to `themes` in `registry.json`. Publishing the theme over the
+   studio MCP does this for you — see [The MCP write path](#the-mcp-write-path--publish-template).
 6. Add one `themes.<id>` entry to `scripts/theme.config.json` listing the
    colours forbidden on that brand, each with the guide sentence that says so.
 7. `npm run lint:css && npm run check:theme`.
@@ -403,6 +404,98 @@ Because no template emits these classes, no other assertion in
 itself.
 
 ---
+
+## The MCP write path — `publish-template`
+
+`supabase/functions/publish-template/` is the only automated writer into this
+repository. `dfl-mcp-studio`'s `update_template` and `update_theme` call it with
+a user JWT; it writes the files, edits `registry.json`, and opens a pull
+request. Nothing reaches `main` without the merge gate.
+
+### The entry is a MERGE PATCH, not a replacement
+
+Until 2026-08-27 the function did this:
+
+```ts
+if (idx >= 0) currentRegistry.templates[idx] = registryEntry   // full replace
+```
+
+`update_template` sends three fields — `id`, `version`, `category`.
+`registry.json` is `$schema_version: 2` and carries **seven more** per template:
+`name`, `when_to_use`, `avoid_when`, `media_profile`, `text_density`, `layout`,
+`tags`. Those seven are exactly what `dfl-mcp-studio:rank.ts` scores on. So
+bumping a version over MCP **erased a template's discoverability** and
+`search_templates` stopped ranking it for its own phrase, and a template created
+over MCP was **born unrankable**. Every guard stayed green, because no guard in
+this repository reads that metadata. (Plan Gap 4 / risk 6.)
+
+It now merges, and the contract is **RFC 7396 JSON Merge Patch**:
+
+| the caller sends | what happens |
+|---|---|
+| the field is **omitted** | **preserved.** Silence is never a delete. |
+| `"field": null` | **deleted.** Explicit, and visible in the request. |
+| `"field": <value>` | replaced. Arrays replace wholesale; nested objects merge. |
+| `"field": ""` | written as an empty string. `""` is a **value**, not a clear. |
+
+Deletion stays expressible on purpose: a merge that can never remove anything is
+its own bug, and a retired key would otherwise live in the source of truth with
+no writer able to reach it. But deletion is never *unattended* — the
+`registry-no-metadata-loss` invariant refuses any diff that drops or empties an
+entry key, so an explicit `null` produces a pull request a human merges. The
+writer decides what a write **means**; the gate decides what may **merge**.
+
+### `update_theme` registers the theme
+
+`update_theme` used to write `themes/<id>.css` and nothing else. `registry.json`
+carries a `themes[]` array whose own `themes_doc` calls it the source of truth,
+and `list_themes` reads it — so a theme published over MCP **did not appear in
+the catalogue**. The same defect class, on the theme side.
+
+A theme publish now always merges an entry into `themes[]`. `file` is **derived**
+from the id, so it cannot disagree with the CSS path the same request writes.
+
+⚠️ **A brand-new theme entry must carry `name` and `mode`, or the request is
+refused with a 400.** This is the one deliberate behaviour change, and it is not
+symmetric with templates. A template with no `when_to_use` is *degraded* — it
+still lists, still renders, and ranks badly, so the function warns and writes. A
+theme entry with no `name`/`mode` is *malformed* against the shape `themes_doc`
+declares, and the only alternatives to refusing are to guess a company's display
+name and to guess light vs dark. A wrong guess becomes the truth, and no later
+call can tell it was a guess.
+
+🚧 **And a brand-new theme still cannot land unattended**, for a reason outside
+this function: `lint:css` fails when `registry.json` and
+`scripts/theme.config.json` disagree about which themes exist, and `scripts/**`
+is human-gated. A new theme therefore needs its forbidden-colour contract in the
+same pull request. That is by design — see step 6 of *Adding a new theme*.
+
+### Formatting and ordering are preserved
+
+The document is edited as **text**, and only the span of the one entry being
+written is replaced. So:
+
+- unknown top-level keys and unknown keys in other entries survive, because they
+  are never re-encoded — if `registry.json` grows a field neither side knows
+  about, the merge keeps it;
+- entry order never changes. An existing entry is rewritten in place; a new one
+  is appended at the **end**, which `registry-single-append` requires;
+- the hand-aligned `themes[]` block is not reformatted by a template write. The
+  old `JSON.stringify(registry, null, 2)` exploded those four lines into
+  twenty-four on **every** publish — a diff that touched an unrelated section to
+  change one entry;
+- a write that changes nothing produces a **byte-identical** file and no
+  `registry.json` entry in the pull request at all.
+
+`npm run test:registry-merge` asserts each of those against the real
+`registry.json`, including the criterion-8 case from the plan run through **both**
+the old writer and the new one, so the suite proves the defect instead of
+describing it. It is dependency-free `node`, like the merge gate's own suite: the
+write path into this repository does not run third-party code to be tested.
+
+⚠️ **No workflow deploys this function.** `supabase functions deploy
+publish-template` is a manual step after the merge, so merging the pull request
+changes the repository and not yet the live write path.
 
 ## Generating previews
 
@@ -468,6 +561,8 @@ The GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push and 
 - **lint-css** — runs the CSS scoping / canvas / theme-token linter.
 - **automerge-rules** — the merge gate's own regression suite
   (`npm run test:automerge`).
+- **registry-merge** — the regression suite for the `publish-template` write
+  path (`npm run test:registry-merge`), run against the real `registry.json`.
 - **preview-regen** — canvas-fill guard, theme-conformance guard, then
   regenerates all previews using Playwright.
   - On **pull requests**: it re-renders every preview and **warns** when an image

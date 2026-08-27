@@ -9,7 +9,7 @@
     "lint:css": "node scripts/lint-css.mjs",
     "check:theme": "ts-node scripts/check-theme.ts",
     "test:automerge": "node .github/scripts/automerge-decide.test.mjs",
-    "test:registry-merge": "node supabase/functions/publish-template/registry-merge.test.mjs"
+    "check:registry": "node scripts/check-registry-shape.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.44.0",

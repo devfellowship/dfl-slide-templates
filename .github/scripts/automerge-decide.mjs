@@ -11,6 +11,26 @@
  * All path knowledge lives in `.github/automerge-rules.conf`. This file holds
  * the invariants that a glob cannot express, and nothing else.
  *
+ * 🚦 THE POSTURE INVERTED ON 2026-08-27 (plan ADR-14). The conf was default-deny
+ * with one narrow hole (a brand-new template directory); it is now a deny-list,
+ * because Tainan decided "It's ok to auto merge this here, why not?". Two
+ * consequences live in THIS file rather than in the conf:
+ *
+ *   1. `decide()` classifies the diff into `new-template` or `change` BEFORE it
+ *      judges it, and three invariants — `new-template-dir-only`,
+ *      `registry-single-append`, `non-empty-sample-source` — apply to the
+ *      `new-template` class only. They were the SCOPE of the old narrow hole,
+ *      not review requirements. Every verdict names the class and says which
+ *      invariants were `n/a`, so a skip can never be read as a pass.
+ *   2. `no-hold-label` and `registry-no-metadata-loss` are new. The first is the
+ *      per-PR review mechanism ADR-14 leaves in place; the second replaces the
+ *      protection that `registry-single-append` used to give every registry
+ *      edit, and it catches the one registry failure four green guards cannot
+ *      see — a lost `when_to_use` / `avoid_when` / `tags` (plan Gap 4).
+ *
+ * Both additions TIGHTEN the gate. ADR-14 requires that every existing
+ * invariant stays; it does not forbid adding one.
+ *
  * Usage:  node automerge-decide.mjs <case.json> [--conf <path>]
  * Output: one JSON verdict on stdout. Exit 0 = ALLOW, exit 1 = BLOCK.
  *         A BLOCK is a normal, successful outcome of the gate; the workflow
@@ -25,7 +45,12 @@ export const KNOWN_INVARIANTS = [
   "same-repo-head",
   "author-has-write",
   "not-draft",
+  "no-hold-label",
   "no-deletions",
+  "registry-no-metadata-loss",
+  /* The three below are CONDITIONAL: they apply to the `new-template` change
+     class only. A conditional invariant is still an invariant — the condition
+     is part of its meaning, which is why it is not a fifth conf field. */
   "new-template-dir-only",
   "registry-single-append",
   "non-empty-sample-source",
@@ -33,6 +58,20 @@ export const KNOWN_INVARIANTS = [
 ];
 
 const WRITE_PERMISSIONS = new Set(["admin", "maintain", "write"]);
+
+/*
+ * Labels that hold ONE pull request for review. Kept in sync with
+ * `pr-merge-sweeper.sh:HOLD_LABELS` on purpose, so a single label holds a PR
+ * against this gate AND against the sweeper. Compared lower-cased and trimmed.
+ */
+export const HOLD_LABELS = new Set([
+  "hold",
+  "do-not-merge",
+  "do_not_merge",
+  "hold-for-review",
+  "no-merge",
+  "wip",
+]);
 
 /* ------------------------------------------------------------------ globs */
 
@@ -328,6 +367,22 @@ export function decide(kase, conf) {
     return block("not-draft", `the pull request is a draft. ${r.why}`, r.who);
   }
 
+  /* A hold label is the per-PR review mechanism. It sits here, beside `not-draft`,
+     because both are the AUTHOR declaring the pull request is not ready — not a
+     property of the diff. `labels` absent is not a hold: the collector always
+     sends the array, and an empty array is the honest "no labels". */
+  {
+    const r = inv("no-hold-label");
+    const labels = Array.isArray(kase.labels) ? kase.labels : null;
+    if (!labels) {
+      return block("no-hold-label", `the pull request's label list could not be read, so a hold label cannot be ruled out. ${r.why}`, r.who);
+    }
+    const held = labels.filter((l) => HOLD_LABELS.has(String(l).trim().toLowerCase()));
+    if (held.length) {
+      return block("no-hold-label", `the pull request carries the label(s) ${held.join(", ")}. ${r.why}`, r.who);
+    }
+  }
+
   /* --- 2. the diff. ------------------------------------------------------- */
 
   const files = Array.isArray(kase.files) ? kase.files : null;
@@ -372,215 +427,328 @@ export function decide(kase, conf) {
     }
   }
 
-  /* --- 3. new-template-dir-only ------------------------------------------ */
+  /* --- 3. classify the change ------------------------------------------- */
+  /*
+   * ADR-14 made auto-merge the norm for this repository, so the gate no longer
+   * asks "is this the one safe shape?". It asks "which class of change is this,
+   * and which invariants does that class require?".
+   *
+   *   new-template — at least one changed path sits inside `templates/<id>/`
+   *                  where `<id>` does NOT exist on the base commit.
+   *   change       — everything else: a CSS fix to an existing template, a theme
+   *                  edit, a README edit, a new top-level file.
+   *
+   * `new-template-dir-only`, `registry-single-append` and
+   * `non-empty-sample-source` apply to the FIRST class only. They were the SCOPE
+   * of the old narrow hole plus the structural rules that make a brand-new
+   * template well-formed — never review requirements. The verdict always names
+   * the class and says which invariants were `n/a`, so a skip is never read as a
+   * pass.
+   */
 
   const templateFiles = files.filter((f) => f.path.startsWith("templates/"));
-  let newId;
-  {
+  /* A path directly under `templates/` — `templates/README.md` — is inside no
+     template directory. It is an ordinary repo file for classification, and the
+     deny-list is what judges it. */
+  const inTemplateDir = templateFiles.filter((f) => f.path.split("/").length >= 3 && f.path.split("/")[1] !== "");
+  const touchedIds = [...new Set(inTemplateDir.map((f) => f.path.split("/")[1]))].sort();
+  const baseIds = Array.isArray(kase.base_template_ids) ? kase.base_template_ids : null;
+
+  /* Fail closed, but only where the answer changes the verdict: a diff that
+     touches no template directory needs no base listing to be classified. */
+  if (inTemplateDir.length && !baseIds) {
     const r = inv("new-template-dir-only");
-    if (templateFiles.length === 0) {
-      return block(
-        "new-template-dir-only",
-        `the diff touches no templates/ path, so it is not a new template. ${r.why}`,
-        r.who,
-      );
-    }
-    const ids = [...new Set(templateFiles.map((f) => f.path.split("/")[1]))].sort();
-    if (ids.length !== 1) {
-      return block(
-        "new-template-dir-only",
-        `the diff touches ${ids.length} template directories (${ids.join(", ")}). Exactly one is allowed. ${r.why}`,
-        r.who,
-      );
-    }
-    newId = ids[0];
-    const baseIds = Array.isArray(kase.base_template_ids) ? kase.base_template_ids : null;
-    if (!baseIds) {
-      return block(
-        "new-template-dir-only",
-        "the list of template directories on the base commit could not be read, so 'new' cannot be established",
-        r.who,
-      );
-    }
-    if (baseIds.includes(newId)) {
-      return block(
-        "new-template-dir-only",
-        `'templates/${newId}/' ALREADY EXISTS on ${kase.base_ref ?? "the base branch"}. ` +
-          `Editing an existing template changes every live deck that uses it. ${r.why}`,
-        r.who,
-      );
-    }
-    const notAdded = templateFiles.filter((f) => f.status !== "added");
-    if (notAdded.length) {
-      return block(
-        "new-template-dir-only",
-        `'${notAdded[0].path}' has status '${notAdded[0].status}', not 'added', inside a directory reported as new. ${r.why}`,
-        r.who,
-      );
-    }
+    return block(
+      "new-template-dir-only",
+      "the diff touches a templates/ directory but the list of template directories on the base commit " +
+        "could not be read, so whether it introduces a NEW template cannot be established. Unknown is a refusal.",
+      r.who,
+    );
   }
 
-  /* --- 4. registry-single-append ----------------------------------------- */
+  const newIds = baseIds ? touchedIds.filter((id) => !baseIds.includes(id)) : [];
+  const isNewTemplate = newIds.length > 0;
+  const changeClass = isNewTemplate ? "new-template" : "change";
 
-  {
-    const r = inv("registry-single-append");
-    const touchesRegistry = files.some((f) => f.path === "registry.json");
-    if (!touchesRegistry) {
-      return block(
-        "registry-single-append",
-        "the diff adds a template directory but no registry.json entry, so the studio MCP would never list it. " +
-          "Add the entry in the same PR.",
-        r.who,
-      );
-    }
+  /* --- 4. registry-no-metadata-loss, in EVERY class ---------------------- */
+  /*
+   * `registry.json` used to be auto-mergeable only as a single append, which
+   * made destruction impossible by construction. It is now editable, so the
+   * protection has to be stated rather than inherited.
+   *
+   * CI already covers the parts that break a render: `check:theme` fails when
+   * `templates/` and `registry.json` disagree about which templates exist, and
+   * `lint:css` fails when `registry.json` and `scripts/theme.config.json`
+   * disagree about which themes exist. What no guard sees is the DISCOVERABILITY
+   * metadata — `when_to_use`, `avoid_when`, `tags`. Drop those and all four
+   * guards stay green while `search_templates` silently stops ranking the
+   * template for its own phrase. That is plan Gap 4, and `update_template`
+   * causes it today (plan risk 6).
+   *
+   * A CHANGED value is allowed: a version bump or a copy edit is legitimate, and
+   * it is visible in the diff. A LOST or EMPTIED value is not.
+   */
+  if (files.some((f) => f.path === "registry.json")) {
+    const r = inv("registry-no-metadata-loss");
     const base = kase.registry_base;
     const head = kase.registry_head;
     if (!base || !head || !Array.isArray(base.templates) || !Array.isArray(head.templates)) {
       return block(
-        "registry-single-append",
-        "registry.json could not be read and parsed on both the base and the head commit",
+        "registry-no-metadata-loss",
+        "registry.json is in the diff but could not be read and parsed on BOTH the base and the head commit, " +
+          "so a lost entry cannot be ruled out. A gate that opens when it cannot see is not a gate.",
         r.who,
       );
     }
-    if (!deepEqual(registryShell(base), registryShell(head))) {
+
+    const lostTopKeys = Object.keys(base).filter((k) => !Object.prototype.hasOwnProperty.call(head, k));
+    if (lostTopKeys.length) {
       return block(
-        "registry-single-append",
-        `the diff changes a top-level registry.json key other than templates[]. ${r.why}`,
+        "registry-no-metadata-loss",
+        `registry.json loses the top-level key(s) ${lostTopKeys.join(", ")}. ${r.why}`,
         r.who,
       );
     }
-    if (head.templates.length !== base.templates.length + 1) {
+
+    /* Uniqueness first, or the id-keyed comparison below is not well defined. */
+    const headIds = head.templates.map((t) => (t && typeof t === "object" ? t.id : undefined));
+    const dupe = headIds.find((id, i) => headIds.indexOf(id) !== i);
+    if (dupe !== undefined) {
       return block(
-        "registry-single-append",
-        `registry.json goes from ${base.templates.length} to ${head.templates.length} entries; exactly one more is allowed. ${r.why}`,
+        "registry-no-metadata-loss",
+        `registry.json[templates] carries the id '${dupe}' more than once, so no entry can be compared against its base version`,
         r.who,
       );
     }
-    if (!deepEqual(head.templates.slice(0, base.templates.length), base.templates)) {
-      return block(
-        "registry-single-append",
-        "the new registry.json entry is not appended at the END, or a pre-existing entry changed. " +
-          "Every pre-existing entry must stay byte-identical and in the same order; the studio MCP serves them live.",
-        r.who,
-      );
-    }
-    const appended = head.templates[head.templates.length - 1];
-    if (!appended || appended.id !== newId) {
-      return block(
-        "registry-single-append",
-        `the appended registry.json entry has id '${appended && appended.id}', which is not the new template id '${newId}'`,
-        r.who,
-      );
+    const headById = new Map(head.templates.filter((t) => t && typeof t === "object").map((t) => [t.id, t]));
+
+    /* Written but holding nothing. An emptied `when_to_use` is the same harm as
+       a deleted one: `search_templates` has nothing left to rank on. */
+    const holdsNothing = (v) =>
+      v === null ||
+      v === undefined ||
+      v === "" ||
+      (Array.isArray(v) && v.length === 0) ||
+      (typeof v === "object" && !Array.isArray(v) && Object.keys(v).length === 0);
+
+    for (const b of base.templates) {
+      if (!b || typeof b !== "object") continue;
+      const h = headById.get(b.id);
+      if (!h) {
+        return block(
+          "registry-no-metadata-loss",
+          `registry.json no longer carries an entry with id '${b.id}'. ${r.why}`,
+          r.who,
+        );
+      }
+      const lost = Object.keys(b).filter((k) => !Object.prototype.hasOwnProperty.call(h, k));
+      if (lost.length) {
+        return block(
+          "registry-no-metadata-loss",
+          `the registry.json entry '${b.id}' loses the key(s) ${lost.join(", ")}. ${r.why}`,
+          r.who,
+        );
+      }
+      const emptied = Object.keys(b).filter((k) => !holdsNothing(b[k]) && holdsNothing(h[k]));
+      if (emptied.length) {
+        return block(
+          "registry-no-metadata-loss",
+          `the registry.json entry '${b.id}' empties the key(s) ${emptied.join(", ")}, which is the same harm as deleting them. ${r.why}`,
+          r.who,
+        );
+      }
     }
   }
 
-  /* --- 5. non-empty-sample-source ---------------------------------------- */
-  /*
-   * A new template that ships no sample data renders every slot with the empty
-   * string. Its committed preview is blank, and `check:canvas` / `check:theme`
-   * then pass against an empty layout — green, and proving nothing about a
-   * populated render. A blank template merging unattended is worse than one
-   * that is blocked, so the gate refuses it here.
-   *
-   * The precedence MIRRORS `scripts/render-page.ts:resolveSampleData()`, and it
-   * must keep mirroring it: a PRESENT `sample.json` is the whole answer at
-   * render time, never merged with `config.yaml`. So an EMPTY `sample.json`
-   * blanks the render even when every slot in `config.yaml` carries a
-   * `sample:`. A rule that read the two as interchangeable would allow exactly
-   * the blank preview it exists to stop.
-   */
-  let sampleNote;
-  {
-    const r = inv("non-empty-sample-source");
-    const configPath = `templates/${newId}/config.yaml`;
-    const samplePath = `templates/${newId}/sample.json`;
-    /* Every templates/ path in this diff is `added` and the directory does not
-       exist on the base, both already established above. So the changed-file
-       list IS the complete listing of the new directory: a file absent from it
-       is absent from the template. */
-    const shipsConfig = files.some((f) => f.path === configPath);
-    const shipsSample = files.some((f) => f.path === samplePath);
+  /* --- 5. the three new-template invariants, in that class only ---------- */
 
-    if (!shipsConfig) {
-      return block(
-        "non-empty-sample-source",
-        `the new template ships no ${configPath}, so the gate cannot tell whether it declares any fillable slot. ${r.why}`,
-        r.who,
-      );
+  let newId = null;
+  let sampleNote = null;
+
+  if (isNewTemplate) {
+    {
+      const r = inv("new-template-dir-only");
+      if (touchedIds.length !== 1) {
+        return block(
+          "new-template-dir-only",
+          `the diff introduces the new template directory/ies ${newIds.join(", ")} and touches ` +
+            `${touchedIds.length} template directories in total (${touchedIds.join(", ")}). ` +
+            `Exactly one is allowed, and it must be the new one. ${r.why}`,
+          r.who,
+        );
+      }
+      newId = touchedIds[0];
+      const notAdded = inTemplateDir.filter((f) => f.status !== "added");
+      if (notAdded.length) {
+        return block(
+          "new-template-dir-only",
+          `'${notAdded[0].path}' has status '${notAdded[0].status}', not 'added', inside a directory reported as new. ${r.why}`,
+          r.who,
+        );
+      }
     }
 
-    const cfg = kase.config_yaml_head;
-    if (!cfg || typeof cfg.text !== "string") {
-      return block(
-        "non-empty-sample-source",
-        `${configPath} could not be read at the head SHA${cfg && cfg.error ? ` (${cfg.error})` : ""}. ` +
-          `A gate that opens when it cannot see is not a gate.`,
-        r.who,
-      );
-    }
-    const slotsInfo = parseConfigSlots(cfg.text);
-    if (slotsInfo.error) {
-      return block(
-        "non-empty-sample-source",
-        `${configPath} could not be parsed: ${slotsInfo.error}. The sample source is therefore unknown, and unknown is a refusal.`,
-        r.who,
-      );
+    /* --- 5a. registry-single-append (new-template class only) ----------------------------------------- */
+
+    {
+      const r = inv("registry-single-append");
+      const touchesRegistry = files.some((f) => f.path === "registry.json");
+      if (!touchesRegistry) {
+        return block(
+          "registry-single-append",
+          "the diff adds a template directory but no registry.json entry, so the studio MCP would never list it. " +
+            "Add the entry in the same PR.",
+          r.who,
+        );
+      }
+      const base = kase.registry_base;
+      const head = kase.registry_head;
+      if (!base || !head || !Array.isArray(base.templates) || !Array.isArray(head.templates)) {
+        return block(
+          "registry-single-append",
+          "registry.json could not be read and parsed on both the base and the head commit",
+          r.who,
+        );
+      }
+      if (!deepEqual(registryShell(base), registryShell(head))) {
+        return block(
+          "registry-single-append",
+          `the diff changes a top-level registry.json key other than templates[]. ${r.why}`,
+          r.who,
+        );
+      }
+      if (head.templates.length !== base.templates.length + 1) {
+        return block(
+          "registry-single-append",
+          `registry.json goes from ${base.templates.length} to ${head.templates.length} entries; exactly one more is allowed. ${r.why}`,
+          r.who,
+        );
+      }
+      if (!deepEqual(head.templates.slice(0, base.templates.length), base.templates)) {
+        return block(
+          "registry-single-append",
+          "the new registry.json entry is not appended at the END, or a pre-existing entry changed. " +
+            "Every pre-existing entry must stay byte-identical and in the same order; the studio MCP serves them live.",
+          r.who,
+        );
+      }
+      const appended = head.templates[head.templates.length - 1];
+      if (!appended || appended.id !== newId) {
+        return block(
+          "registry-single-append",
+          `the appended registry.json entry has id '${appended && appended.id}', which is not the new template id '${newId}'`,
+          r.who,
+        );
+      }
     }
 
-    if (slotsInfo.slots === 0) {
-      /* The `blank` case, handled ON PURPOSE and not by accident: a template
-         that declares no slot has nothing to fill, so it needs no sample and
-         its preview is legitimately empty. `templates/blank/` on main ships no
-         sample.json for exactly this reason. */
-      sampleNote = `${configPath} declares zero slots, so this template has nothing to fill and needs no sample source`;
-    } else if (shipsSample) {
-      const smp = kase.sample_json_head;
-      if (!smp || typeof smp.text !== "string") {
+    /* --- 5b. non-empty-sample-source (new-template class only) ---------------------------------------- */
+    /*
+     * A new template that ships no sample data renders every slot with the empty
+     * string. Its committed preview is blank, and `check:canvas` / `check:theme`
+     * then pass against an empty layout — green, and proving nothing about a
+     * populated render. A blank template merging unattended is worse than one
+     * that is blocked, so the gate refuses it here.
+     *
+     * The precedence MIRRORS `scripts/render-page.ts:resolveSampleData()`, and it
+     * must keep mirroring it: a PRESENT `sample.json` is the whole answer at
+     * render time, never merged with `config.yaml`. So an EMPTY `sample.json`
+     * blanks the render even when every slot in `config.yaml` carries a
+     * `sample:`. A rule that read the two as interchangeable would allow exactly
+     * the blank preview it exists to stop.
+     */
+    {
+      const r = inv("non-empty-sample-source");
+      const configPath = `templates/${newId}/config.yaml`;
+      const samplePath = `templates/${newId}/sample.json`;
+      /* Every templates/ path in this diff is `added` and the directory does not
+         exist on the base, both already established above. So the changed-file
+         list IS the complete listing of the new directory: a file absent from it
+         is absent from the template. */
+      const shipsConfig = files.some((f) => f.path === configPath);
+      const shipsSample = files.some((f) => f.path === samplePath);
+
+      if (!shipsConfig) {
         return block(
           "non-empty-sample-source",
-          `${samplePath} is in the diff but could not be read at the head SHA${smp && smp.error ? ` (${smp.error})` : ""}. ` +
+          `the new template ships no ${configPath}, so the gate cannot tell whether it declares any fillable slot. ${r.why}`,
+          r.who,
+        );
+      }
+
+      const cfg = kase.config_yaml_head;
+      if (!cfg || typeof cfg.text !== "string") {
+        return block(
+          "non-empty-sample-source",
+          `${configPath} could not be read at the head SHA${cfg && cfg.error ? ` (${cfg.error})` : ""}. ` +
             `A gate that opens when it cannot see is not a gate.`,
           r.who,
         );
       }
-      let parsed;
-      try {
-        parsed = JSON.parse(smp.text);
-      } catch (err) {
+      const slotsInfo = parseConfigSlots(cfg.text);
+      if (slotsInfo.error) {
         return block(
           "non-empty-sample-source",
-          `${samplePath} is not valid JSON (${err && err.message}), so render-page.ts would throw and no preview could be produced.`,
+          `${configPath} could not be parsed: ${slotsInfo.error}. The sample source is therefore unknown, and unknown is a refusal.`,
           r.who,
         );
       }
-      if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed)) {
+
+      if (slotsInfo.slots === 0) {
+        /* The `blank` case, handled ON PURPOSE and not by accident: a template
+           that declares no slot has nothing to fill, so it needs no sample and
+           its preview is legitimately empty. `templates/blank/` on main ships no
+           sample.json for exactly this reason. */
+        sampleNote = `${configPath} declares zero slots, so this template has nothing to fill and needs no sample source`;
+      } else if (shipsSample) {
+        const smp = kase.sample_json_head;
+        if (!smp || typeof smp.text !== "string") {
+          return block(
+            "non-empty-sample-source",
+            `${samplePath} is in the diff but could not be read at the head SHA${smp && smp.error ? ` (${smp.error})` : ""}. ` +
+              `A gate that opens when it cannot see is not a gate.`,
+            r.who,
+          );
+        }
+        let parsed;
+        try {
+          parsed = JSON.parse(smp.text);
+        } catch (err) {
+          return block(
+            "non-empty-sample-source",
+            `${samplePath} is not valid JSON (${err && err.message}), so render-page.ts would throw and no preview could be produced.`,
+            r.who,
+          );
+        }
+        if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed)) {
+          return block(
+            "non-empty-sample-source",
+            `${samplePath} must contain a JSON object keyed by slot name, and render-page.ts throws on anything else.`,
+            r.who,
+          );
+        }
+        const keys = Object.keys(parsed);
+        if (keys.length === 0) {
+          return block(
+            "non-empty-sample-source",
+            `${samplePath} is an empty JSON object, and ${configPath} declares ${slotsInfo.slots} slot(s) to fill. ` +
+              `render-page.ts treats a PRESENT sample.json as the whole answer, so the per-slot \`sample:\` values in ` +
+              `config.yaml would NOT be used: every slot renders empty and the committed preview is blank. ${r.why}`,
+            r.who,
+          );
+        }
+        sampleNote = `${samplePath} supplies ${keys.length} slot value(s) for ${slotsInfo.slots} declared slot(s)`;
+      } else if (slotsInfo.withSample === 0) {
         return block(
           "non-empty-sample-source",
-          `${samplePath} must contain a JSON object keyed by slot name, and render-page.ts throws on anything else.`,
+          `the new template ships no ${samplePath}, and none of the ${slotsInfo.slots} slot(s) in ${configPath} carries a ` +
+            `\`sample:\` value. Every slot would render empty, the committed preview would be blank, and check:canvas / ` +
+            `check:theme would pass against an empty layout. ${r.why}`,
           r.who,
         );
+      } else {
+        sampleNote = `${configPath} carries a \`sample:\` value on ${slotsInfo.withSample} of its ${slotsInfo.slots} slot(s)`;
       }
-      const keys = Object.keys(parsed);
-      if (keys.length === 0) {
-        return block(
-          "non-empty-sample-source",
-          `${samplePath} is an empty JSON object, and ${configPath} declares ${slotsInfo.slots} slot(s) to fill. ` +
-            `render-page.ts treats a PRESENT sample.json as the whole answer, so the per-slot \`sample:\` values in ` +
-            `config.yaml would NOT be used: every slot renders empty and the committed preview is blank. ${r.why}`,
-          r.who,
-        );
-      }
-      sampleNote = `${samplePath} supplies ${keys.length} slot value(s) for ${slotsInfo.slots} declared slot(s)`;
-    } else if (slotsInfo.withSample === 0) {
-      return block(
-        "non-empty-sample-source",
-        `the new template ships no ${samplePath}, and none of the ${slotsInfo.slots} slot(s) in ${configPath} carries a ` +
-          `\`sample:\` value. Every slot would render empty, the committed preview would be blank, and check:canvas / ` +
-          `check:theme would pass against an empty layout. ${r.why}`,
-        r.who,
-      );
-    } else {
-      sampleNote = `${configPath} carries a \`sample:\` value on ${slotsInfo.withSample} of its ${slotsInfo.slots} slot(s)`;
     }
   }
 
@@ -643,13 +811,23 @@ export function decide(kase, conf) {
     }
   }
 
+  /* An ALLOW must state which invariants were skipped and why. A verdict that
+     said only "allowed" would let a reader mistake a class-scoped skip for a
+     check that passed. */
+  const scopedNote = isNewTemplate
+    ? `it introduces the NEW directory templates/${newId}/ (${inTemplateDir.length} added file(s)), ` +
+      `registry.json appends exactly one entry for '${newId}', and ${sampleNote}`
+    : `new-template-dir-only, registry-single-append and non-empty-sample-source are N/A for this class — ` +
+      `the diff introduces no template directory that is absent from ${kase.base_ref ?? "the base branch"}, ` +
+      `so there is no new template for them to judge`;
+
   return {
     decision: "ALLOW",
-    rule: "new-template-dir-only",
+    rule: isNewTemplate ? "new-template" : "no-human-gated-path",
     who: "nobody — unattended merge",
     reason:
-      `the diff adds only the NEW directory templates/${newId}/ (${templateFiles.length} added file(s)) ` +
-      `plus one appended registry.json entry for '${newId}'; ${sampleNote}; ` +
+      `change class '${changeClass}': ${files.length} changed path(s), none of them matching a human-gated glob ` +
+      `in automerge-rules.conf; ${scopedNote}; no path is removed or renamed; no hold label; ` +
       `and every blocking guard is green on the head SHA.`,
   };
 }

@@ -14,6 +14,10 @@
  * of a head lockfile, no head script ever runs in this job — and this job holds
  * a write token. Nothing here is `import`ed, `eval`ed or executed.
  *
+ * The pull request's LABELS are collected too, for `no-hold-label`. They come
+ * from the pull-request object, never from the `labeled`/`unlabeled` event
+ * payload, so a re-run reads the labels as they are now.
+ *
  * Usage:
  *   GITHUB_TOKEN=... node automerge-collect.mjs \
  *     --repo owner/name --pr 123 --base-checkout /path/to/base > case.json
@@ -155,13 +159,20 @@ async function readHeadText(filePath) {
   }
 }
 
-/* Derived only to know WHICH two files to read. `new-template-dir-only` is
-   judged in the decider and nowhere else; if the diff names anything other than
-   exactly one template directory, the decider refuses before it reads these. */
+/* Derived only to know WHICH two files to read, and only for a directory that
+   is genuinely absent from the base — an edit to an EXISTING template needs
+   neither file, because `non-empty-sample-source` does not apply to it.
+   `new-template-dir-only` is judged in the decider and nowhere else. */
 const touchedIds = [
-  ...new Set(files.filter((f) => f.path.startsWith("templates/")).map((f) => f.path.split("/")[1]).filter(Boolean)),
+  ...new Set(
+    files
+      .filter((f) => f.path.startsWith("templates/") && f.path.split("/").length >= 3)
+      .map((f) => f.path.split("/")[1])
+      .filter(Boolean),
+  ),
 ];
-const newTemplateId = touchedIds.length === 1 ? touchedIds[0] : null;
+const newIds = baseTemplateIds ? touchedIds.filter((id) => !baseTemplateIds.includes(id)) : touchedIds;
+const newTemplateId = touchedIds.length === 1 && newIds.length === 1 ? touchedIds[0] : null;
 
 let configYamlHead = null;
 let sampleJsonHead = null;
@@ -247,6 +258,10 @@ process.stdout.write(
       base_ref: pr.base.ref,
       base_sha: pr.base.sha,
       draft: pr.draft === true,
+      /* Always an array, never null when the PR object was read: an absent
+         label list is a fact the decider refuses on, and "no labels" must not
+         look like "could not read the labels". */
+      labels: (pr.labels || []).map((l) => (l && typeof l === "object" ? l.name : l)).filter((n) => typeof n === "string"),
       author: pr.user ? pr.user.login : null,
       author_permission: authorPermission,
       files,

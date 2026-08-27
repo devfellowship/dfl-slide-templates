@@ -2,13 +2,24 @@ name: Auto-merge new template
 
 # WHY THIS WORKFLOW EXISTS
 #   dfl-mcp-studio:src/lib/template-ref.ts resolves `main` to a commit SHA on a
-#   5-minute TTL, automatically. There is no pin to bump, so a merged template is
+#   5-minute TTL, automatically. There is no pin to bump, so a merged change is
 #   servable within five minutes and this repository adds no latency at all. The
-#   entire wait for a new template is the human merge. This workflow removes that
-#   wait for the ONE case where it is safe — a brand-new template directory,
-#   which cannot break a deck that already exists — and leaves the human gate on
-#   everything that reaches a live deck.
-#   Plan: https://plans.devfellowship.com/20260822-branded-image-templates-deterministic-mcp (Phase 7, ADR-9)
+#   entire wait is the human merge, and this workflow removes it.
+#   Plan: https://plans.devfellowship.com/20260822-branded-image-templates-deterministic-mcp (Phase 7, ADR-9, ADR-14)
+#
+# 🚦 THE POSTURE INVERTED ON 2026-08-27 (ADR-14).
+#   The workflow file name still says "new template" — the workflow no longer
+#   does. Renaming it would change the check-run name that `automerge-collect`
+#   excludes from its own "is anything still running?" sweep, so the name stays
+#   and this comment carries the truth. Tainan decided:
+#
+#     "It's ok to auto merge this here, why not?"   — Tainan, 2026-08-27
+#
+#   Auto-merge is now the NORM for this repository. `.github/automerge-rules.conf`
+#   is a DENY-LIST plus safety invariants, not an allow-list with one hole.
+#   To hold ONE pull request for review, label it `hold` — that is the
+#   `no-hold-label` invariant, and the same label holds it against
+#   `pr-merge-sweeper` too.
 #
 # WHERE THE RULES LIVE
 #   `.github/automerge-rules.conf`. This workflow holds NO path knowledge. A
@@ -39,10 +50,11 @@ name: Auto-merge new template
 #   Its "Check for preview drift" step emits `::warning::` and exits 0 on
 #   purpose, because CI fonts and Chromium differ from a local render. So a
 #   template whose PNG changed for a BAD reason still shows a green job. That is
-#   plan risk 8 and Verification criterion 2, still open. It is also exactly why
-#   this gate is scoped to a NEW directory: a new template has no previously
-#   approved raster to drift from. DO NOT widen this gate on the strength of that
-#   green.
+#   plan risk 8 and Verification criterion 2, still open — and under ADR-14 it
+#   costs more than it used to, because an EDIT to an existing template now
+#   auto-merges and its raster can drift with every guard green. The fix is the
+#   three-step sequence in criterion 2: vendor the sample images, build the
+#   cross-engine diff, then flip the drift step to blocking.
 #
 # 🚨 THERE IS NO `|| true` IN THIS FILE, AND THERE MUST NEVER BE ONE.
 #   Every refusal path ends in "no merge". A fact that cannot be read is a
@@ -50,7 +62,10 @@ name: Auto-merge new template
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+    # `unlabeled` is here because of `no-hold-label`: removing the `hold` label
+    # is how an author releases a pull request for the unattended merge, and
+    # without this type nothing would re-judge it until the next push.
+    types: [opened, synchronize, reopened, ready_for_review, unlabeled]
 
 # Default deny; the one job below grants itself the minimum it needs.
 permissions: {}
@@ -207,6 +222,7 @@ jobs:
           REPO: ${{ github.repository }}
           PR: ${{ github.event.pull_request.number }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          RULE: ${{ steps.gate.outputs.rule }}
           # Passed through the environment, never interpolated into the shell.
           PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
@@ -215,7 +231,7 @@ jobs:
                -f merge_method=squash \
                -f sha="$HEAD_SHA" \
                -f commit_title="$PR_TITLE (#$PR)" \
-               -f commit_message="Auto-merged by the automerge-new-template gate: a NEW templates/ directory plus one appended registry.json entry, with every blocking guard green on $HEAD_SHA. Rule file: .github/automerge-rules.conf"; then
+               -f commit_message="Auto-merged by the automerge gate (rule=$RULE): no changed path matches a human-gated glob, no path is removed or renamed, no hold label, and every blocking guard is green on $HEAD_SHA. Rule file: .github/automerge-rules.conf"; then
             echo "MERGED $HEAD_SHA" >> "$GITHUB_STEP_SUMMARY"
           else
             echo "The merge call did not succeed, so nothing was merged. The head SHA probably moved; the next push is judged again." >> "$GITHUB_STEP_SUMMARY"
@@ -251,10 +267,13 @@ jobs:
             printf '**This pull request will not auto-merge.** Rule `%s`.\n\n' "$RULE"
             printf '%s\n\n' "$REASON"
             printf '**Who merges it instead:** %s\n\n' "$WHO"
-            printf 'The rule is data, not code: see [`.github/automerge-rules.conf`](%s). ' "$CONF_URL"
-            printf 'Auto-merge covers exactly one shape — a **new** `templates/<new-id>/**` directory plus that '
-            printf "template's own entry **appended** to \`registry.json\`. Everything else is human-gated, because "
-            printf '`dfl-lesson-studio` and the studio MCP serve this registry live.\n'
+            printf 'The rule is data, not code: see [`.github/automerge-rules.conf`](%s).\n\n' "$CONF_URL"
+            printf 'Auto-merge is the **norm** for this repository (plan ADR-14). That file is a **deny-list**: '
+            printf 'the guard machinery (`scripts/**`, `package.json`, `package-lock.json`, `tsconfig.json`), the '
+            printf 'gate itself (`.github/**`), the canvas contract, `studio/**`, `supabase/**`, `renovate.json` and '
+            printf '`.gitignore` still need a human, because a green CI proves nothing about a change that alters '
+            printf '**what CI runs** or reaches a consumer no job here watches.\n\n'
+            printf 'To hold ONE pull request for review, label it `hold`.\n'
           } > comment.md
           jq -n --rawfile body comment.md '{body: $body}' \
             | gh api "repos/$REPO/issues/$PR/comments" --input -

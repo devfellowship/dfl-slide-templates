@@ -54,19 +54,24 @@ jobs:
       - name: Test the auto-merge rules
         run: npm run test:automerge
 
-  registry-merge:
-    name: Registry merge (write path)
-    # The `publish-template` edge function is the ONLY automated writer into
-    # registry.json, and until 2026-08-27 nothing in this repo tested it. It
-    # replaced a template's whole registry entry with the three fields
-    # `update_template` sends, which deleted the seven that
-    # `dfl-mcp-studio:rank.ts` ranks on — with all four guards green, because
-    # no guard reads that metadata. Plan Gap 4:
+  registry-shape:
+    name: Registry shape (cross-repo contract)
+    # registry.json is READ by `dfl-mcp-studio:rank.ts`, which scores
+    # `search_templates` on `name`, `when_to_use`, `media_profile`, `tags`,
+    # `layout` and `category`; and it is WRITTEN by
+    # `dfl-schema:supabase/functions/publish-template`, which edits it as TEXT
+    # by offset. Nothing else in this repository reads that metadata, so a lost
+    # `when_to_use` merges green and a user simply stops finding the template.
+    # Plan Gap 4:
     # https://plans.devfellowship.com/20260822-branded-image-templates-deterministic-mcp
     #
-    # This job runs the merge against the REAL registry.json, so a future
-    # entry shape that the merge cannot carry turns it red here rather than in
-    # a silent PR from the studio.
+    # THIS JOB REPLACES "Registry merge (write path)". That job ran the writer's
+    # own suite from `supabase/functions/publish-template/`, source this
+    # repository never deployed — the running copy has always been on the DFL
+    # prod Supabase project, and only `dfl-schema:push-functions.yml` ships
+    # there. The writer moved to `dfl-schema` (PR #889) with its suite. What
+    # could not move is the half that asserts the LIVE document, because
+    # `dfl-schema` can only test a vendored snapshot. This job is that half.
     # Public repo: self-hosted dfl-runner blocked (allows_public=false). Authorized Tainan TG 2026-06-06.
     runs-on: ubuntu-latest
     steps:
@@ -78,11 +83,11 @@ jobs:
         with:
           node-version: "20"
 
-      # No `npm ci`: the merge and its suite are dependency-free, the same
-      # posture as the merge gate. The write path into this repository must not
-      # run third-party code to be tested.
-      - name: Test the registry merge
-        run: npm run test:registry-merge
+      # No `npm ci`: the check is dependency-free, the same posture as the merge
+      # gate. A guard must not run third-party code to decide whether this
+      # repository is well formed.
+      - name: Check the registry shape
+        run: npm run check:registry
 
   preview-regen:
     name: Canvas fill + previews

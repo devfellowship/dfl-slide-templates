@@ -407,10 +407,25 @@ itself.
 
 ## The MCP write path — `publish-template`
 
-`supabase/functions/publish-template/` is the only automated writer into this
+The `publish-template` edge function is the only automated writer into this
 repository. `dfl-mcp-studio`'s `update_template` and `update_theme` call it with
-a user JWT; it writes the files, edits `registry.json`, and opens a pull
-request. Nothing reaches `main` without the merge gate.
+a user JWT; it writes the files, edits `registry.json`, and opens a pull request.
+Nothing reaches `main` without the merge gate.
+
+📍 **Its source lives in
+[`devfellowship/dfl-schema`](https://github.com/devfellowship/dfl-schema/tree/main/supabase/functions/publish-template),
+not here.** It used to live in this repository under `supabase/functions/`, and
+that was the bug: the running copy answers on the DFL prod Supabase project
+(`yoojxnggaxcqtsyjdrdx`), and the only workflow in the fleet that deploys an edge
+function to that project is `dfl-schema`'s `push-functions.yml`. This repository
+has **no** deploy job at all. So the function was hand-deployed once and the two
+copies drifted apart in silence — a fix could merge here, green, and change
+nothing in production. It did: the merge-patch fix below merged on 2026-08-27 and
+production kept destroying metadata until the function moved. Moved in
+`dfl-schema` PR #889.
+
+The sections that follow describe how that function behaves. They stay here
+because this repository is what it writes into.
 
 ### The entry is a MERGE PATCH, not a replacement
 
@@ -487,15 +502,23 @@ written is replaced. So:
 - a write that changes nothing produces a **byte-identical** file and no
   `registry.json` entry in the pull request at all.
 
-`npm run test:registry-merge` asserts each of those against the real
-`registry.json`, including the criterion-8 case from the plan run through **both**
+`dfl-schema:supabase/functions/publish-template/registry-merge.test.ts` asserts
+each of those, including the criterion-8 case from the plan run through **both**
 the old writer and the new one, so the suite proves the defect instead of
-describing it. It is dependency-free `node`, like the merge gate's own suite: the
-write path into this repository does not run third-party code to be tested.
+describing it.
 
-⚠️ **No workflow deploys this function.** `supabase functions deploy
-publish-template` is a manual step after the merge, so merging the pull request
-changes the repository and not yet the live write path.
+On **this** side, `npm run check:registry` asserts the half that suite cannot:
+that the LIVE `registry.json` still holds the shape the writer and the ranker
+depend on. `dfl-schema` can only test against a vendored snapshot of this file, so
+a formatting drift or a lost `when_to_use` here would be invisible there. Both
+are dependency-free `node`: the write path into this repository does not run
+third-party code to be tested.
+
+✅ **The function now deploys itself on merge.** `dfl-schema`'s
+`push-functions.yml` derives what to deploy from the diff, so a change to
+`supabase/functions/publish-template/**` there ships on merge with no manual step.
+Until 2026-08-27 `supabase functions deploy publish-template` was a manual step
+that nobody ran, which is why the merge-patch fix sat un-deployed.
 
 ## Generating previews
 
@@ -561,8 +584,13 @@ The GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push and 
 - **lint-css** — runs the CSS scoping / canvas / theme-token linter.
 - **automerge-rules** — the merge gate's own regression suite
   (`npm run test:automerge`).
-- **registry-merge** — the regression suite for the `publish-template` write
-  path (`npm run test:registry-merge`), run against the real `registry.json`.
+- **registry-shape** — the cross-repo contract check on `registry.json`
+  (`npm run check:registry`): every template carries the fields
+  `dfl-mcp-studio:rank.ts` ranks on, `templates[]` keeps the canonical
+  formatting that `dfl-schema:publish-template` edits by offset, ids are unique,
+  and the registry and the `templates/` + `themes/` directories agree. It
+  replaces **registry-merge**, whose subject — the writer and its own suite —
+  moved to `dfl-schema` with the function.
 - **preview-regen** — canvas-fill guard, theme-conformance guard, then
   regenerates all previews using Playwright.
   - On **pull requests**: it re-renders every preview and **warns** when an image
@@ -608,7 +636,7 @@ human unless a changed path matches the **deny-list** in
 | `package.json`, `package-lock.json`, `tsconfig.json` | They decide what every guard command actually runs, and which code it executes. |
 | `canvas.config.json`, `scripts/canvas.config.json` | A cross-repo contract, and the counterpart check that catches a desync lives in the **other** repo. |
 | `studio/**` | Deployed code with no test suite: Studio CI proves lint, typecheck and build only. |
-| `supabase/**` | The `publish-template` edge function is the write path **into** this repository, and no job here tests it. |
+| `supabase/**` | **Empty on purpose.** `publish-template` moved to `dfl-schema`, the only repository whose CI deploys to the DFL prod Supabase project. A `supabase/` path reappearing here is a second copy that nothing ships. |
 | `renovate.json` | It configures what lands unattended, so auto-merging it is the same self-reference as auto-merging the gate. |
 | `.gitignore` | It can hide a file from the diff, and a path that never appears is judged by no rule. |
 

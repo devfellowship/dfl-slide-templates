@@ -1173,7 +1173,7 @@ for (const [glob, p, expected] of globCases) {
     ["package-lock.json", "human", "it chooses the code the guards execute"],
     ["tsconfig.json", "human", "it changes how the ts-node guards compile"],
     ["studio/src/App.tsx", "human", "deployed code with no test suite"],
-    ["supabase/functions/publish-template/index.ts", "human", "the write path INTO this repo, tested by no job here"],
+    ["supabase/functions/publish-template/index.ts", "human", "the path is empty since the function moved to dfl-schema; a copy reappearing here ships nowhere"],
     ["renovate.json", "human", "it configures what lands unattended"],
     [".gitignore", "human", "it can hide a file from the diff"],
     /* Relaxed by ADR-14 — every one of these was `human` before 2026-08-27. */

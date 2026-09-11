@@ -13,6 +13,8 @@
  *     must come from a theme token — `var(--token, <fallback>)`. See THEME_NOTE.
  *  6. Every `--s-*` / `--p-*` token a template reads must actually exist in
  *     at least one theme file. Catches typo'd token names that silently fall back.
+ *     `--anim-*` is exempt: the slide animation runtime writes those variables,
+ *     so no theme defines them and a template reads them with a fallback.
  *  7. THEME COMPLETENESS — every one of those tokens must be defined by EVERY
  *     theme in registry.json, every theme must style the three shared .dfl-*
  *     chassis classes, and registry.json and theme.config.json must name the
@@ -29,6 +31,14 @@
  *  8. Every template's `canvases:` list in config.yaml must name only declared
  *     canvases, and must have exactly the HTML+CSS files it names — no more,
  *     no fewer. See lintTemplateCanvases().
+ *  9. ANIMATION OWNERSHIP. A template (and a theme) never SETS a runtime
+ *     animation value: no `--anim-*` declaration in CSS under templates/ or
+ *     themes/, no `@property --anim-*`, and no `anim-*` class or `--anim-*`
+ *     variable in a template's HTML — in any quote style, inside a Mustache
+ *     section, or written as a character reference. And no CSS `transition` /
+ *     `animation` on a rule that can select an element carrying
+ *     `data-anim-target`, in a template's CSS or in a THEME. See
+ *     lintAnimationOwnership().
  *
  * Usage: node scripts/lint-css.mjs
  */
@@ -554,11 +564,288 @@ function lintThemeTokens(filePath, strippedSrc, rel, errors) {
   }
 }
 
+/**
+ * The prefixes the slide animation runtime owns (dfl-lesson-studio
+ * `src/lib/animation/applyState.ts`). The runtime writes every animated value
+ * for a given t and deletes what the current state does not carry, so a value
+ * a template or a theme sets is overwritten or removed during playback.
+ */
+const ANIMATION_VAR_PREFIX = "--anim-";
+
+/**
+ * Named character references that decode to an ASCII character a class or a
+ * style value can carry. This is NOT the full HTML5 table: the entities that
+ * matter are the ones a browser turns into a character the runtime prefixes
+ * are made of. `&hyphen;` is deliberately absent — it is U+2010, not the ASCII
+ * hyphen, so `anim&hyphen;active` is a different class than `anim-active`.
+ */
+const NAMED_ENTITIES = {
+  amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " ",
+  lowbar: "_", period: ".", num: "#", dollar: "$", percnt: "%", commat: "@",
+  excl: "!", ast: "*", midast: "*", plus: "+", equals: "=", quest: "?",
+  sol: "/", bsol: "\\", colon: ":", semi: ";", verbar: "|", grave: "`",
+  tilde: "~", circ: "^", lpar: "(", rpar: ")", lsqb: "[", rsqb: "]",
+  lcub: "{", rcub: "}", Tab: "\t", NewLine: "\n",
+};
+
+function fromCodePoint(value) {
+  if (!Number.isInteger(value) || value < 0 || value > 0x10ffff) return null;
+  try {
+    return String.fromCodePoint(value);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Decode the character references an attribute value can carry, so a token is
+ * compared as the browser applies it. `class="anim&#45;active"` IS the class
+ * `anim-active`; without this the scan reads a literal `anim&#45;active` and
+ * passes. Numeric first, then named, in ONE pass — so a double-encoded
+ * `&amp;#45;`, which a browser shows as the text `&#45;`, does not decode to a
+ * hyphen. This is a decoder, not an HTML parser.
+ */
+function decodeEntities(value) {
+  return value
+    .replace(/&#[xX]([0-9a-fA-F]+);?/g, (match, hex) => fromCodePoint(parseInt(hex, 16)) ?? match)
+    .replace(/&#([0-9]+);?/g, (match, dec) => fromCodePoint(parseInt(dec, 10)) ?? match)
+    .replace(/&([a-zA-Z][a-zA-Z0-9]*);/g, (match, name) =>
+      Object.prototype.hasOwnProperty.call(NAMED_ENTITIES, name) ? NAMED_ENTITIES[name] : match
+    );
+}
+
+/** A Mustache tag carries no class token: `{{#state}}x{{/state}}` is the token `x`. */
+function stripMustache(src) {
+  return src.replace(/\{\{[^}]*\}\}/g, " ");
+}
+
+function stripCssComments(src) {
+  return src.replace(/\/\*[\s\S]*?\*\//g, "");
+}
+
+/** Every `class` attribute value of a tag, in double, single or no quotes. */
+function classAttributeValues(tagSrc) {
+  const out = [];
+  for (const m of tagSrc.matchAll(
+    /\bclass\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/gi
+  ))
+    out.push(m[1] ?? m[2] ?? m[3] ?? "");
+  return out;
+}
+
+/** Decode BEFORE splitting: the split must see the characters a browser applies. */
+function classTokensOf(tagSrc) {
+  return classAttributeValues(tagSrc)
+    .flatMap((value) => stripMustache(decodeEntities(value)).split(/\s+/))
+    .filter(Boolean);
+}
+
+function tagsOf(htmlSrc) {
+  return [...htmlSrc.matchAll(/<[a-zA-Z][^>]*>/g)].map((m) => m[0]);
+}
+
+/**
+ * The class tokens a template writes on an element that carries
+ * `data-anim-target`. A token that ends in `-` is the literal part of a
+ * Mustache expression (`tpl-steps__step--{{state}}`), so it matches as a
+ * PREFIX — otherwise a rule on `.tpl-steps__step--active` would escape.
+ */
+function animTargetClassMarkers(htmlSrc) {
+  const markers = new Set();
+  let hasTarget = false;
+  for (const tag of tagsOf(htmlSrc)) {
+    if (!/\bdata-anim-target\s*=/.test(tag)) continue;
+    hasTarget = true;
+    for (const token of classTokensOf(tag)) markers.add(token);
+  }
+  return { markers, hasTarget };
+}
+
+/** `transition`, `animation`, and every longhand of both. */
+const CLOCK_DECLARATION = /(?:^|[;{\s])(?:transition|animation)(?:-[a-z-]+)?\s*:/i;
+
+/** Rule sets of a stylesheet as [selector list, body]. An at-rule prelude never matches. */
+function ruleSetsOf(strippedCss) {
+  return [...strippedCss.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((m) => [
+    m[1].trim(),
+    m[2],
+  ]);
+}
+
+/** The subject of a selector: the compound after the last combinator, pseudos removed. */
+function selectorSubject(selector) {
+  const parts = selector.trim().split(/\s*[>+~]\s*|\s+/);
+  const last = parts[parts.length - 1] ?? "";
+  return last.replace(/::?[a-zA-Z-]+(?:\([^)]*\))?/g, "");
+}
+
+function subjectClassTokens(subject) {
+  return [...subject.matchAll(/\.([A-Za-z0-9_-]+)/g)].map((m) => m[1]);
+}
+
+/**
+ * Rule 9d — no clock-driven CSS on a rule that can select an animated element.
+ *
+ * The runtime sets every visual value for a given t, so a `transition` or an
+ * `animation` adds a state that depends on the wall clock: the editor and the
+ * captured MP4 frame stop agreeing. The check compares the selector SUBJECT
+ * with the class tokens the markup puts on the target, so a rule on a CHILD of
+ * the target stays legal. A subject that names no class (a bare tag, `*`, an
+ * id) cannot be proven safe and FAILS CLOSED.
+ */
+function clockCssErrors(rel, strippedCss, markers) {
+  const errors = [];
+  const markerList = [...markers];
+  for (const [selectorList, body] of ruleSetsOf(strippedCss)) {
+    if (selectorList.startsWith("@")) continue;
+    if (!CLOCK_DECLARATION.test(body)) continue;
+    for (const selector of selectorList.split(",")) {
+      const subject = selectorSubject(selector);
+      if (!subject) continue;
+      const tokens = subjectClassTokens(subject);
+      const selectsTarget =
+        /\[\s*data-anim-target/.test(subject) ||
+        tokens.some((token) =>
+          markerList.some(
+            (marker) =>
+              token === marker || (marker.endsWith("-") && token.startsWith(marker))
+          )
+        );
+      if (!selectsTarget && tokens.length > 0) continue;
+      errors.push(
+        `${rel}: "${selector.trim().slice(0, 60)}" declares a CSS transition ` +
+          `or animation and can select an element with data-anim-target. The ` +
+          `runtime sets every value for a given t; a transition adds a state ` +
+          `that depends on the wall clock.` +
+          (tokens.length === 0
+            ? ` This selector names no class, so it cannot be proven safe.`
+            : ``)
+      );
+    }
+  }
+  return errors;
+}
+
+/**
+ * Rule 9 — a template reads runtime animation values and never sets them, and
+ * no clock-driven CSS lands on an element the runtime writes.
+ *
+ * Template CSS may READ `var(--anim-*, <final value>)` and may SELECT the
+ * runtime `.anim-*` classes. Four things it must not do:
+ *
+ *   a. declare an `--anim-*` variable, under any name shape. `themes/` is
+ *      walked for the same reason: a theme declaration INHERITS into every
+ *      animated element, a theme edit auto-merges under ADR-15, and the
+ *      runtime only ever removes the variables of the CURRENT state.
+ *   b. register `--anim-*` with `@property`. A registered custom property
+ *      always has a value, so `var(--anim-opacity, 1)` would never reach its
+ *      fallback and a slide with NO animation would render at the initial
+ *      value — every step hidden.
+ *   c. set an `anim-*` class or an `--anim-*` variable in its HTML, in any
+ *      quote style, inside a Mustache section, or written as a character
+ *      reference (`class="anim&#45;active"` is the class `anim-active`).
+ *   d. put a `transition` or an `animation` on a rule that can select an
+ *      element carrying `data-anim-target` — in a template's CSS **or in a
+ *      theme**. A theme is injected under every slide, so a theme rule reaches
+ *      the targets of every template; the theme pass therefore uses the UNION
+ *      of every template's markers.
+ */
+function lintAnimationOwnership(roots) {
+  const errors = [];
+  const walk = (dir) =>
+    readdirSync(dir).flatMap((entry) => {
+      const full = join(dir, entry);
+      return statSync(full).isDirectory() ? walk(full) : [full];
+    });
+
+  for (const file of roots.filter((d) => existsSync(d)).flatMap(walk)) {
+    const rel = relative(REPO_ROOT, file);
+    if (file.endsWith(".css")) {
+      const src = stripCssComments(readFileSync(file, "utf8"));
+      for (const m of src.matchAll(/(?:^|[{;\s])(--anim-[^\s:{};]*)\s*:/g))
+        errors.push(
+          `${rel}: declares "${m[1]}". The animation runtime owns ` +
+            `${ANIMATION_VAR_PREFIX}* — read it as var(${m[1]}, <final value>) instead.`
+        );
+      for (const m of src.matchAll(/@property\s+(--anim-[^\s{]*)/g))
+        errors.push(
+          `${rel}: registers "${m[1]}" with @property. A registered custom ` +
+            `property always has a value, so the var() fallback never applies ` +
+            `and a slide with no animation renders at the initial value.`
+        );
+    } else if (file.endsWith(".html")) {
+      const src = readFileSync(file, "utf8");
+      if (decodeEntities(src).includes(ANIMATION_VAR_PREFIX))
+        errors.push(
+          `${rel}: sets a ${ANIMATION_VAR_PREFIX}* variable. The animation ` +
+            `runtime owns that prefix.`
+        );
+      for (const tag of tagsOf(src))
+        for (const token of classTokensOf(tag))
+          if (token.startsWith("anim-"))
+            errors.push(
+              `${rel}: sets the class "${token}". The animation runtime owns ` +
+                `anim-* classes.`
+            );
+    }
+  }
+
+  // (d). The markers come from the markup, so they are collected first: each
+  // template's own set for its own CSS, and the union for every theme.
+  const templatesDir = join(REPO_ROOT, "templates");
+  const union = new Set();
+  const perTemplate = new Map();
+  if (existsSync(templatesDir))
+    for (const entry of readdirSync(templatesDir)) {
+      const dir = join(templatesDir, entry);
+      if (!statSync(dir).isDirectory()) continue;
+      const local = new Set();
+      let hasTarget = false;
+      for (const f of readdirSync(dir).filter((x) => x.endsWith(".html"))) {
+        const found = animTargetClassMarkers(readFileSync(join(dir, f), "utf8"));
+        if (found.hasTarget) hasTarget = true;
+        for (const token of found.markers) {
+          local.add(token);
+          union.add(token);
+        }
+      }
+      if (hasTarget) perTemplate.set(dir, local);
+    }
+
+  for (const [dir, local] of perTemplate)
+    for (const f of readdirSync(dir).filter((x) => x.endsWith(".css"))) {
+      const full = join(dir, f);
+      errors.push(
+        ...clockCssErrors(
+          relative(REPO_ROOT, full),
+          stripCssComments(readFileSync(full, "utf8")),
+          local
+        )
+      );
+    }
+
+  const themesDir = join(REPO_ROOT, "themes");
+  if (perTemplate.size > 0 && existsSync(themesDir))
+    for (const f of readdirSync(themesDir).filter((x) => x.endsWith(".css"))) {
+      const full = join(themesDir, f);
+      errors.push(
+        ...clockCssErrors(
+          relative(REPO_ROOT, full),
+          stripCssComments(readFileSync(full, "utf8")),
+          union
+        )
+      );
+    }
+
+  return errors;
+}
+
 /** Rule 6 — every token read must exist in at least one theme (typo check). */
 function lintTokenExistence(strippedSrc, rel, errors) {
   const seen = new Set();
   for (const m of strippedSrc.matchAll(/var\(\s*(--[a-z0-9-]+)/gi)) {
     const token = m[1];
+    if (token.startsWith(ANIMATION_VAR_PREFIX)) continue;
     if (ANY_THEME_TOKENS.has(token) || seen.has(token)) continue;
     seen.add(token);
     errors.push(
@@ -769,7 +1056,10 @@ if (cssFiles.length === 0) {
 
 let allErrors = lintCanvasConfig()
   .concat(lintTemplateCanvases())
-  .concat(lintThemes());
+  .concat(lintThemes())
+  .concat(
+    lintAnimationOwnership([join(REPO_ROOT, "templates"), join(REPO_ROOT, "themes")])
+  );
 for (const f of cssFiles) {
   allErrors = allErrors.concat(lintFile(f));
 }

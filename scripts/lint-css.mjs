@@ -13,6 +13,8 @@
  *     must come from a theme token — `var(--token, <fallback>)`. See THEME_NOTE.
  *  6. Every `--s-*` / `--p-*` token a template reads must actually exist in
  *     at least one theme file. Catches typo'd token names that silently fall back.
+ *     `--anim-*` is exempt: the slide animation runtime writes those variables,
+ *     so no theme defines them and a template reads them with a fallback.
  *  7. THEME COMPLETENESS — every one of those tokens must be defined by EVERY
  *     theme in registry.json, every theme must style the three shared .dfl-*
  *     chassis classes, and registry.json and theme.config.json must name the
@@ -29,6 +31,9 @@
  *  8. Every template's `canvases:` list in config.yaml must name only declared
  *     canvases, and must have exactly the HTML+CSS files it names — no more,
  *     no fewer. See lintTemplateCanvases().
+ *  9. A template never SETS a runtime animation value: no `--anim-*`
+ *     declaration in its CSS, and no `anim-*` class or `--anim-*` variable in
+ *     its HTML. See lintAnimationOwnership().
  *
  * Usage: node scripts/lint-css.mjs
  */
@@ -554,11 +559,54 @@ function lintThemeTokens(filePath, strippedSrc, rel, errors) {
   }
 }
 
+/**
+ * The prefixes the slide animation runtime owns (dfl-lesson-studio
+ * `src/lib/animation/applyState.ts`). The runtime removes any value the current
+ * state does not have, so a value that a template sets is either overwritten or
+ * deleted during playback.
+ */
+const ANIMATION_VAR_PREFIX = "--anim-";
+const ANIMATION_CLASS_PREFIX = "anim-";
+
+/**
+ * Rule 9 — a template reads runtime animation values and never sets them.
+ * CSS may read `var(--anim-*, <fallback>)` and select `.anim-*`; it must not
+ * declare `--anim-*`. HTML must not carry an `anim-*` class or `--anim-*`.
+ */
+function lintAnimationOwnership(templatesDir) {
+  const errors = [];
+  const walk = (dir) =>
+    readdirSync(dir).flatMap((entry) => {
+      const full = join(dir, entry);
+      return statSync(full).isDirectory() ? walk(full) : [full];
+    });
+  for (const file of walk(templatesDir)) {
+    const rel = relative(REPO_ROOT, file);
+    if (file.endsWith(".css")) {
+      const src = readFileSync(file, "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+      for (const m of src.matchAll(/(?:^|[{;\s])(--anim-[a-z0-9-]*)\s*:/gi))
+        errors.push(
+          `${rel}: declares "${m[1]}". The animation runtime owns ${ANIMATION_VAR_PREFIX}* — read it with var(${m[1]}, <final value>) instead.`
+        );
+    } else if (file.endsWith(".html")) {
+      const src = readFileSync(file, "utf8");
+      if (src.includes(ANIMATION_VAR_PREFIX))
+        errors.push(`${rel}: sets a ${ANIMATION_VAR_PREFIX}* variable. The animation runtime owns that prefix.`);
+      for (const m of src.matchAll(/\bclass\s*=\s*"([^"]*)"/gi))
+        for (const token of m[1].split(/\s+/))
+          if (token.startsWith(ANIMATION_CLASS_PREFIX))
+            errors.push(`${rel}: sets the class "${token}". The animation runtime owns ${ANIMATION_CLASS_PREFIX}* classes.`);
+    }
+  }
+  return errors;
+}
+
 /** Rule 6 — every token read must exist in at least one theme (typo check). */
 function lintTokenExistence(strippedSrc, rel, errors) {
   const seen = new Set();
   for (const m of strippedSrc.matchAll(/var\(\s*(--[a-z0-9-]+)/gi)) {
     const token = m[1];
+    if (token.startsWith(ANIMATION_VAR_PREFIX)) continue;
     if (ANY_THEME_TOKENS.has(token) || seen.has(token)) continue;
     seen.add(token);
     errors.push(
@@ -769,7 +817,8 @@ if (cssFiles.length === 0) {
 
 let allErrors = lintCanvasConfig()
   .concat(lintTemplateCanvases())
-  .concat(lintThemes());
+  .concat(lintThemes())
+  .concat(lintAnimationOwnership(join(REPO_ROOT, "templates")));
 for (const f of cssFiles) {
   allErrors = allErrors.concat(lintFile(f));
 }

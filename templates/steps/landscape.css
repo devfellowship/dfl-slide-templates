@@ -107,3 +107,25 @@
   margin: 0;
   line-height: 1.5;
 }
+
+/* steps-reveal animation. The Studio runtime writes the --anim-* variables and
+   the anim-* classes on each [data-anim-target="step"] for a given t. The
+   fallbacks are the final state, so a slide without animation is unchanged.
+   While a slide animates, the runtime classes drive the number badge instead of
+   the authored items[].state. */
+.tpl-root.tpl-steps .tpl-steps__step {
+  opacity: var(--anim-opacity, 1);
+  transform: translateY(calc((1 - var(--anim-progress, 1)) * 12px));
+}
+
+.tpl-root.tpl-steps .tpl-steps__step.anim-active .tpl-steps__num {
+  background: var(--s-brand-solid, #E07A4A);
+  border-color: var(--s-brand-solid, #E07A4A);
+  color: var(--s-ink-inverse, #0a0908);
+}
+
+.tpl-root.tpl-steps .tpl-steps__step.anim-done .tpl-steps__num {
+  background: var(--s-surface-raised, #1a1714);
+  border-color: var(--s-border-strong, #3a3530);
+  color: var(--s-brand-fg, #f0a872);
+}

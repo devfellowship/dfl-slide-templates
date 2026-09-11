@@ -31,9 +31,12 @@
  *  8. Every template's `canvases:` list in config.yaml must name only declared
  *     canvases, and must have exactly the HTML+CSS files it names — no more,
  *     no fewer. See lintTemplateCanvases().
- *  9. A template never SETS a runtime animation value: no `--anim-*`
- *     declaration in its CSS, and no `anim-*` class or `--anim-*` variable in
- *     its HTML. See lintAnimationOwnership().
+ *  9. ANIMATION OWNERSHIP. A template (and a theme) never SETS a runtime
+ *     animation value: no `--anim-*` declaration in CSS under templates/ or
+ *     themes/, no `@property --anim-*`, and no `anim-*` class or `--anim-*`
+ *     variable in a template's HTML. And no CSS `transition` / `animation` on
+ *     a rule that can select an element carrying `data-anim-target`. See
+ *     lintAnimationOwnership().
  *
  * Usage: node scripts/lint-css.mjs
  */
@@ -561,41 +564,190 @@ function lintThemeTokens(filePath, strippedSrc, rel, errors) {
 
 /**
  * The prefixes the slide animation runtime owns (dfl-lesson-studio
- * `src/lib/animation/applyState.ts`). The runtime removes any value the current
- * state does not have, so a value that a template sets is either overwritten or
- * deleted during playback.
+ * `src/lib/animation/applyState.ts`). The runtime writes every animated value
+ * for a given t and deletes what the current state does not carry, so a value
+ * a template or a theme sets is overwritten or removed during playback.
  */
 const ANIMATION_VAR_PREFIX = "--anim-";
-const ANIMATION_CLASS_PREFIX = "anim-";
+
+/** A Mustache tag carries no class token: `{{#state}}x{{/state}}` is the token `x`. */
+function stripMustache(src) {
+  return src.replace(/\{\{[^}]*\}\}/g, " ");
+}
+
+/** Every `class` attribute value of a tag, in double, single or no quotes. */
+function classAttributeValues(tagSrc) {
+  const out = [];
+  for (const m of tagSrc.matchAll(
+    /\bclass\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/gi
+  ))
+    out.push(m[1] ?? m[2] ?? m[3] ?? "");
+  return out;
+}
+
+function classTokensOf(tagSrc) {
+  return classAttributeValues(tagSrc)
+    .flatMap((value) => stripMustache(value).split(/\s+/))
+    .filter(Boolean);
+}
+
+function tagsOf(htmlSrc) {
+  return [...htmlSrc.matchAll(/<[a-zA-Z][^>]*>/g)].map((m) => m[0]);
+}
 
 /**
- * Rule 9 — a template reads runtime animation values and never sets them.
- * CSS may read `var(--anim-*, <fallback>)` and select `.anim-*`; it must not
- * declare `--anim-*`. HTML must not carry an `anim-*` class or `--anim-*`.
+ * The class tokens a template writes on an element that carries
+ * `data-anim-target`. A token that ends in `-` is the literal part of a
+ * Mustache expression (`tpl-steps__step--{{state}}`), so it matches as a
+ * PREFIX — otherwise a rule on `.tpl-steps__step--active` would escape.
  */
-function lintAnimationOwnership(templatesDir) {
+function animTargetClassMarkers(htmlSrc) {
+  const markers = new Set();
+  let hasTarget = false;
+  for (const tag of tagsOf(htmlSrc)) {
+    if (!/\bdata-anim-target\s*=/.test(tag)) continue;
+    hasTarget = true;
+    for (const token of classTokensOf(tag)) markers.add(token);
+  }
+  return { markers, hasTarget };
+}
+
+/** `transition`, `animation`, and every longhand of both. */
+const CLOCK_DECLARATION = /(?:^|[;{\s])(?:transition|animation)(?:-[a-z-]+)?\s*:/i;
+
+/** Rule sets of a stylesheet as [selector list, body]. An at-rule prelude never matches. */
+function ruleSetsOf(strippedCss) {
+  return [...strippedCss.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map((m) => [
+    m[1].trim(),
+    m[2],
+  ]);
+}
+
+/** The subject of a selector: the compound after the last combinator, pseudos removed. */
+function selectorSubject(selector) {
+  const parts = selector.trim().split(/\s*[>+~]\s*|\s+/);
+  const last = parts[parts.length - 1] ?? "";
+  return last.replace(/::?[a-zA-Z-]+(?:\([^)]*\))?/g, "");
+}
+
+function subjectClassTokens(subject) {
+  return [...subject.matchAll(/\.([A-Za-z0-9_-]+)/g)].map((m) => m[1]);
+}
+
+/**
+ * Rule 9 — a template reads runtime animation values and never sets them, and
+ * no clock-driven CSS lands on an element the runtime writes.
+ *
+ * Template CSS may READ `var(--anim-*, <final value>)` and may SELECT the
+ * runtime `.anim-*` classes. Four things it must not do:
+ *
+ *   a. declare an `--anim-*` variable, under any name shape. `themes/` is
+ *      walked for the same reason: a theme declaration INHERITS into every
+ *      animated element, a theme edit auto-merges under ADR-15, and the
+ *      runtime only ever removes the variables of the CURRENT state.
+ *   b. register `--anim-*` with `@property`. A registered custom property
+ *      always has a value, so `var(--anim-opacity, 1)` would never reach its
+ *      fallback and a slide with NO animation would render at the initial
+ *      value — every step hidden.
+ *   c. set an `anim-*` class or an `--anim-*` variable in its HTML.
+ *   d. put a `transition` or an `animation` on a rule that can select an
+ *      element carrying `data-anim-target`. The runtime sets every visual
+ *      value for a given t; a transition adds a state that depends on the
+ *      wall clock, so the editor and the MP4 frame stop agreeing.
+ *
+ * What (d) cannot see: it compares the selector SUBJECT against the class
+ * tokens the markup puts on the target, so a subject with no class token at
+ * all (a bare tag, `*`, an id) cannot be proven safe and FAILS CLOSED.
+ */
+function lintAnimationOwnership(roots) {
   const errors = [];
   const walk = (dir) =>
     readdirSync(dir).flatMap((entry) => {
       const full = join(dir, entry);
       return statSync(full).isDirectory() ? walk(full) : [full];
     });
-  for (const file of walk(templatesDir)) {
+
+  for (const file of roots.filter((d) => existsSync(d)).flatMap(walk)) {
     const rel = relative(REPO_ROOT, file);
     if (file.endsWith(".css")) {
       const src = readFileSync(file, "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
-      for (const m of src.matchAll(/(?:^|[{;\s])(--anim-[a-z0-9-]*)\s*:/gi))
+      for (const m of src.matchAll(/(?:^|[{;\s])(--anim-[^\s:{};]*)\s*:/g))
         errors.push(
-          `${rel}: declares "${m[1]}". The animation runtime owns ${ANIMATION_VAR_PREFIX}* — read it with var(${m[1]}, <final value>) instead.`
+          `${rel}: declares "${m[1]}". The animation runtime owns ` +
+            `${ANIMATION_VAR_PREFIX}* — read it as var(${m[1]}, <final value>) instead.`
+        );
+      for (const m of src.matchAll(/@property\s+(--anim-[^\s{]*)/g))
+        errors.push(
+          `${rel}: registers "${m[1]}" with @property. A registered custom ` +
+            `property always has a value, so the var() fallback never applies ` +
+            `and a slide with no animation renders at the initial value.`
         );
     } else if (file.endsWith(".html")) {
       const src = readFileSync(file, "utf8");
       if (src.includes(ANIMATION_VAR_PREFIX))
-        errors.push(`${rel}: sets a ${ANIMATION_VAR_PREFIX}* variable. The animation runtime owns that prefix.`);
-      for (const m of src.matchAll(/\bclass\s*=\s*"([^"]*)"/gi))
-        for (const token of m[1].split(/\s+/))
-          if (token.startsWith(ANIMATION_CLASS_PREFIX))
-            errors.push(`${rel}: sets the class "${token}". The animation runtime owns ${ANIMATION_CLASS_PREFIX}* classes.`);
+        errors.push(
+          `${rel}: sets a ${ANIMATION_VAR_PREFIX}* variable. The animation ` +
+            `runtime owns that prefix.`
+        );
+      for (const tag of tagsOf(src))
+        for (const token of classTokensOf(tag))
+          if (token.startsWith("anim-"))
+            errors.push(
+              `${rel}: sets the class "${token}". The animation runtime owns ` +
+                `anim-* classes.`
+            );
+    }
+  }
+
+  // (d) — per template, because the markers come from that template's markup.
+  const templatesDir = join(REPO_ROOT, "templates");
+  if (!existsSync(templatesDir)) return errors;
+  for (const entry of readdirSync(templatesDir)) {
+    const dir = join(templatesDir, entry);
+    if (!statSync(dir).isDirectory()) continue;
+    const files = readdirSync(dir);
+    const markers = new Set();
+    let hasTarget = false;
+    for (const f of files.filter((x) => x.endsWith(".html"))) {
+      const found = animTargetClassMarkers(readFileSync(join(dir, f), "utf8"));
+      if (found.hasTarget) hasTarget = true;
+      for (const token of found.markers) markers.add(token);
+    }
+    if (!hasTarget) continue;
+    for (const f of files.filter((x) => x.endsWith(".css"))) {
+      const rel = relative(REPO_ROOT, join(dir, f));
+      const src = readFileSync(join(dir, f), "utf8").replace(
+        /\/\*[\s\S]*?\*\//g,
+        ""
+      );
+      for (const [selectorList, body] of ruleSetsOf(src)) {
+        if (selectorList.startsWith("@")) continue;
+        if (!CLOCK_DECLARATION.test(body)) continue;
+        for (const selector of selectorList.split(",")) {
+          const subject = selectorSubject(selector);
+          if (!subject) continue;
+          const tokens = subjectClassTokens(subject);
+          const selectsTarget =
+            /\[\s*data-anim-target/.test(subject) ||
+            tokens.some((token) =>
+              [...markers].some(
+                (marker) =>
+                  token === marker ||
+                  (marker.endsWith("-") && token.startsWith(marker))
+              )
+            );
+          if (!selectsTarget && tokens.length > 0) continue;
+          errors.push(
+            `${rel}: "${selector.trim().slice(0, 60)}" declares a CSS ` +
+              `transition or animation and can select an element with ` +
+              `data-anim-target. The runtime sets every value for a given t; a ` +
+              `transition adds a state that depends on the wall clock.` +
+              (tokens.length === 0
+                ? ` This selector names no class, so it cannot be proven safe.`
+                : ``)
+          );
+        }
+      }
     }
   }
   return errors;
@@ -818,7 +970,9 @@ if (cssFiles.length === 0) {
 let allErrors = lintCanvasConfig()
   .concat(lintTemplateCanvases())
   .concat(lintThemes())
-  .concat(lintAnimationOwnership(join(REPO_ROOT, "templates")));
+  .concat(
+    lintAnimationOwnership([join(REPO_ROOT, "templates"), join(REPO_ROOT, "themes")])
+  );
 for (const f of cssFiles) {
   allErrors = allErrors.concat(lintFile(f));
 }

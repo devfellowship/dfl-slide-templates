@@ -1,0 +1,230 @@
+/* tpl-chat-typing · portrait — 720×1280 */
+
+.tpl-root.tpl-chat-typing.tpl-chat-typing--portrait {
+  position: relative;
+  width: 720px;
+  height: 1280px;
+  padding: 72px 56px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+}
+
+.tpl-root.tpl-chat-typing.tpl-chat-typing--portrait::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-chat-typing.tpl-chat-typing--portrait > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-chat-typing.tpl-chat-typing--portrait .tpl-chat-typing__title { margin-top: 14px; }
+
+.tpl-root.tpl-chat-typing.tpl-chat-typing--portrait .tpl-chat-typing__panel {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 28px 28px;
+  box-sizing: border-box;
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  border-radius: var(--p-radius-xl, 14px);
+  background: var(--s-surface-panel, #141210);
+  overflow: hidden;
+}
+
+.tpl-root.tpl-chat-typing.tpl-chat-typing--portrait .tpl-chat-typing__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--s-border-subtle, #2a2622);
+  flex-shrink: 0;
+}
+
+.tpl-root.tpl-chat-typing.tpl-chat-typing--portrait .tpl-chat-typing__avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--p-radius-pill, 999px);
+  background: var(--s-brand-solid, #E07A4A);
+  flex-shrink: 0;
+}
+
+.tpl-root.tpl-chat-typing.tpl-chat-typing--portrait .tpl-chat-typing__assistant {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 15px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  color: var(--s-ink-secondary, #c9c0b4);
+}
+
+.tpl-root.tpl-chat-typing.tpl-chat-typing--portrait .tpl-chat-typing__thread {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+/* chat-typing animation. The Studio runtime writes the --anim-* variables and
+   the anim-* classes on each [data-anim-target] for a given t. Every fallback
+   is the FINAL state, so a slide with no animation renders the finished chat:
+   the prompt written, the thinking indicator gone, the answer visible.
+   The one exception is the caret, whose final state is "not blinking". */
+
+.tpl-root.tpl-chat-typing.tpl-chat-typing--portrait .tpl-chat-typing__thinking {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  height: 20px;
+  flex-shrink: 0;
+  /* --anim-dots is 1, 2 or 3 while the indicator runs and 0 outside it. With no
+     runtime the fallback 0 hides the row, which is the state after the answer. */
+  opacity: clamp(0, var(--anim-dots, 0), 1);
+}
+
+.tpl-root.tpl-chat-typing.tpl-chat-typing--portrait .tpl-chat-typing__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: var(--p-radius-pill, 999px);
+  background: var(--s-ink-muted, #7d7568);
+}
+
+.tpl-root.tpl-chat-typing.tpl-chat-typing--portrait .tpl-chat-typing__dot:nth-child(1) { opacity: clamp(0, var(--anim-dots, 0), 1); }
+.tpl-root.tpl-chat-typing.tpl-chat-typing--portrait .tpl-chat-typing__dot:nth-child(2) { opacity: clamp(0, calc(var(--anim-dots, 0) - 1), 1); }
+.tpl-root.tpl-chat-typing.tpl-chat-typing--portrait .tpl-chat-typing__dot:nth-child(3) { opacity: clamp(0, calc(var(--anim-dots, 0) - 2), 1); }
+
+.tpl-root.tpl-chat-typing.tpl-chat-typing--portrait .tpl-chat-typing__response {
+  max-width: 100%;
+  margin: 0;
+  padding: 18px 22px;
+  border-radius: var(--p-radius-lg, 10px);
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  background-color: var(--s-surface-raised, #1a1714);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-size: 24px;
+  line-height: 1.5;
+  opacity: var(--anim-opacity, 1);
+  transform: translateY(calc((1 - var(--anim-progress, 1)) * 10px));
+  /* The highlight wipe. --anim-highlight grows 0 -> 1 over the beat window. */
+  background-image: linear-gradient(var(--s-brand-subtle, rgba(224, 122, 74, 0.10)), var(--s-brand-subtle, rgba(224, 122, 74, 0.10)));
+  background-repeat: no-repeat;
+  background-size: calc(var(--anim-highlight, 0) * 100%) 100%;
+}
+
+/* `response` is an optional slot. Without it the bubble must not paint an empty
+   box, and it must NOT leave the DOM: the runtime drives this element, so a
+   Mustache guard that removes it would break the target contract. `display:
+   none` keeps the target where `applyAnimationState` finds it. `templates/steps`
+   uses the same `:empty` idiom. */
+.tpl-root.tpl-chat-typing.tpl-chat-typing--portrait .tpl-chat-typing__response:empty { display: none; }
+
+.tpl-root.tpl-chat-typing.tpl-chat-typing--portrait .tpl-chat-typing__composer {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding-top: 18px;
+  border-top: 1px solid var(--s-border-subtle, #2a2622);
+  flex-shrink: 0;
+}
+
+.tpl-root.tpl-chat-typing.tpl-chat-typing--portrait .tpl-chat-typing__field {
+  /* The typed span and the static twin share ONE grid cell, so BOTH are in
+     flow. The field is therefore as tall as the authored prompt in every state,
+     and the twin can never spill past the border. An absolutely positioned twin
+     sized the static field at 62.6px against the animated 91.2px, and the
+     two-line sample prompt hung 11.6px below the input border — in the
+     committed preview. The shared cell also stops the field from growing while
+     the prompt types, so the layout is stable frame to frame. */
+  display: grid;
+  align-items: start;
+  flex: 1;
+  min-width: 0;
+  min-height: 60px;
+  padding: 16px 18px;
+  box-sizing: border-box;
+  border-radius: var(--p-radius-lg, 10px);
+  border: 1px solid var(--s-border-strong, #3a3530);
+  background: var(--s-surface-raised, #1a1714);
+  font-size: 22px;
+  line-height: 1.3;
+  color: var(--s-ink-primary, #f6f1e7);
+}
+
+/* The runtime OWNS the text of this element: it writes the typed prefix with
+   textContent, so the markup leaves it empty and the static twin below carries
+   the authored prompt. */
+.tpl-root.tpl-chat-typing.tpl-chat-typing--portrait .tpl-chat-typing__typed {
+  grid-area: 1 / 1;
+  background-image: linear-gradient(var(--s-brand-subtle, rgba(224, 122, 74, 0.10)), var(--s-brand-subtle, rgba(224, 122, 74, 0.10)));
+  background-repeat: no-repeat;
+  background-size: calc(var(--anim-highlight, 0) * 100%) 100%;
+}
+
+/* The caret is a pseudo-element, not a child: applyAnimationState replaces the
+   children of the prompt target on every frame, and a pseudo-element survives
+   that. --anim-caret is 1 while the typing runs and 0 when the prompt is whole. */
+.tpl-root.tpl-chat-typing.tpl-chat-typing--portrait .tpl-chat-typing__typed::after {
+  content: "";
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  background: var(--s-brand-solid, #E07A4A);
+  opacity: var(--anim-caret, 0);
+}
+
+/* The authored prompt, shown only when NO runtime drives this slide.
+   --anim-sent is 0 or 1 whenever the runtime writes a state, so the fallback 9
+   is a value the runtime can never produce: 9 - 1 clamps to 1 (twin visible),
+   and both runtime values clamp to 0 (the typed text is the only copy). */
+.tpl-root.tpl-chat-typing.tpl-chat-typing--portrait .tpl-chat-typing__static {
+  grid-area: 1 / 1;
+  opacity: clamp(0, calc(var(--anim-sent, 9) - 1), 1);
+}
+
+.tpl-root.tpl-chat-typing.tpl-chat-typing--portrait .tpl-chat-typing__send {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--p-radius-lg, 10px);
+  background: var(--s-brand-solid, #E07A4A);
+  color: var(--s-ink-inverse, #0a0908);
+  font-size: 24px;
+  line-height: 1;
+}
+
+/* The 120 ms press. The runtime puts anim-pressed on the send target, which is
+   the panel, so the button reacts through a descendant rule. */
+.tpl-root.tpl-chat-typing.tpl-chat-typing--portrait .tpl-chat-typing__panel.anim-pressed .tpl-chat-typing__send {
+  transform: scale(0.94);
+}
+
+/* --anim-sent latches from 0 to 1 at the send and stays there. */
+.tpl-root.tpl-chat-typing.tpl-chat-typing--portrait .tpl-chat-typing__send-ring {
+  position: absolute;
+  inset: -5px;
+  border-radius: var(--p-radius-xl, 14px);
+  border: 2px solid var(--s-brand-ring, rgba(224, 122, 74, 0.45));
+  opacity: var(--anim-sent, 1);
+}
+
+.tpl-root.tpl-chat-typing.tpl-chat-typing--portrait .tpl-chat-typing__send-icon {
+  position: relative;
+  z-index: 1;
+}

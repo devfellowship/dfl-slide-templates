@@ -872,6 +872,27 @@
         "kpi",
         "data"
       ]
+    },
+    {
+      "id": "chat-typing",
+      "version": "1.0.0",
+      "category": "content",
+      "name": "Chat Typing",
+      "when_to_use": "Show a conversation with an AI assistant: the learner types a prompt, sends it, the assistant thinks and answers. The template for a prompt-engineering lesson, a tool demo, or any \"ask it this\" moment. It carries the animation targets of the chat-typing preset, so the answer can be typed out over the slide.",
+      "avoid_when": "A plain question-and-answer list (use bullet-list or definition), a code session (use code-block or code-output), or a screenshot of a real chat app (use screenshot-frame).",
+      "media_profile": "text-heavy",
+      "text_density": "medium",
+      "layout": "title + chat panel: assistant header, thinking dots, answer bubble, composer with the typed prompt and a send button",
+      "tags": [
+        "chat",
+        "ai",
+        "assistant",
+        "prompt",
+        "conversation",
+        "typing",
+        "animated",
+        "demo"
+      ]
     }
   ]
 }

@@ -1,0 +1,7 @@
+{
+  "eyebrow": "AI tutor",
+  "title": "Ask the tutor for flashcards",
+  "assistant": "DFL Tutor",
+  "prompt": "create 5 flashcards about row level security",
+  "response": "Here are 5 flashcards about row level security, from the policy syntax to the USING and WITH CHECK clauses."
+}

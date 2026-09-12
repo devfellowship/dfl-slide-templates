@@ -122,6 +122,13 @@
   background-size: calc(var(--anim-highlight, 0) * 100%) 100%;
 }
 
+/* `response` is an optional slot. Without it the bubble must not paint an empty
+   box, and it must NOT leave the DOM: the runtime drives this element, so a
+   Mustache guard that removes it would break the target contract. `display:
+   none` keeps the target where `applyAnimationState` finds it. `templates/steps`
+   uses the same `:empty` idiom. */
+.tpl-root.tpl-chat-typing .tpl-chat-typing__response:empty { display: none; }
+
 .tpl-root.tpl-chat-typing .tpl-chat-typing__composer {
   display: flex;
   align-items: flex-start;
@@ -132,7 +139,14 @@
 }
 
 .tpl-root.tpl-chat-typing .tpl-chat-typing__field {
-  position: relative;
+  /* The typed span and the static twin share ONE grid cell, so BOTH are in
+     flow. The field is therefore as tall as the authored prompt in every state,
+     and the twin can never spill past the border. An absolutely positioned twin
+     sized the static field at 54px against the animated 80px, and a two-line
+     prompt hung outside the input. The shared cell also stops the field from
+     growing while the prompt types, so the layout is stable frame to frame. */
+  display: grid;
+  align-items: start;
   flex: 1;
   min-width: 0;
   min-height: 52px;
@@ -150,6 +164,7 @@
    textContent, so the markup leaves it empty and the static twin below carries
    the authored prompt. */
 .tpl-root.tpl-chat-typing .tpl-chat-typing__typed {
+  grid-area: 1 / 1;
   background-image: linear-gradient(var(--s-brand-subtle, rgba(224, 122, 74, 0.10)), var(--s-brand-subtle, rgba(224, 122, 74, 0.10)));
   background-repeat: no-repeat;
   background-size: calc(var(--anim-highlight, 0) * 100%) 100%;
@@ -174,10 +189,7 @@
    is a value the runtime can never produce: 9 - 1 clamps to 1 (twin visible),
    and both runtime values clamp to 0 (the typed text is the only copy). */
 .tpl-root.tpl-chat-typing .tpl-chat-typing__static {
-  position: absolute;
-  left: 16px;
-  right: 16px;
-  top: 13px;
+  grid-area: 1 / 1;
   opacity: clamp(0, calc(var(--anim-sent, 9) - 1), 1);
 }
 

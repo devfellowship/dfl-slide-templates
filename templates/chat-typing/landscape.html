@@ -1,0 +1,29 @@
+<div class="tpl-root tpl-chat-typing">
+  {{#eyebrow}}<span class="dfl-eyebrow">{{eyebrow}}</span>{{/eyebrow}}
+  <h2 class="dfl-section-title tpl-chat-typing__title">{{title}}</h2>
+  <div class="dfl-section-rule"></div>
+  <div class="tpl-chat-typing__panel" data-anim-target="send">
+    <div class="tpl-chat-typing__header">
+      <span class="tpl-chat-typing__avatar"></span>
+      {{#assistant}}<span class="tpl-chat-typing__assistant">{{assistant}}</span>{{/assistant}}
+    </div>
+    <div class="tpl-chat-typing__thread">
+      <div class="tpl-chat-typing__thinking" data-anim-target="thinking">
+        <span class="tpl-chat-typing__dot"></span>
+        <span class="tpl-chat-typing__dot"></span>
+        <span class="tpl-chat-typing__dot"></span>
+      </div>
+      <p class="tpl-chat-typing__response" data-anim-target="response">{{response}}</p>
+    </div>
+    <div class="tpl-chat-typing__composer">
+      <div class="tpl-chat-typing__field">
+        <span class="tpl-chat-typing__typed" data-anim-target="prompt"></span>
+        <span class="tpl-chat-typing__static">{{prompt}}</span>
+      </div>
+      <span class="tpl-chat-typing__send">
+        <span class="tpl-chat-typing__send-ring"></span>
+        <span class="tpl-chat-typing__send-icon">&#8593;</span>
+      </span>
+    </div>
+  </div>
+</div>

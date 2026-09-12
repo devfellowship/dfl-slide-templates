@@ -1,0 +1,36 @@
+id: chat-typing
+name: Chat Typing
+version: "1.0.0"
+category: content
+slots:
+  - name: eyebrow
+    type: text
+    required: false
+    description: "Short uppercase label rendered above the title (e.g. 'AI tutor')"
+    sample: "AI tutor"
+  - name: title
+    type: text
+    required: true
+    description: "Slide heading above the chat panel"
+    sample: "Ask the tutor for flashcards"
+  - name: assistant
+    type: text
+    required: false
+    description: "Name shown in the chat header (e.g. the assistant or the product)"
+    sample: "DFL Tutor"
+  - name: prompt
+    type: text
+    required: true
+    description: |
+      The message the user sends. The chat-typing animation preset TYPES this
+      text one grapheme cluster at a time into the composer, so the preset reads
+      this slot to build its default beats. Keep it to one or two lines.
+    sample: "create 5 flashcards about row level security"
+  - name: response
+    type: text
+    required: false
+    description: |
+      The answer the assistant gives. The chat-typing preset reads this slot too:
+      with it the default beats add the thinking indicator, the reveal and the
+      highlight. Without it the animation stops after the send.
+    sample: "Here are 5 flashcards about row level security, from the policy syntax to the USING and WITH CHECK clauses."

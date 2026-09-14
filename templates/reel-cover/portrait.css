@@ -88,6 +88,9 @@
   letter-spacing: var(--p-tracking-wide, 0.4px);
   text-transform: uppercase;
   color: var(--s-ink-secondary, #c9c0b4);
+  /* A kicker long enough to wrap must not leave one word alone on the second
+   * line. `balance` splits it into two even lines instead. */
+  text-wrap: balance;
 }
 
 /*
@@ -173,4 +176,34 @@
    * palette entry. */
   -webkit-mask-image: linear-gradient(to bottom, var(--s-surface-page, #0a0908) 74%, rgba(10, 9, 8, 0.35) 93%, rgba(10, 9, 8, 0) 100%);
   mask-image: linear-gradient(to bottom, var(--s-surface-page, #0a0908) 74%, rgba(10, 9, 8, 0.35) 93%, rgba(10, 9, 8, 0) 100%);
+}
+
+/* ── Variants ───────────────────────────────────────────────────────────────
+ *
+ * Two covers that post within a few days of each other share a system but must
+ * not share a silhouette: at thumbnail size a viewer reads a repeated colour
+ * block as a re-post. These two slots are how the NEXT cover differs from the
+ * last one without a second design.
+ *
+ * Both are optional and both default to the base rules above, so a slide that
+ * passes neither renders exactly as it did before they existed.
+ */
+
+/* emphasis: "ink" — the headline is ink, the kicker carries the brand colour.
+ * The inverse of the default, and the cheapest way to make consecutive covers
+ * read as different posts. */
+.tpl-root.tpl-reel-cover.tpl-reel-cover--portrait.tpl-reel-cover--emphasis-ink .tpl-reel-cover__headline {
+  color: var(--s-ink-primary, #f6f1e7);
+}
+
+.tpl-root.tpl-reel-cover.tpl-reel-cover--portrait.tpl-reel-cover--emphasis-ink .tpl-reel-cover__kicker {
+  color: var(--s-brand-solid, #e07a4a);
+}
+
+/* scale: "large" — 132px, for a headline short enough to hold one line.
+ * A short headline set at the two-line size looks lost in the frame; this is
+ * the size step that fills it. The measured limit on this canvas is about 14
+ * characters, which is 585px in the 616px text box. */
+.tpl-root.tpl-reel-cover.tpl-reel-cover--portrait.tpl-reel-cover--scale-large .tpl-reel-cover__headline {
+  font-size: 132px;
 }

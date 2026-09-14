@@ -1,0 +1,28 @@
+id: reel-cover
+name: Reel Cover
+version: "1.0.0"
+category: content
+# A Reel cover is 9:16 and nothing else. It is not a deck slide, so it declares
+# only the portrait canvas — landscape and social-portrait would be dead files.
+canvases: [portrait]
+slots:
+  - name: headline
+    type: text
+    required: true
+    description: "The payoff — the one line the cover exists to say. Two to five words per line reads best."
+    sample: "Agora os 20% são o trabalho"
+  - name: kicker
+    type: text
+    required: false
+    description: "Optional short setup line above the headline. It is the half of the hook that makes the headline mean something."
+    sample: "A IA entrega 80%."
+  - name: photoUrl
+    type: image
+    required: false
+    description: "Presenter portrait. A transparent-background PNG cut-out reads best. The template keeps it small and dark on purpose, so the headline stays the subject."
+    sample: "https://placehold.co/800x800/0a0908/1f1c18?text=+"
+  - name: photoAlt
+    type: text
+    required: false
+    description: "Alt text for the presenter portrait"
+    sample: "Presenter portrait"

@@ -1,0 +1,176 @@
+/* tpl-reel-cover · portrait — 720×1280
+ *
+ * The Instagram Reel cover. It is a POSTER, not a slide: one line carries it,
+ * and every other element earns its place or is absent.
+ *
+ * Three decisions come from Tainan's review of the 2026-09-11 cover
+ * ("a foto ficou muito em destaque… ficou muito iluminado… pode ser um
+ * pouquinho mais simples"):
+ *
+ *  1. The headline is the subject. The portrait is support, so it sits BELOW
+ *     the type, at 294px on a 720px canvas — 41% of the width, never more.
+ *  2. The portrait is lit by SUBTRACTION. The earlier cover put a bright amber
+ *     halo behind the presenter, which pulled the eye off the line. Here the
+ *     separation comes from a black pool and a black floor shadow, and the
+ *     photo itself is dimmed to 84%. The presenter emerges from the dark; he is
+ *     not spot-lit out of it.
+ *  3. There is exactly one optional line of supporting text (the kicker) and
+ *     no name, no handle, no badge and no restated headline. A cover that
+ *     repeats itself reads as verbose.
+ *
+ * The .tpl-reel-cover__safe box is the Instagram-safe band: 190px from the top
+ * and 900px tall, which is 285/1350 of a 1080×1920 export. Content inside it
+ * also survives the 1:1 centre crop Instagram applies in the profile grid.
+ */
+
+.tpl-root.tpl-reel-cover.tpl-reel-cover--portrait {
+  position: relative;
+  width: 720px;
+  height: 1280px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.tpl-root.tpl-reel-cover.tpl-reel-cover--portrait::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: var(--s-texture-dot-size, 32px) var(--s-texture-dot-size, 32px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* The only brand mark on the cover. A rule, not a badge: it says whose this is
+ * without spending a word. */
+.tpl-root.tpl-reel-cover.tpl-reel-cover--portrait .tpl-reel-cover__rule {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 5px;
+  background: var(--s-brand-solid, #e07a4a);
+  z-index: 2;
+}
+
+.tpl-root.tpl-reel-cover.tpl-reel-cover--portrait .tpl-reel-cover__safe {
+  position: absolute;
+  left: 0;
+  top: 190px;
+  width: 720px;
+  height: 900px;
+  box-sizing: border-box;
+  padding: 0 52px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 56px;
+  z-index: 1;
+}
+
+.tpl-root.tpl-reel-cover.tpl-reel-cover--portrait .tpl-reel-cover__copy {
+  width: 100%;
+  text-align: center;
+}
+
+.tpl-root.tpl-reel-cover.tpl-reel-cover--portrait .tpl-reel-cover__kicker {
+  display: block;
+  margin-bottom: 22px;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-weight: var(--p-weight-700, 700);
+  font-size: 48px;
+  line-height: 1;
+  letter-spacing: var(--p-tracking-wide, 0.4px);
+  text-transform: uppercase;
+  color: var(--s-ink-secondary, #c9c0b4);
+}
+
+/*
+ * 96px is the largest size at which the sample headline ("Agora os 20% são o
+ * trabalho", 27 characters) still sets on two lines inside the 616px text box.
+ * `text-wrap: balance` keeps those two lines close in length, which is what
+ * makes a two-line poster headline look set rather than wrapped.
+ * `overflow-wrap: break-word` stops a single long word painting outside a box
+ * the canvas-fill guard measures as inside.
+ */
+.tpl-root.tpl-reel-cover.tpl-reel-cover--portrait .tpl-reel-cover__headline {
+  margin: 0;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-weight: var(--p-weight-700, 700);
+  font-size: 96px;
+  line-height: 0.96;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  text-transform: uppercase;
+  color: var(--s-brand-solid, #e07a4a);
+  overflow-wrap: break-word;
+  text-wrap: balance;
+}
+
+/* ── The presenter. Small, low, and dark. ───────────────────────────────── */
+
+.tpl-root.tpl-reel-cover.tpl-reel-cover--portrait .tpl-reel-cover__figure {
+  position: relative;
+  width: 294px;
+  height: 294px;
+  flex: none;
+}
+
+/* The black pool. This replaces the amber halo of the earlier cover. It darkens
+ * the ground the presenter stands on, so he separates by contrast with the page
+ * rather than by his own glow. */
+.tpl-root.tpl-reel-cover.tpl-reel-cover--portrait .tpl-reel-cover__pool {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: 440px;
+  height: 440px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    circle,
+    rgba(10, 9, 8, 0.92) 0%,
+    rgba(10, 9, 8, 0.70) 46%,
+    rgba(10, 9, 8, 0) 74%
+  );
+}
+
+/* A soft floor shadow. Without it the masked portrait reads as floating. */
+.tpl-root.tpl-reel-cover.tpl-reel-cover--portrait .tpl-reel-cover__floor {
+  position: absolute;
+  left: 50%;
+  bottom: 2px;
+  width: 360px;
+  height: 64px;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(10, 9, 8, 0.92) 0%,
+    rgba(10, 9, 8, 0) 70%
+  );
+}
+
+/*
+ * brightness(.84) is the dimming Tainan asked for. The mask fades the bottom of
+ * the cut-out into the page so the photo has no cut edge, which is what let the
+ * earlier cover get away with a halo in the first place.
+ */
+.tpl-root.tpl-reel-cover.tpl-reel-cover--portrait .tpl-reel-cover__photo {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: 50% 100%;
+  filter: brightness(0.84) contrast(1.04) saturate(0.82)
+    drop-shadow(0 15px 19px rgba(10, 9, 8, 0.95));
+  /* A mask reads ALPHA only, so the hue of the opaque stop never reaches the
+   * page. It still goes through the page token, because the linter owns the
+   * rule and a raw opaque literal here would be indistinguishable from a real
+   * palette entry. */
+  -webkit-mask-image: linear-gradient(to bottom, var(--s-surface-page, #0a0908) 74%, rgba(10, 9, 8, 0.35) 93%, rgba(10, 9, 8, 0) 100%);
+  mask-image: linear-gradient(to bottom, var(--s-surface-page, #0a0908) 74%, rgba(10, 9, 8, 0.35) 93%, rgba(10, 9, 8, 0) 100%);
+}

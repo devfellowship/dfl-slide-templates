@@ -207,3 +207,34 @@
 .tpl-root.tpl-reel-cover.tpl-reel-cover--portrait.tpl-reel-cover--scale-large .tpl-reel-cover__headline {
   font-size: 132px;
 }
+
+/* ── The attribution mark ───────────────────────────────────────────────────
+ *
+ * ONE small handle, and only when the slide passes one. Tainan removed a block
+ * of THREE attribution lines from the earlier cover — a name, a handle and a
+ * restated headline — and then asked for the handle back "somewhere pequeno".
+ * The distinction is the whole design: a mark is attribution, a block is
+ * verbosity. So this slot takes one string and gives it no room to grow.
+ *
+ * It is positioned ABSOLUTELY inside the safe band, which is what keeps it out
+ * of the flex centring of the copy and the portrait. A cover that passes no
+ * handle lays out exactly as it did before this slot existed.
+ *
+ * `bottom: 105px` puts its baseline at y=985 of 1280, which is 1478 of a
+ * 1080x1920 export. Instagram's profile grid crops a 1:1 square from the
+ * centre — rows 420 to 1500 — so the mark survives the thumbnail. A few pixels
+ * lower and it would not.
+ */
+.tpl-root.tpl-reel-cover.tpl-reel-cover--portrait .tpl-reel-cover__handle {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 105px;
+  text-align: center;
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-weight: var(--p-weight-500, 500);
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: var(--p-tracking-wider, 0.8px);
+  color: var(--s-ink-muted, #7d7568);
+}

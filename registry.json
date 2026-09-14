@@ -101,7 +101,7 @@
     },
     {
       "id": "image",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "category": "content",
       "name": "Image Slide",
       "when_to_use": "Show one image with a short caption. Screenshot, product shot, single illustrative photo.",
@@ -647,7 +647,7 @@
     },
     {
       "id": "definition",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "category": "content",
       "name": "Definition",
       "when_to_use": "Introduce a key term, concept, or piece of jargon — the dictionary-entry layout (eyebrow, giant term, accent rule, definition sentence) creates a pause that makes vocabulary stick. Great as a concept opener.",

@@ -1,5 +1,5 @@
 <div class="tpl-root tpl-image">
-  <img src="{{imageUrl}}" alt="Template image" class="tpl-image__img" />
+  <img src="{{#image}}{{image}}{{/image}}{{^image}}{{imageUrl}}{{/image}}" alt="Template image" class="tpl-image__img" data-anim-target="image" />
   {{#description}}
   <p class="tpl-image__description">{{description}}</p>
   {{/description}}

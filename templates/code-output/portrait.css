@@ -117,6 +117,53 @@
   display: block;
 }
 
+/* code-output animation. Same contract as templates/chat-typing: the Studio
+   runtime writes --anim-* variables and anim-* classes onto each
+   [data-anim-target], and every CSS fallback here is the FINAL state, so a
+   slide with no animation spec still renders the finished exchange — the
+   command whole, the caret off, the output visible. */
+
+.tpl-root.tpl-code-output.tpl-code-output--portrait .tpl-code-output__pre--code {
+  display: grid;
+}
+
+/* The runtime OWNS the text of this element: it writes the typed prefix with
+   textContent, so the markup leaves it empty and the static twin carries the
+   authored code. Both share the grid cell, so the pane is as tall as the
+   authored code in every state — the same reason chat-typing's field is a
+   grid, not an absolute overlay. */
+.tpl-root.tpl-code-output.tpl-code-output--portrait .tpl-code-output__code--typed {
+  grid-area: 1 / 1;
+}
+
+/* The caret is a pseudo-element, not a child: applyAnimationState replaces the
+   children of the typed target on every frame, and a pseudo-element survives
+   that. --anim-caret is 1 while the typing runs and 0 when the code is whole. */
+.tpl-root.tpl-code-output.tpl-code-output--portrait .tpl-code-output__code--typed::after {
+  content: "";
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  background: var(--s-brand-solid, #E07A4A);
+  opacity: var(--anim-caret, 0);
+}
+
+/* The authored code, shown until the typed twin has written anything. Unlike
+   chat-typing's static span — hidden through --anim-sent, inherited from a
+   "send" target this layout has no button for — code-output has no second
+   beat to key the twin off, so it reads the one fact the runtime already
+   writes here instead: whether the typed span is still empty. */
+.tpl-root.tpl-code-output.tpl-code-output--portrait .tpl-code-output__code--static {
+  grid-area: 1 / 1;
+  opacity: 1;
+}
+
+.tpl-root.tpl-code-output.tpl-code-output--portrait .tpl-code-output__code--typed:not(:empty) ~ .tpl-code-output__code--static {
+  opacity: 0;
+}
+
 .tpl-root.tpl-code-output.tpl-code-output--portrait .tpl-code-output__output-text {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
   font-size: 17px;
@@ -124,6 +171,15 @@
   color: var(--s-success-solid, #5ec27e);
   white-space: pre;
   display: block;
+  /* The reveal + highlight, same as chat-typing's response bubble.
+     --anim-opacity and --anim-progress move together (see the `reveal` beat in
+     AnimationState), and --anim-highlight grows 0 -> 1 over the highlight
+     beat window, painted as a wipe under the text. */
+  opacity: var(--anim-opacity, 1);
+  transform: translateY(calc((1 - var(--anim-progress, 1)) * 6px));
+  background-image: linear-gradient(var(--s-brand-subtle, rgba(224, 122, 74, 0.10)), var(--s-brand-subtle, rgba(224, 122, 74, 0.10)));
+  background-repeat: no-repeat;
+  background-size: calc(var(--anim-highlight, 0) * 100%) 100%;
 }
 
 .tpl-root.tpl-code-output.tpl-code-output--portrait .tpl-code-output__arrow {

@@ -1,0 +1,16 @@
+<div class="tpl-root tpl-reel-cover tpl-reel-cover--portrait">
+  <span class="tpl-reel-cover__rule"></span>
+  <div class="tpl-reel-cover__safe">
+    <div class="tpl-reel-cover__copy">
+      {{#kicker}}<span class="tpl-reel-cover__kicker">{{kicker}}</span>{{/kicker}}
+      <p class="tpl-reel-cover__headline">{{headline}}</p>
+    </div>
+    {{#photoUrl}}
+    <div class="tpl-reel-cover__figure">
+      <span class="tpl-reel-cover__pool"></span>
+      <img class="tpl-reel-cover__photo" src="{{photoUrl}}" alt="{{photoAlt}}" />
+      <span class="tpl-reel-cover__floor"></span>
+    </div>
+    {{/photoUrl}}
+  </div>
+</div>

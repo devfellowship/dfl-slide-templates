@@ -893,6 +893,29 @@
         "animated",
         "demo"
       ]
+    },
+    {
+      "id": "reel-cover",
+      "version": "1.0.0",
+      "category": "media",
+      "name": "Reel Cover",
+      "when_to_use": "The cover frame of a vertical short video — an Instagram Reel, a TikTok, a YouTube Short. One headline carries the frame, with an optional setup line above it and an optional presenter cut-out below it. The cut-out is kept small and dimmed on purpose so the line stays the subject. Portrait only; content sits inside the Instagram-safe band and survives the 1:1 profile-grid crop.",
+      "avoid_when": "A slide inside a deck (use big-statement), a cover that must show a photograph edge to edge (use full-bleed or chapter-image), or a landscape thumbnail.",
+      "media_profile": "balanced",
+      "text_density": "low",
+      "layout": "portrait-only poster: brand rule, centred kicker and headline, small dimmed presenter cut-out beneath",
+      "tags": [
+        "cover",
+        "reel",
+        "shorts",
+        "tiktok",
+        "instagram",
+        "thumbnail",
+        "vertical",
+        "social",
+        "hook",
+        "presenter"
+      ]
     }
   ]
 }

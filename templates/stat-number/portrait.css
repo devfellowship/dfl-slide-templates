@@ -50,7 +50,7 @@
 
 .tpl-root.tpl-stat-number.tpl-stat-number--portrait .tpl-stat-number__eyebrow {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 19px;
+  font-size: 24px;
   letter-spacing: var(--p-tracking-wider, 0.8px);
   text-transform: uppercase;
   color: var(--s-ink-muted, #7d7568);
@@ -86,8 +86,8 @@
 }
 
 .tpl-root.tpl-stat-number.tpl-stat-number--portrait .tpl-stat-number__label {
-  font-size: 37px;
-  line-height: 1.35;
+  font-size: 46px;
+  line-height: 1.3;
   color: var(--s-ink-secondary, #c9c0b4);
   margin: 16px 0 0;
   max-width: 24ch;
@@ -96,7 +96,7 @@
 
 .tpl-root.tpl-stat-number.tpl-stat-number--portrait .tpl-stat-number__source {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 17px;
+  font-size: 22px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   color: var(--s-ink-muted, #7d7568);
 }

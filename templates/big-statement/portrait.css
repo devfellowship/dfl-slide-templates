@@ -52,7 +52,7 @@
 
 .tpl-root.tpl-big-statement.tpl-big-statement--portrait .tpl-big-statement__eyebrow {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 19px;
+  font-size: 24px;
   letter-spacing: var(--p-tracking-wider, 0.8px);
   text-transform: uppercase;
   color: var(--s-ink-muted, #7d7568);

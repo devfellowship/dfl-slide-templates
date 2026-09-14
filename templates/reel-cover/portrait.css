@@ -216,24 +216,30 @@
  * The distinction is the whole design: a mark is attribution, a block is
  * verbosity. So this slot takes one string and gives it no room to grow.
  *
- * It is positioned ABSOLUTELY inside the safe band, which is what keeps it out
- * of the flex centring of the copy and the portrait. A cover that passes no
- * handle lays out exactly as it did before this slot existed.
+ * It sits ABOVE the copy, not under the portrait. Under the portrait it landed
+ * on the mask gradient, where it read as the first line of a caption block
+ * rather than as a mark ("acho q n curti o @ embaixo do degrade, bora por em
+ * cima da frase com text size menor" — Tainan, 2026-09-14). Above the copy it
+ * reads as a byline, and the headline keeps the whole lower half to itself.
  *
- * `bottom: 105px` puts its baseline at y=985 of 1280, which is 1478 of a
- * 1080x1920 export. Instagram's profile grid crops a 1:1 square from the
- * centre — rows 420 to 1500 — so the mark survives the thumbnail. A few pixels
- * lower and it would not.
+ * It is IN FLOW, which is safe because the Mustache section removes the element
+ * entirely when no handle is passed. A cover with no handle lays out exactly as
+ * it did before this slot existed.
+ *
+ * 19px mono. Small enough that it cannot compete with a 96px or 132px display
+ * headline, large enough to stay legible after Instagram's grid downscale.
+ * Measured position on both shipping covers: y 300-319 of 1280, which is
+ * y 450-479 of a 1080x1920 export. Instagram crops a 1:1 square from the centre
+ * for the profile grid — rows 420 to 1500 — so the mark survives the thumbnail
+ * with room above it.
  */
 .tpl-root.tpl-reel-cover.tpl-reel-cover--portrait .tpl-reel-cover__handle {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 105px;
+  display: block;
+  margin-bottom: 20px;
   text-align: center;
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
   font-weight: var(--p-weight-500, 500);
-  font-size: 24px;
+  font-size: 19px;
   line-height: 1;
   letter-spacing: var(--p-tracking-wider, 0.8px);
   color: var(--s-ink-muted, #7d7568);

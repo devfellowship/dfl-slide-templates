@@ -123,6 +123,11 @@
    slide with no animation spec still renders the finished exchange — the
    command whole, the caret off, the output visible. */
 
+/* This layout has no send button, but the preset always emits a `send` beat
+   once the code has an output to answer it (and a `sent` value of 0 even when
+   it does not — see the comment on the static twin below), so the PRE itself
+   carries `data-anim-target="send"` purely to receive `--anim-sent`. It sets
+   no visible state of its own: `anim-pressed` has no rule here. */
 .tpl-root.tpl-code-output.tpl-code-output--portrait .tpl-code-output__pre--code {
   display: grid;
 }
@@ -150,18 +155,22 @@
   opacity: var(--anim-caret, 0);
 }
 
-/* The authored code, shown until the typed twin has written anything. Unlike
-   chat-typing's static span — hidden through --anim-sent, inherited from a
-   "send" target this layout has no button for — code-output has no second
-   beat to key the twin off, so it reads the one fact the runtime already
-   writes here instead: whether the typed span is still empty. */
+/* The authored code, shown only when NO runtime drives this slide — same
+   mechanism as chat-typing's static span, not a `:empty` check on the typed
+   twin. `--anim-sent` is written on the PRE (the `send` target above) on
+   EVERY frame once a spec exists, 0 before the send beat and 1 after — never
+   the fallback 9 — and it inherits down to this child. So the twin hides the
+   instant a runtime attaches, at t=0, not when the FIRST typed character
+   lands. A type beat moved late (live marking, manual edit) would otherwise
+   show the whole code, then snap it away the moment typing starts; keying off
+   `--anim-sent` instead keeps that interval blank, matching what
+   chat-typing's own composer field does before its prompt starts typing.
+   --anim-sent is 0 or 1 whenever the runtime writes a state, so the fallback 9
+   is a value the runtime can never produce: 9 - 1 clamps to 1 (twin visible),
+   and both runtime values clamp to 0 (the typed text is the only copy). */
 .tpl-root.tpl-code-output.tpl-code-output--portrait .tpl-code-output__code--static {
   grid-area: 1 / 1;
-  opacity: 1;
-}
-
-.tpl-root.tpl-code-output.tpl-code-output--portrait .tpl-code-output__code--typed:not(:empty) ~ .tpl-code-output__code--static {
-  opacity: 0;
+  opacity: clamp(0, calc(var(--anim-sent, 9) - 1), 1);
 }
 
 .tpl-root.tpl-code-output.tpl-code-output--portrait .tpl-code-output__output-text {

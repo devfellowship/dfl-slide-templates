@@ -66,3 +66,16 @@
   color: var(--s-ink-secondary, #c9c0b4);
   margin: 0;
 }
+
+/* highlight animation. The Studio runtime writes --anim-opacity, --anim-progress
+   and --anim-highlight on [data-anim-target="highlight"]; this template decides
+   what they move. --anim-highlight grows 0 -> 1 over the wipe beat and paints a
+   brand wash across the definition. Every fallback is the unanimated state, so a
+   slide with no animation renders exactly as before. */
+.tpl-root.tpl-definition .tpl-definition__def {
+  opacity: var(--anim-opacity, 1);
+  transform: translateY(calc((1 - var(--anim-progress, 1)) * 10px));
+  background-image: linear-gradient(var(--s-brand-subtle, rgba(224, 122, 74, 0.10)), var(--s-brand-subtle, rgba(224, 122, 74, 0.10)));
+  background-repeat: no-repeat;
+  background-size: calc(var(--anim-highlight, 0) * 100%) 100%;
+}

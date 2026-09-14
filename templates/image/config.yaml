@@ -1,12 +1,17 @@
 id: image
 name: Image Slide
-version: "1.0.0"
+version: "1.1.0"
 category: content
 slots:
-  - name: imageUrl
+  - name: image
     type: image
     required: true
-    description: "URL of the image to display"
+    description: "URL of the image to display. Primary slot — the `image-enter` animation preset reads this one."
+    sample: "https://placehold.co/1200x800/1e293b/94a3b8?text=Your+Image+Here"
+  - name: imageUrl
+    type: image
+    required: false
+    description: "DEPRECATED fallback for `image`, kept so slides authored before the rename keep rendering. Fill `image` on new slides."
     sample: "https://placehold.co/1200x800/1e293b/94a3b8?text=Your+Image+Here"
   - name: description
     type: text

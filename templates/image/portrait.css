@@ -30,12 +30,17 @@
 
 .tpl-root.tpl-image > * { position: relative; z-index: 1; }
 
+/* image-enter animation — same contract as landscape.css: the runtime writes
+   --anim-opacity and --anim-progress on [data-anim-target="image"], both
+   falling back to 1 so an unanimated slide is unchanged. */
 .tpl-root.tpl-image .tpl-image__img {
   max-width: 100%;
   max-height: 52%;
   object-fit: contain;
   border-radius: var(--p-radius-xl, 14px);
   border: 1px solid var(--s-border-subtle, #2a2622);
+  opacity: var(--anim-opacity, 1);
+  transform: scale(calc(0.96 + var(--anim-progress, 1) * 0.04));
 }
 
 .tpl-root.tpl-image .tpl-image__description {

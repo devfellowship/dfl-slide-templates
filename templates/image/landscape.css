@@ -30,12 +30,19 @@
 
 .tpl-root.tpl-image > * { position: relative; z-index: 1; }
 
+/* image-enter animation. The Studio runtime writes --anim-opacity and
+   --anim-progress (the same eased value) on [data-anim-target="image"]; this
+   template decides what they move. Both fall back to 1, so a slide with no
+   animation renders the image exactly as before. object-fit stays here: the
+   runtime owns only the anim- class prefix and the --anim- variables. */
 .tpl-root.tpl-image .tpl-image__img {
   max-width: 100%;
   max-height: 62%;
   object-fit: contain;
   border-radius: var(--p-radius-xl, 14px);
   border: 1px solid var(--s-border-subtle, #2a2622);
+  opacity: var(--anim-opacity, 1);
+  transform: scale(calc(0.96 + var(--anim-progress, 1) * 0.04));
 }
 
 .tpl-root.tpl-image .tpl-image__description {

@@ -16,6 +16,11 @@ slots:
     required: false
     description: "Optional short setup line above the headline. It is the half of the hook that makes the headline mean something."
     sample: "A IA entrega 80%."
+  - name: handle
+    type: text
+    required: false
+    description: "One small attribution mark, such as a social handle. It sits at the foot of the safe band, inside the 1:1 profile-grid crop, in muted ink at a size that cannot compete with the headline. Pass ONE mark. It is not the place for a name, a restated headline or a subtitle — a block of attribution lines is what this template exists to remove."
+    sample: "@tainanfidelis"
   - name: emphasis
     type: select
     required: false

@@ -16,6 +16,18 @@ slots:
     required: false
     description: "Optional short setup line above the headline. It is the half of the hook that makes the headline mean something."
     sample: "A IA entrega 80%."
+  - name: emphasis
+    type: select
+    required: false
+    options: ["accent", "ink"]
+    description: "Which half of the copy carries the brand colour. 'accent' (the default) paints the headline in the brand colour and the kicker in secondary ink. 'ink' inverts it: the headline is ink, the kicker is the brand colour. Two covers that post within a few days of each other should not use the same value — a viewer reads a repeated colour block as a re-post."
+    sample: "accent"
+  - name: scale
+    type: select
+    required: false
+    options: ["regular", "large"]
+    description: "Headline size step. 'regular' (the default) is 96px and sets a two-line headline of 20 to 30 characters. 'large' is 132px, for a headline short enough to hold one line — under about 14 characters."
+    sample: "regular"
   - name: photoUrl
     type: image
     required: false

@@ -1,16 +1,32 @@
-/* tpl-kpi · portrait — 720×1280 */
+/* tpl-kpi · portrait — 720×1280
+ *
+ * ONE COLUMN, FULL WIDTH, AND THE GRID FILLS THE FRAME.
+ * The 2-column grid here was the landscape 3-column grid with one column
+ * removed. On a phone that wasted the width twice over: each card was half the
+ * frame wide, and the grid sat in static flow at the top, so a 4-card slide left
+ * the bottom HALF of the frame empty and still had to shrink its number to fit
+ * a narrow card. Portrait now stacks one card per row, full-bleed between the
+ * page margins, and the grid flexes to consume the height — so the number is
+ * sized by the frame instead of by a column.
+ *
+ * `grid-auto-rows: 1fr` is what makes the row count irrelevant: the 4 real KPIs
+ * and the 6 in sample.json divide the same height evenly. Type is sized for the
+ * 6-row worst case, so no card overflows as items are added.
+ */
 
 .tpl-root.tpl-kpi.tpl-kpi--portrait {
   position: relative;
   width: 720px;
   height: 1280px;
-  padding: 96px 75px;
+  padding: 84px 64px;
   background: var(--s-surface-page, #0a0908);
   color: var(--s-ink-primary, #f6f1e7);
   font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
   box-sizing: border-box;
   overflow: hidden;
   isolation: isolate;
+  display: flex;
+  flex-direction: column;
 }
 
 .tpl-root.tpl-kpi.tpl-kpi--portrait::before {
@@ -25,24 +41,45 @@
 
 .tpl-root.tpl-kpi.tpl-kpi--portrait > * { position: relative; z-index: 1; }
 
-.tpl-root.tpl-kpi.tpl-kpi--portrait .tpl-kpi__title { margin-top: 19px; }
+/* The theme chassis sizes .dfl-eyebrow / .dfl-section-title for a 720px-tall
+ * canvas. Both are restated here for the 1280px one; the override is scoped to
+ * this template's portrait canvas, so image-row and steps are untouched. */
+.tpl-root.tpl-kpi.tpl-kpi--portrait .dfl-eyebrow {
+  font-size: 20px;
+  flex: 0 0 auto;
+}
+
+.tpl-root.tpl-kpi.tpl-kpi--portrait .tpl-kpi__title {
+  font-size: 58px;
+  margin-top: 14px;
+  flex: 0 0 auto;
+}
+
+.tpl-root.tpl-kpi.tpl-kpi--portrait .dfl-section-rule { flex: 0 0 auto; }
 
 .tpl-root.tpl-kpi.tpl-kpi--portrait .tpl-kpi__grid {
+  flex: 1 1 auto;
+  min-height: 0;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 19px;
-  margin-top: 11px;
+  grid-template-columns: 1fr;
+  grid-auto-rows: 1fr;
+  gap: 16px;
+  margin-top: 8px;
 }
 
 .tpl-root.tpl-kpi.tpl-kpi--portrait .tpl-kpi__card {
-  padding: 29px 32px;
+  min-height: 0;
+  padding: 26px 36px;
   background: var(--s-surface-panel, #141210);
   border: 1px solid var(--s-border-subtle, #2a2622);
   border-radius: var(--p-radius-lg, 10px);
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
   position: relative;
+  overflow: hidden;
 }
 
 .tpl-root.tpl-kpi.tpl-kpi--portrait .tpl-kpi__card.is-brand {
@@ -50,26 +87,39 @@
   border-color: var(--s-brand-border, rgba(224, 122, 74, 0.22));
 }
 
+.tpl-root.tpl-kpi.tpl-kpi--portrait .tpl-kpi__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
 .tpl-root.tpl-kpi.tpl-kpi--portrait .tpl-kpi__label {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 17px;
+  font-size: 24px;
+  line-height: 1.25;
   letter-spacing: var(--p-tracking-wider, 0.8px);
   text-transform: uppercase;
   color: var(--s-ink-muted, #7d7568);
 }
 
+/* 84px of 1280 = 6.56% of the frame (126px at 1080x1920), up from 69px / 5.39%.
+ * Sized for the 6-row case so the number never has to shrink. */
 .tpl-root.tpl-kpi.tpl-kpi--portrait .tpl-kpi__value {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 69px;
+  font-size: 84px;
   font-weight: var(--p-weight-700, 700);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   line-height: 1;
   color: var(--s-ink-primary, #f6f1e7);
   font-feature-settings: "tnum" 1;
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 
 .tpl-root.tpl-kpi.tpl-kpi--portrait .tpl-kpi__delta {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 20px;
+  font-size: 22px;
+  line-height: 1.2;
   color: var(--s-success-fg, #7ad79a);
 }

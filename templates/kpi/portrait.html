@@ -5,9 +5,11 @@
   <div class="tpl-kpi__grid">
     {{#items}}
     <div class="tpl-kpi__card{{#brand}} is-brand{{/brand}}">
-      <span class="tpl-kpi__label">{{label}}</span>
+      <div class="tpl-kpi__meta">
+        <span class="tpl-kpi__label">{{label}}</span>
+        {{#delta}}<span class="tpl-kpi__delta">{{delta}}</span>{{/delta}}
+      </div>
       <span class="tpl-kpi__value">{{value}}</span>
-      {{#delta}}<span class="tpl-kpi__delta">{{delta}}</span>{{/delta}}
     </div>
     {{/items}}
   </div>

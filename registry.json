@@ -628,7 +628,7 @@
     },
     {
       "id": "code-output",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "category": "code",
       "name": "Code + Output",
       "when_to_use": "Show a code snippet alongside its terminal result/stdout — CLI demos, API call + response pairs, script invocations, test run output. Left = mono code pane, right = terminal output box.",

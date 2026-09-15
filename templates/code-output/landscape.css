@@ -115,6 +115,62 @@
   display: block;
 }
 
+/* code-output animation. Same contract as templates/chat-typing: the Studio
+   runtime writes --anim-* variables and anim-* classes onto each
+   [data-anim-target], and every CSS fallback here is the FINAL state, so a
+   slide with no animation spec still renders the finished exchange — the
+   command whole, the caret off, the output visible. */
+
+/* This layout has no send button, but the preset always emits a `send` beat
+   once the code has an output to answer it (and a `sent` value of 0 even when
+   it does not — see the comment on the static twin below), so the PRE itself
+   carries `data-anim-target="send"` purely to receive `--anim-sent`. It sets
+   no visible state of its own: `anim-pressed` has no rule here. */
+.tpl-root.tpl-code-output .tpl-code-output__pre--code {
+  display: grid;
+}
+
+/* The runtime OWNS the text of this element: it writes the typed prefix with
+   textContent, so the markup leaves it empty and the static twin carries the
+   authored code. Both share the grid cell, so the pane is as tall as the
+   authored code in every state — the same reason chat-typing's field is a
+   grid, not an absolute overlay. */
+.tpl-root.tpl-code-output .tpl-code-output__code--typed {
+  grid-area: 1 / 1;
+}
+
+/* The caret is a pseudo-element, not a child: applyAnimationState replaces the
+   children of the typed target on every frame, and a pseudo-element survives
+   that. --anim-caret is 1 while the typing runs and 0 when the code is whole. */
+.tpl-root.tpl-code-output .tpl-code-output__code--typed::after {
+  content: "";
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  background: var(--s-brand-solid, #E07A4A);
+  opacity: var(--anim-caret, 0);
+}
+
+/* The authored code, shown only when NO runtime drives this slide — same
+   mechanism as chat-typing's static span, not a `:empty` check on the typed
+   twin. `--anim-sent` is written on the PRE (the `send` target above) on
+   EVERY frame once a spec exists, 0 before the send beat and 1 after — never
+   the fallback 9 — and it inherits down to this child. So the twin hides the
+   instant a runtime attaches, at t=0, not when the FIRST typed character
+   lands. A type beat moved late (live marking, manual edit) would otherwise
+   show the whole code, then snap it away the moment typing starts; keying off
+   `--anim-sent` instead keeps that interval blank, matching what
+   chat-typing's own composer field does before its prompt starts typing.
+   --anim-sent is 0 or 1 whenever the runtime writes a state, so the fallback 9
+   is a value the runtime can never produce: 9 - 1 clamps to 1 (twin visible),
+   and both runtime values clamp to 0 (the typed text is the only copy). */
+.tpl-root.tpl-code-output .tpl-code-output__code--static {
+  grid-area: 1 / 1;
+  opacity: clamp(0, calc(var(--anim-sent, 9) - 1), 1);
+}
+
 .tpl-root.tpl-code-output .tpl-code-output__output-text {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
   font-size: 19px;
@@ -122,6 +178,15 @@
   color: var(--s-success-solid, #5ec27e);
   white-space: pre;
   display: block;
+  /* The reveal + highlight, same as chat-typing's response bubble.
+     --anim-opacity and --anim-progress move together (see the `reveal` beat in
+     AnimationState), and --anim-highlight grows 0 -> 1 over the highlight
+     beat window, painted as a wipe under the text. */
+  opacity: var(--anim-opacity, 1);
+  transform: translateY(calc((1 - var(--anim-progress, 1)) * 6px));
+  background-image: linear-gradient(var(--s-brand-subtle, rgba(224, 122, 74, 0.10)), var(--s-brand-subtle, rgba(224, 122, 74, 0.10)));
+  background-repeat: no-repeat;
+  background-size: calc(var(--anim-highlight, 0) * 100%) 100%;
 }
 
 .tpl-root.tpl-code-output .tpl-code-output__arrow {

@@ -916,6 +916,27 @@
         "hook",
         "presenter"
       ]
+    },
+    {
+      "id": "outro",
+      "version": "1.0.0",
+      "category": "layout",
+      "name": "Outro",
+      "when_to_use": "The LAST slide of a lesson or deck: the 3-second brand closing vignette — wordmark, growing hairline, small CTA. Add it once, after the content ends; the Studio seeds its 3s duration, its hard cut and its motion, so nothing needs configuring.",
+      "avoid_when": "Anywhere but the final slide. Opening a deck (use title), a recap or summary (use bullet-list/checklist BEFORE the outro), or any slide that must carry content — this one deliberately holds none.",
+      "media_profile": "text-heavy",
+      "text_density": "low",
+      "layout": "centered brand wordmark, hairline rule below it, mono CTA under the rule",
+      "tags": [
+        "outro",
+        "closing",
+        "end-card",
+        "brand",
+        "vignette",
+        "cta",
+        "credits",
+        "last-slide"
+      ]
     }
   ]
 }

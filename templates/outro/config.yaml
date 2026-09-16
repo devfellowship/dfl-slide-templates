@@ -1,0 +1,10 @@
+id: outro
+name: Outro
+version: "1.0.0"
+category: layout
+slots:
+  - name: cta
+    type: text
+    required: false
+    description: "Small mono uppercase call-to-action under the hairline — usually a URL or handle. Omit for a wordmark-only end card."
+    sample: "devfellowship.com"

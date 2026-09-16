@@ -1,0 +1,101 @@
+/* tpl-outro · landscape — 1280×720
+ *
+ * The 3-second closing vignette of DFL brand guide ch. 15.3 (which specifies
+ * 5s; the Studio seeds 3s, the length the tech lead asked for). Reference
+ * timeline at 24fps: the wordmark fades in 0.10→0.25s, the hairline grows to
+ * full width 0.60→0.80s, the CTA fades in 0.90→1.05s, then the slide holds and
+ * cuts hard.
+ *
+ * THE MARK IS NOT SLIDE DATA. `--s-brand-wordmark` carries the word and
+ * `--s-brand-solid` the slash, so the theme alone decides whether this slide
+ * says DFL, ITERA or REVERA, and an author cannot pair one brand's word with
+ * another's accent.
+ *
+ * ONE animation target drives three elements. The `highlight` preset writes
+ * --anim-opacity and --anim-highlight on [data-anim-target="highlight"], and
+ * custom properties inherit, so the wrapper is the target and each child reads
+ * the value it needs. The preset allows only two beats (a second `highlight`
+ * beat would restart the wipe at 0 and collapse the rule), so the CTA rides the
+ * tail of the SAME wipe value instead of a beat of its own:
+ *   rule width  = min(h × 2.25, 1)      → full at h = 4/9  (0.80s of a 3s slide)
+ *   CTA opacity = clamp(0, h × 3 − 2, 1) → starts at h = 2/3 (0.90s), full at 1
+ * Every fallback is the FINAL state, so a slide with no animation renders the
+ * finished end card.
+ *
+ * Known limitation: `highlight`'s defaults read a `definition`/`highlight`
+ * slot, which this template does not declare, so the Animation panel cannot
+ * rebuild the spec after an author deletes it — re-insert the slide, or set it
+ * through the Studio MCP. Giving the preset defaults for this template would be
+ * a three-repository change.
+ */
+
+.tpl-root.tpl-outro {
+  position: relative;
+  width: 1280px;
+  height: 720px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tpl-root.tpl-outro::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: 32px 32px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-outro > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-outro .tpl-outro__lockup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.tpl-root.tpl-outro .tpl-outro__word {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 113px;
+  font-weight: var(--p-weight-700, 700);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  line-height: 0.9;
+  text-transform: uppercase;
+  color: var(--s-ink-primary, #f6f1e7);
+  opacity: var(--anim-opacity, 1);
+}
+
+/* The word itself, from the theme. */
+.tpl-root.tpl-outro .tpl-outro__word::before {
+  content: var(--s-brand-wordmark, 'DFL');
+}
+
+.tpl-root.tpl-outro .tpl-outro__mark {
+  color: var(--s-brand-solid, #E07A4A);
+}
+
+.tpl-root.tpl-outro .tpl-outro__rule {
+  width: calc(min(var(--anim-highlight, 1) * 2.25, 1) * 213px);
+  height: 1px;
+  min-height: 1px;
+  flex-shrink: 0;
+  background: var(--s-ink-muted, #7d7568);
+}
+
+.tpl-root.tpl-outro .tpl-outro__cta {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 17px;
+  letter-spacing: var(--p-tracking-wider, 1px);
+  text-transform: uppercase;
+  color: var(--s-ink-muted, #7d7568);
+  opacity: clamp(0, calc(var(--anim-highlight, 1) * 3 - 2), 1);
+}

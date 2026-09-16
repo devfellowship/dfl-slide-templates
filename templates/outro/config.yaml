@@ -3,7 +3,12 @@ name: Outro
 version: "1.0.0"
 category: layout
 slots:
-  - name: cta
+  # NAMED for the `highlight` animation preset, which reads a `definition` or a
+  # `highlight` slot. The outro's motion reuses that preset, and the Studio
+  # decides a preset can drive a template by looking for one of those names — so
+  # a slot called `cta` would make the editor warn that this slide has nothing
+  # to animate while it animated perfectly well.
+  - name: highlight
     type: text
     required: false
     description: "Small mono uppercase call-to-action under the hairline — usually a URL or handle. Omit for a wordmark-only end card."

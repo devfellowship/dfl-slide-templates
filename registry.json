@@ -937,6 +937,28 @@
         "credits",
         "last-slide"
       ]
+    },
+    {
+      "id": "video-frame",
+      "name": "Video Frame",
+      "version": "1.0.0",
+      "category": "media",
+      "when_to_use": "Play actual screen recordings, browser scroll clips, product demos or B-roll inside a framed slide. Silent footage moves in Stage playback and the exported video. Portrait reserves the lower presenter area.",
+      "avoid_when": "Only a static image is available (use screenshot-frame), or a poster link is intended (use video). Do not combine with template animation.",
+      "media_profile": "video",
+      "tags": [
+        "video",
+        "screen recording",
+        "browser",
+        "product",
+        "demo",
+        "reels",
+        "tiktok",
+        "motion",
+        "capture"
+      ],
+      "text_density": "low",
+      "layout": "Product footage in a rectangular frame, heading and source above it; portrait lower area reserved for presenter."
     }
   ]
 }

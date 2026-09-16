@@ -131,6 +131,14 @@
   --s-brand-border:  rgba(224, 122, 74, 0.22);
   --s-brand-ring:    rgba(224, 122, 74, 0.45);
 
+  /* The brand's WORDMARK, as text. All three DFL brands are purely typographic
+   * (guide ch. 4: "sem brasao, sem ilustracao"), so the mark is the word set in
+   * --s-font-display plus a --s-brand-solid slash. A template reads it through
+   * `content: var(--s-brand-wordmark)`, which keeps the word and the accent on
+   * the same theme: a slide can never show ITERA in amber, or DFL in evergreen.
+   * Quoted because `content` needs a string. */
+  --s-brand-wordmark: 'DFL';
+
   --s-success-solid:  var(--p-green-500);
   --s-success-fg:     var(--p-green-400);
   --s-warning-solid:  var(--p-yellow-500);

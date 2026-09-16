@@ -1,0 +1,7 @@
+<div class="tpl-root tpl-video-frame">
+  {{#title}}<h1 class="tpl-video-frame__title">{{title}}</h1>{{/title}}
+  {{#caption}}<p class="tpl-video-frame__caption">{{caption}}</p>{{/caption}}
+  <div class="tpl-video-frame__border">
+    <video class="tpl-video-frame__footage" data-slide-video data-clip-seconds="{{clipSeconds}}" data-fit="{{fit}}" src="{{videoUrl}}" poster="{{posterUrl}}" muted playsinline preload="none" aria-label="{{title}}"></video>
+  </div>
+</div>

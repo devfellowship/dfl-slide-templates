@@ -1,0 +1,30 @@
+id: video-frame
+name: Video Frame
+version: "1.0.0"
+category: media
+slots:
+  - name: videoUrl
+    type: text
+    required: true
+    description: "Hosted HTTP(S) H.264 MP4 footage. It plays silently, loops to fill the slide, and exports as motion."
+  - name: posterUrl
+    type: image
+    required: true
+    description: "Still from the same footage, used for thumbnails and image export."
+  - name: clipSeconds
+    type: number
+    required: true
+    description: "Playable source window in seconds, at least 0.1 and no longer than the actual file. Short sources loop; long sources trim to the slide."
+  - name: fit
+    type: select
+    required: false
+    options: ["contain", "cover"]
+    description: "Contain preserves the full screen; cover crops to fill the frame. Default contain."
+  - name: title
+    type: text
+    required: false
+    description: "Short product or demonstration heading."
+  - name: caption
+    type: text
+    required: false
+    description: "Short source attribution or context, placed above the media."

@@ -962,7 +962,7 @@
     },
     {
       "id": "detail-zoom",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "category": "media",
       "name": "Detail Zoom",
       "when_to_use": "One detail inside a photo IS the point: a ring marks it on the scene and a card shows that same region magnified beside a caption. Built for 'look at THIS' reels — wear on an object, a texture, a small thing nobody notices. The card re-reads the scene photo, so there is no close-up to crop or upload; move the ring and the magnification follows. Leave the zoom slot empty and the slide is a photo under one centered line.",

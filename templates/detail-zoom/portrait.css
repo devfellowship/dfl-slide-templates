@@ -132,10 +132,20 @@
   min-height: 0;
 }
 
+/* No card, no line to land on: the lone caption takes the room back and centres in it. */
+.tpl-root.tpl-detail-zoom.tpl-detail-zoom--portrait .tpl-detail-zoom__foot:has(> .tpl-detail-zoom__caption:only-child) {
+  flex: 1 1 auto;
+}
+
 /* The line from the ring to the card. The SVG is the scene box exactly, so the
  * focus percentages mean here what they mean on the ring; it overflows on
  * purpose to reach the card underneath. The mask cuts the stretch inside the
- * ring, so the line starts ON the ring and not at its centre. */
+ * ring, so the line starts ON the ring and not at its centre. The HTML draws
+ * the line only with a focus point, and masks it only with a ring size: an empty
+ * slot leaves an invalid SVG length behind, which reads as 0 (a line from the
+ * photo's corner) or as 100% (a hole the size of the photo). The mask id carries
+ * all four values, so two slides sharing a document share a mask only when it
+ * is the same mask. */
 .tpl-root.tpl-detail-zoom.tpl-detail-zoom--portrait .tpl-detail-zoom__link {
   position: absolute;
   left: -40px;
@@ -153,13 +163,6 @@
   stroke-linecap: round;
   stroke-dasharray: 1;
   stroke-dashoffset: calc(1 - var(--anim-progress, 1));
-}
-
-/* Same defaults as the ring: an empty focusW/focusH leaves an invalid attribute
- * behind, and these stand in for it. */
-.tpl-root.tpl-detail-zoom.tpl-detail-zoom--portrait .tpl-detail-zoom__hole {
-  width: 12%;
-  height: 16%;
 }
 
 /* Animation (steps-reveal, indexes 0 ring · 1 line · 2 card · 3 caption ·

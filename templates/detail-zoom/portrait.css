@@ -151,6 +151,12 @@
   margin: 0;
   max-width: 14ch;
   overflow-wrap: break-word;
+  /* An author may enlarge the card (per-entity size, stored on the slide), and
+   * a flex item will not shrink past its longest word while min-width is auto.
+   * Without this the caption keeps its width and runs off the slide instead of
+   * rewrapping into the room that is left. */
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 /* No ring, no lens: the caption is the whole message, so it centres and grows

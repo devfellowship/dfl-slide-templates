@@ -1,0 +1,55 @@
+id: detail-zoom
+name: Detail Zoom
+version: "1.0.0"
+category: media
+slots:
+  - name: imageUrl
+    type: image
+    required: true
+    description: "The scene photo. The magnified card reads THIS image too — there is no second upload and no crop to prepare."
+    sample: "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=1600&auto=format&fit=crop"
+  - name: imageAlt
+    type: text
+    required: false
+    description: "Alt text for the scene photo"
+    sample: "A worn leather boot on a wooden floor"
+  - name: caption
+    type: text
+    required: true
+    description: "The one sentence that says what the detail is. Shown beside the magnified card, or alone and centered when zoom is empty."
+    sample: "The stitching is already coming apart at the toe."
+  - name: title
+    type: text
+    required: false
+    description: "Short heading above the photo, drawn in caps"
+    sample: "O desgaste"
+  - name: eyebrow
+    type: text
+    required: false
+    description: "Small mono label above the title — a counter reads well here"
+    sample: "Detalhe 08"
+  - name: zoom
+    type: text
+    required: false
+    description: "How many times the magnified card enlarges the photo, e.g. 6. THIS SLOT IS THE SWITCH: fill it and the slide draws the ring and the card; leave it empty and the slide is the photo with the caption centred underneath."
+    sample: "6"
+  - name: focusX
+    type: text
+    required: false
+    description: "Horizontal CENTRE of the detail, as a percentage (0–100) of the photo box. The ring sits here and the card zooms about this same point."
+    sample: "62"
+  - name: focusY
+    type: text
+    required: false
+    description: "Vertical CENTRE of the detail, as a percentage (0–100) of the photo box"
+    sample: "58"
+  - name: focusW
+    type: text
+    required: false
+    description: "Width of the ring as a percentage (0–100) of the photo box. It shapes the ring only — how far the card zooms is the zoom slot."
+    sample: "9"
+  - name: focusH
+    type: text
+    required: false
+    description: "Height of the ring as a percentage (0–100) of the photo box. Ring only, like focusW."
+    sample: "14"

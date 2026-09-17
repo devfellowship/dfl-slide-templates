@@ -959,6 +959,26 @@
       ],
       "text_density": "low",
       "layout": "Product footage in a rectangular frame, heading and source above it; portrait lower area reserved for presenter."
+    },
+    {
+      "id": "detail-zoom",
+      "version": "1.0.0",
+      "category": "media",
+      "name": "Detail Zoom",
+      "when_to_use": "One detail inside a photo IS the point: a ring marks it on the scene and a card shows that same region magnified beside a caption. Built for 'look at THIS' reels — wear on an object, a texture, a small thing nobody notices. The card re-reads the scene photo, so there is no close-up to crop or upload; move the ring and the magnification follows. Leave the zoom slot empty and the slide is a photo under one centered line.",
+      "avoid_when": "Several details on one photo (use annotated-image, whose pins are numbered), a photo with nothing to point at (fullscreen-image or big-image), or a side-by-side of two states (before-after-image).",
+      "media_profile": "image-first",
+      "text_density": "low",
+      "layout": "eyebrow + title, full-bleed scene photo with a focus ring, magnified card beside the caption",
+      "tags": [
+        "detail",
+        "zoom",
+        "magnify",
+        "closeup",
+        "reel",
+        "photo",
+        "annotation"
+      ]
     }
   ]
 }

@@ -163,7 +163,8 @@
 }
 
 /* Animation (steps-reveal, indexes 0 ring · 1 line · 2 card · 3 caption ·
- * 4 title). The Studio runtime writes --anim-progress / --anim-opacity for a
+ * 4 title, whose `data-anim-span="slide"` asks the Studio for one beat as long
+ * as the slide instead of a quick reveal). The Studio runtime writes --anim-progress / --anim-opacity for a
  * given t; every fallback is the final state, so a slide without animation is
  * unchanged. The ring mask reads only the ALPHA of its colour. The ring is DRAWN around, clockwise from the top; the card grows
  * out of the corner the line lands on. The title never hides — it only exposes

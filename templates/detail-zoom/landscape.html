@@ -1,20 +1,31 @@
 <div class="tpl-root tpl-detail-zoom">
   <header class="tpl-detail-zoom__head">
     {{#eyebrow}}<span class="tpl-detail-zoom__eyebrow">{{eyebrow}}</span>{{/eyebrow}}
-    {{#title}}<h2 class="tpl-detail-zoom__title">{{title}}</h2>{{/title}}
+    {{#title}}<h2 class="tpl-detail-zoom__title" data-anim-target="step" data-anim-index="4">{{title}}</h2>{{/title}}
   </header>
+  <div class="tpl-detail-zoom__body">
   <div class="tpl-detail-zoom__scene">
     <img src="{{imageUrl}}" alt="{{imageAlt}}" class="tpl-detail-zoom__photo" crossorigin="anonymous" />
-    {{#zoom}}<span class="tpl-detail-zoom__ring" style="left: {{focusX}}%; top: {{focusY}}%; width: {{focusW}}%; height: {{focusH}}%"></span>{{/zoom}}
+    {{#zoom}}<span class="tpl-detail-zoom__ring" data-anim-target="step" data-anim-index="0" style="left: {{focusX}}%; top: {{focusY}}%; width: {{focusW}}%; height: {{focusH}}%"></span>{{/zoom}}
   </div>
+  {{#zoom}}
+  <svg class="tpl-detail-zoom__link" data-anim-target="step" data-anim-index="1" aria-hidden="true">
+    <mask id="tpl-detail-zoom-hole-{{focusX}}-{{focusY}}" maskUnits="userSpaceOnUse" x="-100%" y="-100%" width="300%" height="300%">
+      <rect x="-100%" y="-100%" width="300%" height="300%" fill="#fff" />
+      <svg class="tpl-detail-zoom__hole" x="{{focusX}}%" y="{{focusY}}%" width="{{focusW}}%" height="{{focusH}}%" overflow="visible"><ellipse cx="0" cy="0" rx="50%" ry="50%" fill="#000" /></svg>
+    </mask>
+    <line class="tpl-detail-zoom__linkline" x1="{{focusX}}%" y1="{{focusY}}%" x2="244" y2="324" pathLength="1" mask="url(#tpl-detail-zoom-hole-{{focusX}}-{{focusY}})" />
+  </svg>
+  {{/zoom}}
   <div class="tpl-detail-zoom__foot">
     {{#zoom}}
-    <div class="tpl-detail-zoom__lens">
+    <div class="tpl-detail-zoom__lens" data-anim-target="step" data-anim-index="2">
       <div class="tpl-detail-zoom__lensframe" style="transform-origin: {{focusX}}% {{focusY}}%; transform: translate(-{{focusX}}%, -{{focusY}}%) scale({{zoom}})">
         <img src="{{imageUrl}}" alt="" class="tpl-detail-zoom__photo" crossorigin="anonymous" />
       </div>
     </div>
     {{/zoom}}
-    <p class="tpl-detail-zoom__caption">{{caption}}</p>
+    <p class="tpl-detail-zoom__caption" data-anim-target="step" data-anim-index="3">{{caption}}</p>
+  </div>
   </div>
 </div>

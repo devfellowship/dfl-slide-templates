@@ -111,12 +111,77 @@
   box-sizing: border-box;
 }
 
+/* Scene, link line and foot share one box so the line can be placed from the
+ * scene's own corner, whatever height the head above them takes. */
+.tpl-root.tpl-detail-zoom .tpl-detail-zoom__body {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* `flex: none` and not `1 1 auto`: the link line ends on the card's top-right
+ * corner, a fixed point under the scene. A foot that stretched would centre the
+ * card in whatever room was left and pull that corner away from the line. */
 .tpl-root.tpl-detail-zoom .tpl-detail-zoom__foot {
   display: flex;
   align-items: center;
   gap: 40px;
-  flex: 1 1 auto;
+  flex: none;
   min-height: 0;
+}
+
+/* The line from the ring to the card. The SVG is the scene box exactly, so the
+ * focus percentages mean here what they mean on the ring; it overflows on
+ * purpose to reach the card underneath. The mask cuts the stretch inside the
+ * ring, so the line starts ON the ring and not at its centre. */
+.tpl-root.tpl-detail-zoom .tpl-detail-zoom__link {
+  position: absolute;
+  left: -64px;
+  top: 0;
+  width: 1280px;
+  height: 300px;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.tpl-root.tpl-detail-zoom .tpl-detail-zoom__linkline {
+  stroke: var(--s-brand-solid, #e07a4a);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--anim-progress, 1));
+}
+
+/* Same defaults as the ring: an empty focusW/focusH leaves an invalid attribute
+ * behind, and these stand in for it. */
+.tpl-root.tpl-detail-zoom .tpl-detail-zoom__hole {
+  width: 8%;
+  height: 26%;
+}
+
+/* Animation (steps-reveal, indexes 0 ring · 1 line · 2 card · 3 caption ·
+ * 4 title). The Studio runtime writes --anim-progress / --anim-opacity for a
+ * given t; every fallback is the final state, so a slide without animation is
+ * unchanged. The ring mask reads only the ALPHA of its colour. The ring is DRAWN around, clockwise from the top; the card grows
+ * out of the corner the line lands on. The title never hides — it only exposes
+ * its progress, which the Studio's gradient text effect sweeps along. */
+.tpl-root.tpl-detail-zoom .tpl-detail-zoom__ring {
+  -webkit-mask-image: conic-gradient(var(--s-brand-solid, #e07a4a) calc(var(--anim-progress, 1) * 360deg), transparent 0);
+  mask-image: conic-gradient(var(--s-brand-solid, #e07a4a) calc(var(--anim-progress, 1) * 360deg), transparent 0);
+}
+
+.tpl-root.tpl-detail-zoom .tpl-detail-zoom__lens {
+  opacity: var(--anim-opacity, 1);
+  transform: scale(calc(0.35 + 0.65 * var(--anim-progress, 1)));
+  transform-origin: 100% 0;
+}
+
+.tpl-root.tpl-detail-zoom .tpl-detail-zoom__caption {
+  opacity: var(--anim-opacity, 1);
+  transform: translateX(calc((1 - var(--anim-progress, 1)) * 24px));
 }
 
 .tpl-root.tpl-detail-zoom .tpl-detail-zoom__lens {

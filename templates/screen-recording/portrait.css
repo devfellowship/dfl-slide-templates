@@ -1,0 +1,11 @@
+/* tpl-screen-recording · portrait — 720×1280
+ * An empty theme surface under the slide's screen recording. */
+
+.tpl-root.tpl-screen-recording.tpl-screen-recording--portrait {
+  position: relative;
+  width: 720px;
+  height: 1280px;
+  background: var(--s-surface-page, #0a0908);
+  box-sizing: border-box;
+  overflow: hidden;
+}

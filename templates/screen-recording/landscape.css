@@ -1,0 +1,11 @@
+/* tpl-screen-recording · landscape — 1280×720
+ * An empty theme surface under the slide's screen recording. */
+
+.tpl-root.tpl-screen-recording {
+  position: relative;
+  width: 1280px;
+  height: 720px;
+  background: var(--s-surface-page, #0a0908);
+  box-sizing: border-box;
+  overflow: hidden;
+}

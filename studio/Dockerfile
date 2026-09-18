@@ -7,6 +7,10 @@ ARG VITE_SUPABASE_URL
 ARG VITE_SUPABASE_ANON_KEY
 ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
 ENV VITE_SUPABASE_ANON_KEY=$VITE_SUPABASE_ANON_KEY
+# Umami website id. Empty by default: with no value, the build adds no
+# analytics tag (see the umamiTag plugin in vite.config.ts).
+ARG VITE_UMAMI_WEBSITE_ID=""
+ENV VITE_UMAMI_WEBSITE_ID=$VITE_UMAMI_WEBSITE_ID
 RUN npm run build
 
 FROM nginx:alpine

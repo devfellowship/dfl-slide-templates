@@ -308,10 +308,10 @@
     },
     {
       "id": "big-statement",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "category": "content",
       "name": "Big Statement",
-      "when_to_use": "One short, punchy sentence that should land hard — a thesis, a provocation, a key idea. Minimalist: huge type, almost no other text.",
+      "when_to_use": "One short, punchy sentence that should land hard — a thesis, a provocation, a key idea. Minimalist: huge type, almost no other text. Optional follow-up statements (`items`) can reveal one by one under it.",
       "avoid_when": "An attributed quote (use quote) or a list of ideas (use bullet-list).",
       "media_profile": "text-heavy",
       "text_density": "low",

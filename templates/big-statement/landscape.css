@@ -82,3 +82,34 @@
   overflow-wrap: break-word;
   text-wrap: balance;
 }
+
+/*
+ * `items` — the follow-up statements, optional. Each one is a `step`, so the
+ * steps-reveal preset brings them in one at a time under the main statement.
+ * Smaller than the statement (~0.6×) so the first line still lands hardest and
+ * three of them fit the canvas with it. They are direct children of `__inner`,
+ * with no wrapper: a slide without the list renders exactly the DOM it always
+ * did. The gap between two lines is tighter than the one above the first, so
+ * the list reads as one block under the statement.
+ */
+.tpl-root.tpl-big-statement .tpl-big-statement__line {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 52px;
+  font-weight: var(--p-weight-700, 700);
+  line-height: 1.05;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-secondary, #c9c0b0);
+  margin: 0;
+  max-width: 30ch;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+  /* steps-reveal: the Studio runtime writes --anim-opacity/--anim-progress on
+     each [data-anim-target="step"] for a given t. The fallbacks are the final
+     state, so a slide that does not animate shows every line. */
+  opacity: var(--anim-opacity, 1);
+  transform: translateY(calc((1 - var(--anim-progress, 1)) * 14px));
+}
+
+.tpl-root.tpl-big-statement .tpl-big-statement__line + .tpl-big-statement__line {
+  margin-top: -21px;
+}

@@ -1,6 +1,6 @@
 id: big-statement
 name: Big Statement
-version: "1.0.0"
+version: "1.1.0"
 category: content
 # Design canvases this template ships. Absent = [landscape, portrait]
 # (scripts/canvas.config.json defaultCanvases). social-portrait is 1080x1350
@@ -17,3 +17,15 @@ slots:
     required: false
     description: "Optional small uppercase label above the statement"
     sample: "The thesis"
+  - name: items
+    type: items
+    required: false
+    description: |
+      Optional follow-up lines under the statement, smaller, one per item.
+      Each item has:
+        text — the line
+      Every line is a `step`: add the Steps reveal animation to bring them in
+      one at a time. Leave empty for the classic single statement.
+    sample:
+      - text: "Learn the tools."
+      - text: "Ship with them."

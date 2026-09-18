@@ -14,7 +14,7 @@
       <rect x="-100%" y="-100%" width="300%" height="300%" fill="#fff" />
       <svg class="tpl-detail-zoom__hole" x="{{focusX}}%" y="{{focusY}}%" width="{{focusW}}%" height="{{focusH}}%" overflow="visible"><ellipse cx="0" cy="0" rx="50%" ry="50%" fill="#000" /></svg>
     </mask>{{/focusH}}{{/focusW}}
-    <line class="tpl-detail-zoom__linkline" x1="{{focusX}}%" y1="{{focusY}}%" x2="300" y2="445" pathLength="1"{{#focusW}}{{#focusH}} mask="url(#tpl-detail-zoom-hole-{{focusX}}-{{focusY}}-{{focusW}}-{{focusH}})"{{/focusH}}{{/focusW}} />
+    <line class="tpl-detail-zoom__linkline" x1="{{focusX}}%" y1="{{focusY}}%" x2="300" y2="calc(100% + 40px)" pathLength="1"{{#focusW}}{{#focusH}} mask="url(#tpl-detail-zoom-hole-{{focusX}}-{{focusY}}-{{focusW}}-{{focusH}})"{{/focusH}}{{/focusW}} />
   </svg>
   {{/focusY}}{{/focusX}}{{/zoom}}
   <div class="tpl-detail-zoom__foot">

@@ -83,17 +83,27 @@
  * here rather than removed from the root, which the head still needs. */
 .tpl-root.tpl-detail-zoom .tpl-detail-zoom__scene {
   position: relative;
-  flex: none;
+  grid-row: 1;
+  grid-column: 1;
   width: 1280px;
-  height: 300px;
+  /* No height here any more — it comes from `__photo`'s own px height below,
+   * which is the one thing the Studio Size slider can actually scale. */
   margin: 0 -64px;
   overflow: hidden;
   background: var(--s-surface-raised, #141210);
 }
 
+/* Width stays 100% (full-bleed, already spans the whole canvas — there is no
+ * room to grow it sideways) but height is an explicit px, the exact value it
+ * rendered at before this fix (1280×300 crop). `zoom` scales px, not %, so
+ * this is what makes the Studio Size slider on this class do anything at
+ * all: `__scene`'s `height: auto` above then follows it, and so does
+ * `__lensframe`'s below — the SAME class sits on both the scene photo and
+ * the magnified copy inside the card, so one slider value scales both, in
+ * lockstep, keeping the two crops identical the way the design requires. */
 .tpl-root.tpl-detail-zoom .tpl-detail-zoom__photo {
   width: 100%;
-  height: 100%;
+  height: 300px;
   object-fit: cover;
   display: block;
 }
@@ -112,11 +122,23 @@
 }
 
 /* Scene, link line and foot share one box so the line can be placed from the
- * scene's own corner, whatever height the head above them takes. */
+ * scene's own corner, whatever height the head above them takes.
+ *
+ * GRID, not flex column, for row 1: the Studio Size slider zooms `__photo`,
+ * which the scene's `height: auto` follows (see `__photo` below), and the
+ * link SVG has to grow the exact same amount to keep its `focusX/focusY`
+ * percentages meaning the same point the ring sits at. Stacking `__scene` and
+ * `__link` in the SAME auto-sized grid cell (row 1) makes the SVG's box
+ * literally equal to the scene's real rendered height — a sibling has no
+ * other CSS-only way to read another sibling's size. Row 2 (`__foot`) is
+ * unaffected, so the card and caption still reflow below it as before. */
 .tpl-root.tpl-detail-zoom .tpl-detail-zoom__body {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+  display: grid;
+  grid-template-columns: 1fr;
+  /* `1fr` takes the room left, so the scene row stays exactly the photo's
+   * height instead of being stretched by the grid. */
+  grid-template-rows: auto 1fr;
+  row-gap: 24px;
   flex: 1 1 auto;
   min-height: 0;
 }
@@ -125,16 +147,18 @@
  * corner, a fixed point under the scene. A foot that stretched would centre the
  * card in whatever room was left and pull that corner away from the line. */
 .tpl-root.tpl-detail-zoom .tpl-detail-zoom__foot {
+  grid-row: 2;
+  grid-column: 1;
   display: flex;
   align-items: center;
   gap: 40px;
-  flex: none;
   min-height: 0;
+  align-self: start;
 }
 
 /* No card, no line to land on: the lone caption takes the room back and centres in it. */
 .tpl-root.tpl-detail-zoom .tpl-detail-zoom__foot:has(> .tpl-detail-zoom__caption:only-child) {
-  flex: 1 1 auto;
+  align-self: stretch;
 }
 
 /* The line from the ring to the card. The SVG is the scene box exactly, so the
@@ -146,12 +170,19 @@
  * photo's corner) or as 100% (a hole the size of the photo). The mask id carries
  * all four values, so two slides sharing a document share a mask only when it
  * is the same mask. */
+/* Stacked in the SAME grid cell as `__scene` (see `__body`), not positioned
+ * relative to it, so `height: 100%` here resolves against the scene's real
+ * (possibly zoomed) height, not the pre-fix constant 300. That keeps
+ * `x1%`/`y1%` on the line below meaning the same point on the photo that the
+ * ring — a plain child of `__scene`, so its own `%`s already track this for
+ * free — is drawn at, at every zoom level. */
 .tpl-root.tpl-detail-zoom .tpl-detail-zoom__link {
-  position: absolute;
-  left: -64px;
-  top: 0;
+  grid-row: 1;
+  grid-column: 1;
+  align-self: stretch;
   width: 1280px;
-  height: 300px;
+  height: 100%;
+  margin: 0 -64px;
   overflow: visible;
   pointer-events: none;
   z-index: 2;
@@ -208,7 +239,10 @@
   left: 50%;
   top: 50%;
   width: 1280px;
-  height: 300px;
+  /* Follows its own `__photo` (same class as the scene's, so one Size value
+   * scales both): the copy stays the scene box to the pixel, and the inline
+   * translate(-focusX%, -focusY%) resolves against that box at any height. */
+  height: auto;
 }
 
 .tpl-root.tpl-detail-zoom .tpl-detail-zoom__caption {
@@ -220,6 +254,12 @@
   margin: 0;
   max-width: 20ch;
   overflow-wrap: break-word;
+  /* An author may enlarge the card (per-entity size, stored on the slide), and
+   * a flex item will not shrink past its longest word while min-width is auto.
+   * Without this the caption keeps its width and runs off the slide instead of
+   * rewrapping into the room that is left. */
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 /* No ring, no lens: the caption is the whole message, so it centres and grows

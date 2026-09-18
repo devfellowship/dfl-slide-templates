@@ -126,6 +126,14 @@ jobs:
       - name: Check theme conformance (every template × every theme)
         run: npm run check:theme
 
+      # Regression guard for the 2026-09-18 shadow-over-text bug: the
+      # reel-cover presenter's pool/floor shadow painted above the headline
+      # text on published covers. Hit-tests the real paint order at the
+      # geometric overlap of the two boxes and fails if the shadow ever wins
+      # again. See scripts/check-reel-cover-stacking.ts for the mechanism.
+      - name: Check reel-cover text-over-shadow stacking
+        run: npm run check:reel-cover-stacking
+
       - name: Generate previews
         run: npm run preview
 

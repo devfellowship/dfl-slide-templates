@@ -494,6 +494,25 @@
       ]
     },
     {
+      "id": "screen-recording",
+      "version": "1.0.0",
+      "category": "media",
+      "name": "Screen Recording",
+      "when_to_use": "A slide whose content IS the presenter's own screen recording (Screen On in the recorder). Paints only the theme surface behind the screen and camera; Lesson Studio applies it automatically when a screen take lands on a slide with no template.",
+      "avoid_when": "Silent footage uploaded as a file (use video-frame), a static screenshot (use screenshot-frame), or any slide that needs text or animation.",
+      "media_profile": "video",
+      "text_density": "none",
+      "layout": "empty theme surface; the screen recording fills the frame",
+      "tags": [
+        "screen recording",
+        "screencast",
+        "screen",
+        "webcam",
+        "recording",
+        "demo"
+      ]
+    },
+    {
       "id": "annotated-image",
       "version": "1.0.0",
       "category": "media",

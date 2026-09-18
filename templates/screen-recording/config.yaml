@@ -1,0 +1,10 @@
+id: screen-recording
+name: Screen Recording
+version: "1.0.0"
+category: media
+# No slots and no animation targets: the slide's own screen recording fills the
+# frame, and this layout only paints the theme surface behind it (letterbox
+# bands, the camera corner). Lesson Studio applies it to a template-less slide
+# when a take with the screen lands on it, so no screen slide renders the red
+# "No template selected" placeholder.
+slots: []

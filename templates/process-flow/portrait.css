@@ -38,19 +38,44 @@
   margin: 0;
 }
 
+/*
+ * The track is a vertical chain: node, connector, node, connector, node.
+ *
+ * Each item holds one node (the box) and the connector that leaves it. The
+ * connector has a fixed length (72px) and sits flush between the bottom
+ * edge of node N and the top edge of node N+1, on the centre line of the
+ * column. The nodes take all of the remaining height in equal shares, so the
+ * chain fills the track without dead gaps, for 2..N nodes:
+ *
+ *   - every item has flex-basis 72px (the connector) and grows by 1;
+ *   - the last item has no connector, so its basis is 0.
+ *   Free space = track - (N-1) * conn, split N ways -> equal boxes.
+ *
+ * A node is capped at 300px. When the cap applies (2 or 3 short nodes),
+ * the chain is centred in the track, and the connectors still touch the nodes.
+ */
 .tpl-root.tpl-process-flow.tpl-process-flow--portrait .tpl-process-flow__track {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 0;
   flex: 1 1 auto;
+  min-height: 0;
 }
 
 .tpl-root.tpl-process-flow.tpl-process-flow--portrait .tpl-process-flow__item {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
   gap: 0;
-  flex: 1 1 0;
+  flex: 1 1 72px;
+  min-height: 0;
+  max-height: 372px; /* node cap 300px + connector 72px */
+}
+
+.tpl-root.tpl-process-flow.tpl-process-flow--portrait .tpl-process-flow__item:last-child {
+  flex-basis: 0;
+  max-height: 300px;
 }
 
 .tpl-root.tpl-process-flow.tpl-process-flow--portrait .tpl-process-flow__item:last-child .tpl-process-flow__arrow {
@@ -58,36 +83,93 @@
 }
 
 .tpl-root.tpl-process-flow.tpl-process-flow--portrait .tpl-process-flow__box {
-  width: 100%;
+  flex: 1 1 0;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 24px 27px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  padding: 20px 32px;
   background: var(--s-surface-raised, #1a1714);
   border: 1px solid var(--s-border-subtle, #2a2622);
   border-radius: var(--p-radius-lg, 10px);
+  overflow: hidden;
 }
 
 .tpl-root.tpl-process-flow.tpl-process-flow--portrait .tpl-process-flow__label {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 37px;
+  font-size: 52px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
-  line-height: 1.1;
+  line-height: 1.05;
 }
 
 .tpl-root.tpl-process-flow.tpl-process-flow--portrait .tpl-process-flow__note {
-  font-size: 20px;
+  font-size: 24px;
   color: var(--s-ink-muted, #7d7568);
-  line-height: 1.4;
+  line-height: 1.35;
 }
 
+/* The connector: a line from the bottom edge of the node above to the arrow
+   head, which touches the top edge of the node below. Drawn in CSS so it
+   always spans the full gap, whatever the gap is. */
 .tpl-root.tpl-process-flow.tpl-process-flow--portrait .tpl-process-flow__arrow {
-  flex-shrink: 0;
-  font-size: 27px;
-  color: var(--s-brand-solid, #E07A4A);
-  padding: 8px 27px;
-  line-height: 1;
-  align-self: flex-start;
+  position: relative;
+  flex: 0 0 72px;
+  align-self: center;
+  width: 28px;
+}
+
+.tpl-root.tpl-process-flow.tpl-process-flow--portrait .tpl-process-flow__arrow::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 14px;
+  left: 50%;
+  width: 4px;
+  margin-left: -2px;
+  background: var(--s-brand-solid, #E07A4A);
+}
+
+.tpl-root.tpl-process-flow.tpl-process-flow--portrait .tpl-process-flow__arrow::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: 14px solid transparent;
+  border-right: 14px solid transparent;
+  border-top: 16px solid var(--s-brand-solid, #E07A4A);
+}
+
+/* Dense chain: 6 or more nodes. Shorter connectors and smaller type, so every
+   node keeps room for its label on the 1280px canvas. */
+.tpl-root.tpl-process-flow.tpl-process-flow--portrait .tpl-process-flow__track:has(> .tpl-process-flow__item:nth-child(6)) .tpl-process-flow__item {
+  flex-basis: 44px;
+  max-height: none;
+}
+
+.tpl-root.tpl-process-flow.tpl-process-flow--portrait .tpl-process-flow__track:has(> .tpl-process-flow__item:nth-child(6)) .tpl-process-flow__item:last-child {
+  flex-basis: 0;
+}
+
+.tpl-root.tpl-process-flow.tpl-process-flow--portrait .tpl-process-flow__track:has(> .tpl-process-flow__item:nth-child(6)) .tpl-process-flow__arrow {
+  flex-basis: 44px;
+}
+
+.tpl-root.tpl-process-flow.tpl-process-flow--portrait .tpl-process-flow__track:has(> .tpl-process-flow__item:nth-child(6)) .tpl-process-flow__box {
+  padding: 8px 24px;
+  gap: 4px;
+}
+
+.tpl-root.tpl-process-flow.tpl-process-flow--portrait .tpl-process-flow__track:has(> .tpl-process-flow__item:nth-child(6)) .tpl-process-flow__label {
+  font-size: 38px;
+}
+
+.tpl-root.tpl-process-flow.tpl-process-flow--portrait .tpl-process-flow__track:has(> .tpl-process-flow__item:nth-child(6)) .tpl-process-flow__note {
+  font-size: 20px;
 }

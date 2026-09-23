@@ -1,0 +1,63 @@
+/* tpl-video-fullscreen · portrait — 720×1280
+ *
+ * A screen recording that owns the canvas, as if the presenter were sharing
+ * their screen. The export composites the footage OVER the captured slide, so
+ * nothing may overlap the stage: the optional title lives in its own band above
+ * it. Record at 9:14 (e.g. a 360×560 viewport at 3×) for the titled layout, or
+ * at 9:16 for the full-bleed one, and the footage needs no crop.
+ *
+ * With a title: 160px band, then a 720×1120 stage (9:14).
+ * Without a title (--bleed): the stage is the whole 720×1280 canvas.
+ */
+
+.tpl-root.tpl-video-fullscreen.tpl-video-fullscreen--portrait {
+  position: relative;
+  width: 720px;
+  height: 1280px;
+  overflow: hidden;
+  box-sizing: border-box;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', sans-serif);
+}
+
+.tpl-root.tpl-video-fullscreen.tpl-video-fullscreen--portrait .tpl-video-fullscreen__title {
+  position: absolute;
+  left: 32px;
+  top: 44px;
+  width: 656px;
+  margin: 0;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 64px;
+  line-height: 1;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tpl-root.tpl-video-fullscreen.tpl-video-fullscreen--portrait .tpl-video-fullscreen__stage {
+  position: absolute;
+  left: 0;
+  top: 160px;
+  width: 720px;
+  height: 1120px;
+  background: var(--s-surface-page, #0a0908);
+}
+
+.tpl-root.tpl-video-fullscreen.tpl-video-fullscreen--portrait.tpl-video-fullscreen--bleed .tpl-video-fullscreen__stage {
+  top: 0;
+  height: 1280px;
+}
+
+.tpl-root.tpl-video-fullscreen.tpl-video-fullscreen--portrait .tpl-video-fullscreen__footage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: var(--s-surface-page, #0a0908);
+}
+
+.tpl-root.tpl-video-fullscreen.tpl-video-fullscreen--portrait .tpl-video-fullscreen__footage[data-fit="contain"] {
+  object-fit: contain;
+}

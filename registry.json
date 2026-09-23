@@ -998,6 +998,29 @@
         "photo",
         "annotation"
       ]
+    },
+    {
+      "id": "video-fullscreen",
+      "name": "Video Fullscreen",
+      "version": "1.0.0",
+      "category": "media",
+      "when_to_use": "A screen recording that should own the screen, like a shared screen: product walkthroughs, browser captures, reels where the UI must be read on a phone. Optional one-line title in a band above; without it the footage is full-bleed. Silent footage moves in Stage playback and the exported video.",
+      "avoid_when": "The slide needs text beside the footage or a presenter area (use video-frame), only a static image exists (use screenshot-frame), or text must sit on top of the footage — the export draws the footage over the slide.",
+      "media_profile": "video",
+      "tags": [
+        "video",
+        "screen recording",
+        "screen share",
+        "fullscreen",
+        "browser",
+        "product",
+        "demo",
+        "reels",
+        "tiktok",
+        "capture"
+      ],
+      "text_density": "none",
+      "layout": "Footage fills the canvas; an optional single-line title band sits above it."
     }
   ]
 }

@@ -1,0 +1,31 @@
+id: video-fullscreen
+name: Video Fullscreen
+version: "1.0.0"
+category: media
+slots:
+  - name: videoUrl
+    type: text
+    required: true
+    description: "Hosted HTTP(S) H.264 MP4 footage. It plays silently, loops to fill the slide, and exports as motion. Record portrait footage at 9:14 for the titled layout or 9:16 for the full-bleed one."
+    sample: "https://media.devfellowship.com/d7339c49-f8ca-42b8-bcbc-d1074b0e8a7a"
+  - name: posterUrl
+    type: image
+    required: true
+    description: "Still from the same footage, used for thumbnails and image export."
+    sample: "https://media.devfellowship.com/6a1205cf-0d06-454f-a648-5bd0cc0e4d07"
+  - name: clipSeconds
+    type: number
+    required: true
+    description: "Playable source window in seconds, at least 0.1 and no longer than the actual file. Short sources loop; long sources trim to the slide."
+    sample: 10
+  - name: fit
+    type: select
+    required: false
+    options: ["cover", "contain"]
+    description: "Cover fills the stage and crops the overflow (default). Contain shows the whole frame with bands."
+    sample: "cover"
+  - name: title
+    type: text
+    required: false
+    description: "One short line in a band above the footage. Leave it empty and the footage fills the whole canvas. Nothing can sit ON the footage: the export draws it over the slide."
+    sample: "Your workspace, in motion."

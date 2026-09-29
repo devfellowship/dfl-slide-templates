@@ -1,0 +1,88 @@
+/*
+ * tpl-outro · social-portrait — 1080×1350 (4:5, Instagram portrait post)
+ *
+ * The closing card of a carousel. Same contract as portrait: ONE animation
+ * target (the lockup) drives the word, the rule and the CTA through
+ * --anim-opacity / --anim-highlight, and every fallback is the final state.
+ * Hand-tuned for the 4:5 box: wordmark 200px, rule 440px, CTA 34px mono. The
+ * CTA wraps and breaks inside the 888px column, so a long URL or a
+ * "@handle · @handle" line stays inside the frame instead of running past it.
+ * The wordmark comes from the theme (`--s-brand-wordmark`), never from slide data.
+ */
+
+.tpl-root.tpl-outro.tpl-outro--social {
+  position: relative;
+  width: 1080px;
+  height: 1350px;
+  padding: 104px 96px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tpl-root.tpl-outro.tpl-outro--social::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: var(--s-texture-dot-size, 32px) var(--s-texture-dot-size, 32px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-outro.tpl-outro--social > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-outro.tpl-outro--social .tpl-outro__lockup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 48px;
+  max-width: 100%;
+  text-align: center;
+}
+
+.tpl-root.tpl-outro.tpl-outro--social .tpl-outro__word {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 200px;
+  font-weight: var(--p-weight-700, 700);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  line-height: 0.9;
+  text-transform: uppercase;
+  color: var(--s-ink-primary, #f6f1e7);
+  opacity: var(--anim-opacity, 1);
+}
+
+/* The word itself, from the theme. */
+.tpl-root.tpl-outro.tpl-outro--social .tpl-outro__word::before {
+  content: var(--s-brand-wordmark, 'DFL');
+}
+
+.tpl-root.tpl-outro.tpl-outro--social .tpl-outro__mark {
+  color: var(--s-brand-solid, #E07A4A);
+}
+
+.tpl-root.tpl-outro.tpl-outro--social .tpl-outro__rule {
+  width: calc(min(var(--anim-highlight, 1) * 2.25, 1) * 440px);
+  height: 2px;
+  min-height: 2px;
+  flex-shrink: 0;
+  background: var(--s-ink-muted, #7d7568);
+}
+
+.tpl-root.tpl-outro.tpl-outro--social .tpl-outro__cta {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 34px;
+  letter-spacing: var(--p-tracking-wider, 1px);
+  line-height: 1.4;
+  text-transform: uppercase;
+  color: var(--s-ink-muted, #7d7568);
+  opacity: clamp(0, calc(var(--anim-highlight, 1) * 3 - 2), 1);
+  max-width: 888px;
+  overflow-wrap: anywhere;
+}

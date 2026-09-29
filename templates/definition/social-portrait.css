@@ -1,9 +1,9 @@
 /*
  * tpl-definition · social-portrait — 1080×1350 (4:5, Instagram portrait post)
  *
- * Hand-tuned. Term 132px in the 888px box (two lines for a long term), the
- * definition 42px at 1.5 — about 40 characters a line, readable on a phone and
- * good for ~9 lines before the 1142px text box is full.
+ * Hand-tuned. Term 188px in the 888px box (two lines for a long term), the
+ * definition 52px at 1.42 — about 27 characters a line, readable on a phone and
+ * good for ~7 lines before the 1142px text box is full.
  */
 
 .tpl-root.tpl-definition.tpl-definition--social {
@@ -38,12 +38,12 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 48px;
 }
 
 .tpl-root.tpl-definition.tpl-definition--social .tpl-definition__eyebrow {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 26px;
+  font-size: 30px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   text-transform: uppercase;
   color: var(--s-brand-solid, #E07A4A);
@@ -52,7 +52,7 @@
 
 .tpl-root.tpl-definition.tpl-definition--social .tpl-definition__term {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 132px;
+  font-size: 188px;
   font-weight: var(--p-weight-700, 700);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -70,8 +70,8 @@
 }
 
 .tpl-root.tpl-definition.tpl-definition--social .tpl-definition__def {
-  font-size: 42px;
-  line-height: 1.5;
+  font-size: 52px;
+  line-height: 1.42;
   color: var(--s-ink-secondary, #c9c0b4);
   margin: 0;
   overflow-wrap: break-word;

@@ -97,7 +97,7 @@
 
 .tpl-root.tpl-timeline.tpl-timeline--social .tpl-timeline__date {
   font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
-  font-size: 24px;
+  font-size: 26px;
   letter-spacing: var(--p-tracking-wide, 0.5px);
   text-transform: uppercase;
   color: var(--s-ink-muted, #7d7568);
@@ -106,7 +106,7 @@
 
 .tpl-root.tpl-timeline.tpl-timeline--social .tpl-timeline__label {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 54px;
+  font-size: 58px;
   font-weight: var(--p-weight-600, 600);
   letter-spacing: var(--p-tracking-tight, -0.4px);
   color: var(--s-ink-primary, #f6f1e7);
@@ -116,7 +116,7 @@
 }
 
 .tpl-root.tpl-timeline.tpl-timeline--social .tpl-timeline__note {
-  font-size: 30px;
+  font-size: 34px;
   color: var(--s-ink-muted, #7d7568);
   line-height: 1.35;
   margin: 0;
@@ -125,11 +125,11 @@
 
 /* Density tiers by milestone count (the rail line is child 1, so nth-child(7)
    is the 6th milestone and nth-child(9) the 8th). */
-.tpl-root.tpl-timeline.tpl-timeline--social .tpl-timeline__track:has(.tpl-timeline__node:nth-child(7)) .tpl-timeline__label { font-size: 44px; }
-.tpl-root.tpl-timeline.tpl-timeline--social .tpl-timeline__track:has(.tpl-timeline__node:nth-child(7)) .tpl-timeline__note { font-size: 26px; }
-.tpl-root.tpl-timeline.tpl-timeline--social .tpl-timeline__track:has(.tpl-timeline__node:nth-child(7)) .tpl-timeline__date { font-size: 20px; }
+.tpl-root.tpl-timeline.tpl-timeline--social .tpl-timeline__track:has(.tpl-timeline__node:nth-child(7)) .tpl-timeline__label { font-size: 46px; }
+.tpl-root.tpl-timeline.tpl-timeline--social .tpl-timeline__track:has(.tpl-timeline__node:nth-child(7)) .tpl-timeline__note { font-size: 28px; }
+.tpl-root.tpl-timeline.tpl-timeline--social .tpl-timeline__track:has(.tpl-timeline__node:nth-child(7)) .tpl-timeline__date { font-size: 22px; }
 .tpl-root.tpl-timeline.tpl-timeline--social .tpl-timeline__track:has(.tpl-timeline__node:nth-child(7)) .tpl-timeline__content { gap: 6px; }
-.tpl-root.tpl-timeline.tpl-timeline--social .tpl-timeline__track:has(.tpl-timeline__node:nth-child(9)) .tpl-timeline__label { font-size: 36px; }
-.tpl-root.tpl-timeline.tpl-timeline--social .tpl-timeline__track:has(.tpl-timeline__node:nth-child(9)) .tpl-timeline__note { font-size: 22px; line-height: 1.25; }
-.tpl-root.tpl-timeline.tpl-timeline--social .tpl-timeline__track:has(.tpl-timeline__node:nth-child(9)) .tpl-timeline__date { font-size: 18px; }
+.tpl-root.tpl-timeline.tpl-timeline--social .tpl-timeline__track:has(.tpl-timeline__node:nth-child(9)) .tpl-timeline__label { font-size: 38px; }
+.tpl-root.tpl-timeline.tpl-timeline--social .tpl-timeline__track:has(.tpl-timeline__node:nth-child(9)) .tpl-timeline__note { font-size: 24px; line-height: 1.25; }
+.tpl-root.tpl-timeline.tpl-timeline--social .tpl-timeline__track:has(.tpl-timeline__node:nth-child(9)) .tpl-timeline__date { font-size: 20px; }
 .tpl-root.tpl-timeline.tpl-timeline--social .tpl-timeline__track:has(.tpl-timeline__node:nth-child(9)) .tpl-timeline__content { gap: 3px; }

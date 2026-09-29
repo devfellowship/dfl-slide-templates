@@ -1,8 +1,8 @@
 /*
  * tpl-image-quote · social-portrait — 1080×1350 (4:5, Instagram portrait post)
  *
- * Photo on top (600px, ~44% of the frame), quote below in an 888×606px text box
- * (96px sides, 72px top/bottom). The quote is 76px display type — about four
+ * Photo on top (720px, ~53% of the frame), quote below in an 888×486px text box
+ * (96px sides, 72px top/bottom). The quote is 84px display type — about four
  * lines of a doubled-length quote — and the body clips nothing: the photo row
  * is fixed, the text row takes the rest.
  */
@@ -17,7 +17,7 @@
   overflow: hidden;
   isolation: isolate;
   display: grid;
-  grid-template-rows: 600px 1fr;
+  grid-template-rows: 720px 1fr;
 }
 
 .tpl-root.tpl-image-quote.tpl-image-quote--social .tpl-image-quote__media {
@@ -31,6 +31,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* Bias the crop toward the top so a portrait keeps the whole head. */
+  object-position: 50% 12%;
   display: block;
 }
 
@@ -45,7 +47,7 @@
 
 .tpl-root.tpl-image-quote.tpl-image-quote--social .tpl-image-quote__quote {
   font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
-  font-size: 76px;
+  font-size: 84px;
   font-weight: var(--p-weight-600, 600);
   line-height: 1.08;
   letter-spacing: var(--p-tracking-tight, -0.4px);

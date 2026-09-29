@@ -1,0 +1,111 @@
+/*
+ * tpl-before-after-image · social-portrait — 1080×1350 (4:5, Instagram portrait post)
+ *
+ * Hand-tuned. Two 888px-wide frames stacked, Before above After, sharing the
+ * ~1142px text-box height under a 72px title: roughly 480×888 each, a wide
+ * frame that keeps a screenshot readable. Not a scale of portrait — padding,
+ * gaps and label size are set for the 4:5 box and the phone feed.
+ */
+
+.tpl-root.tpl-before-after-image.tpl-before-after-image--social {
+  position: relative;
+  width: 1080px;
+  height: 1350px;
+  padding: 104px 96px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.tpl-root.tpl-before-after-image.tpl-before-after-image--social::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: var(--s-texture-dot-size, 32px) var(--s-texture-dot-size, 32px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-before-after-image.tpl-before-after-image--social > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-before-after-image.tpl-before-after-image--social .tpl-before-after-image__title {
+  flex: 0 0 auto;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 72px;
+  font-weight: 600;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+  line-height: 1.05;
+}
+
+.tpl-root.tpl-before-after-image.tpl-before-after-image--social .tpl-before-after-image__stack {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.tpl-root.tpl-before-after-image.tpl-before-after-image--social .tpl-before-after-image__panel {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.tpl-root.tpl-before-after-image.tpl-before-after-image--social .tpl-before-after-image__panel--before {
+  padding-bottom: 20px;
+}
+
+.tpl-root.tpl-before-after-image.tpl-before-after-image--social .tpl-before-after-image__panel--after {
+  padding-top: 20px;
+}
+
+.tpl-root.tpl-before-after-image.tpl-before-after-image--social .tpl-before-after-image__frame {
+  flex: 1 1 auto;
+  min-height: 0;
+  border-radius: var(--p-radius-lg, 10px);
+  overflow: hidden;
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  background: var(--s-surface-raised, #1a1714);
+}
+
+.tpl-root.tpl-before-after-image.tpl-before-after-image--social .tpl-before-after-image__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tpl-root.tpl-before-after-image.tpl-before-after-image--social .tpl-before-after-image__divider {
+  flex: 0 0 1px;
+  width: 100%;
+  background: var(--s-border-strong, #3a3530);
+}
+
+.tpl-root.tpl-before-after-image.tpl-before-after-image--social .tpl-before-after-image__label {
+  flex: 0 0 auto;
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 24px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  text-transform: uppercase;
+}
+
+.tpl-root.tpl-before-after-image.tpl-before-after-image--social .tpl-before-after-image__label--before {
+  color: var(--s-ink-muted, #7d7568);
+}
+
+.tpl-root.tpl-before-after-image.tpl-before-after-image--social .tpl-before-after-image__label--after {
+  color: var(--s-brand-solid, #E07A4A);
+}

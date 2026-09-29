@@ -1,0 +1,31 @@
+/*
+ * fullscreen-image · social-portrait — 1080×1350 (4:5, Instagram portrait post)
+ *
+ * The image IS the slide: no padding, no texture, no text, so there is nothing
+ * to crop except the photo itself. `cover` fills the 4:5 frame (a 16:9 source
+ * loses its sides, which is what cover means); `contain` keeps the whole image
+ * on the themed surface. The root paints an opaque themed surface so a
+ * letterbox band or a transparent PNG never shows the host deck's colour.
+ */
+.tpl-root.tpl-fullscreen-image.tpl-fullscreen-image--social {
+  position: relative;
+  width: 1080px;
+  height: 1350px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: var(--s-surface-page, #0a0908);
+  box-sizing: border-box;
+}
+
+.tpl-root.tpl-fullscreen-image.tpl-fullscreen-image--social .tpl-fsimg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tpl-root.tpl-fullscreen-image.tpl-fullscreen-image--social .tpl-fsimg--cover { object-fit: cover; }
+.tpl-root.tpl-fullscreen-image.tpl-fullscreen-image--social .tpl-fsimg--contain { object-fit: contain; }

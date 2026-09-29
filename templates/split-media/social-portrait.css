@@ -1,0 +1,99 @@
+/*
+ * tpl-split-media · social-portrait — 1080×1350 (4:5, Instagram portrait post)
+ *
+ * Hand-tuned. Panels stack (side by side would give two 430px-wide slivers that
+ * crop a screenshot badly): two 888px-wide frames under a 72px title, each
+ * labelled below in 24px mono. Padding, gaps and label size are set for the 4:5
+ * box, not scaled from portrait.
+ */
+
+.tpl-root.tpl-split-media.tpl-split-media--social {
+  position: relative;
+  width: 1080px;
+  height: 1350px;
+  padding: 104px 96px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.tpl-root.tpl-split-media.tpl-split-media--social::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: var(--s-texture-dot-size, 32px) var(--s-texture-dot-size, 32px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-split-media.tpl-split-media--social > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-split-media.tpl-split-media--social .tpl-split-media__title {
+  flex: 0 0 auto;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 72px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+  line-height: 1.05;
+}
+
+.tpl-root.tpl-split-media.tpl-split-media--social .tpl-split-media__panels {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+}
+
+.tpl-root.tpl-split-media.tpl-split-media--social .tpl-split-media__panel {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tpl-root.tpl-split-media.tpl-split-media--social .tpl-split-media__frame {
+  flex: 1 1 auto;
+  min-height: 0;
+  border-radius: var(--p-radius-xl, 14px);
+  overflow: hidden;
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  background: var(--s-surface-raised, #1a1714);
+}
+
+.tpl-root.tpl-split-media.tpl-split-media--social .tpl-split-media__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tpl-root.tpl-split-media.tpl-split-media--social .tpl-split-media__label {
+  flex: 0 0 auto;
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 24px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  text-transform: uppercase;
+  color: var(--s-ink-muted, #7d7568);
+  text-align: center;
+}
+
+.tpl-root.tpl-split-media.tpl-split-media--social .tpl-split-media__divider {
+  flex: 0 0 1px;
+  align-self: stretch;
+  margin: 28px 0;
+  background: var(--s-border-strong, #3a3530);
+}

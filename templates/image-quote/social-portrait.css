@@ -1,0 +1,81 @@
+/*
+ * tpl-image-quote · social-portrait — 1080×1350 (4:5, Instagram portrait post)
+ *
+ * Photo on top (600px, ~44% of the frame), quote below in an 888×606px text box
+ * (96px sides, 72px top/bottom). The quote is 76px display type — about four
+ * lines of a doubled-length quote — and the body clips nothing: the photo row
+ * is fixed, the text row takes the rest.
+ */
+.tpl-root.tpl-image-quote.tpl-image-quote--social {
+  position: relative;
+  width: 1080px;
+  height: 1350px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: grid;
+  grid-template-rows: 600px 1fr;
+}
+
+.tpl-root.tpl-image-quote.tpl-image-quote--social .tpl-image-quote__media {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: var(--s-surface-raised, #1a1714);
+}
+
+.tpl-root.tpl-image-quote.tpl-image-quote--social .tpl-image-quote__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tpl-root.tpl-image-quote.tpl-image-quote--social .tpl-image-quote__body {
+  min-height: 0;
+  padding: 72px 96px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 40px;
+}
+
+.tpl-root.tpl-image-quote.tpl-image-quote--social .tpl-image-quote__quote {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 76px;
+  font-weight: var(--p-weight-600, 600);
+  line-height: 1.08;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+}
+
+.tpl-root.tpl-image-quote.tpl-image-quote--social .tpl-image-quote__quote::before {
+  content: "\201C";
+  color: var(--s-brand-fg, #f0a872);
+}
+
+.tpl-root.tpl-image-quote.tpl-image-quote--social .tpl-image-quote__attribution {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tpl-root.tpl-image-quote.tpl-image-quote--social .tpl-image-quote__author {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 28px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  color: var(--s-brand-fg, #f0a872);
+  overflow-wrap: break-word;
+}
+
+.tpl-root.tpl-image-quote.tpl-image-quote--social .tpl-image-quote__role {
+  font-size: 26px;
+  color: var(--s-ink-muted, #7d7568);
+  overflow-wrap: break-word;
+}

@@ -1,0 +1,86 @@
+/*
+ * tpl-stat-number · social-portrait — 1080×1350 (4:5, Instagram portrait post)
+ *
+ * Hand-tuned. The column is the full 888px text box. Portrait's rule holds: a
+ * value up to ~2.6x its font size stays on one line (340px x 2.58 = 877px);
+ * longer values wrap on the value's own breakable spaces, and 4:5 has the
+ * height for three lines. `overflow-wrap: break-word` keeps a single
+ * unbreakable token inside the column instead of past the canvas edge.
+ */
+
+.tpl-root.tpl-stat-number.tpl-stat-number--social {
+  position: relative;
+  width: 1080px;
+  height: 1350px;
+  padding: 120px 96px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tpl-root.tpl-stat-number.tpl-stat-number--social::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: var(--s-texture-dot-size, 32px) var(--s-texture-dot-size, 32px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-stat-number.tpl-stat-number--social > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-stat-number.tpl-stat-number--social .tpl-stat-number__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 20px;
+  flex: none;
+  width: 100%;
+}
+
+.tpl-root.tpl-stat-number.tpl-stat-number--social .tpl-stat-number__eyebrow {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 28px;
+  letter-spacing: var(--p-tracking-wider, 0.8px);
+  text-transform: uppercase;
+  color: var(--s-ink-muted, #7d7568);
+  overflow-wrap: break-word;
+}
+
+.tpl-root.tpl-stat-number.tpl-stat-number--social .tpl-stat-number__value {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 340px;
+  font-weight: var(--p-weight-700, 700);
+  line-height: 0.82;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  color: var(--s-brand-fg, #f0a872);
+  font-feature-settings: "tnum" 1;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.tpl-root.tpl-stat-number.tpl-stat-number--social .tpl-stat-number__label {
+  font-size: 56px;
+  line-height: 1.3;
+  color: var(--s-ink-secondary, #c9c0b4);
+  margin: 20px 0 0;
+  max-width: 22ch;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+}
+
+.tpl-root.tpl-stat-number.tpl-stat-number--social .tpl-stat-number__source {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 26px;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  color: var(--s-ink-muted, #7d7568);
+  overflow-wrap: break-word;
+}

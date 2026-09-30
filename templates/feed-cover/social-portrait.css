@@ -1,0 +1,147 @@
+/*
+ * tpl-feed-cover · social-portrait — 1080×1350 (4:5, Instagram carousel cover)
+ *
+ * The first frame of a feed carousel. A POSTER: one headline carries it, an
+ * optional floating icon sits above, and the foot holds the author handle(s)
+ * and a swipe hint. Declared for social-portrait ONLY (like reel-cover for
+ * portrait): a carousel cover is not a deck slide.
+ *
+ * Nothing sits closer than 96px to any edge. Instagram's profile grid shows a
+ * 3:4 centre crop of a 4:5 post, which trims ~34px off each side, so the 96px
+ * side padding keeps every glyph inside the thumbnail as well. The foot is
+ * pinned 104px above the bottom edge.
+ *
+ * Headline steps (888px text box, Barlow Condensed bold caps):
+ *   compact 116px · regular 152px · large 204px
+ * Every step wraps on word breaks and breaks a single long word inside the box
+ * (`overflow-wrap: break-word`) instead of painting past it.
+ */
+
+.tpl-root.tpl-feed-cover.tpl-feed-cover--social {
+  position: relative;
+  width: 1080px;
+  height: 1350px;
+  padding: 120px 96px 104px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+}
+
+.tpl-root.tpl-feed-cover.tpl-feed-cover--social::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: var(--s-texture-dot-size, 32px) var(--s-texture-dot-size, 32px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-feed-cover.tpl-feed-cover--social > * { position: relative; z-index: 1; }
+
+/* The only brand mark: a rule across the top, like reel-cover. */
+.tpl-root.tpl-feed-cover.tpl-feed-cover--social .tpl-feed-cover__rule {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 8px;
+  background: var(--s-brand-solid, #E07A4A);
+  z-index: 2;
+}
+
+.tpl-root.tpl-feed-cover.tpl-feed-cover--social .tpl-feed-cover__main {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 36px;
+}
+
+.tpl-root.tpl-feed-cover.tpl-feed-cover--social .tpl-feed-cover__image {
+  display: block;
+  /* Shrinks first: a long headline takes the icon's room before it can reach
+     the foot. */
+  flex: 0 1 260px;
+  width: 260px;
+  min-height: 0;
+  object-fit: contain;
+  object-position: 0 50%;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 18px 24px rgba(10, 9, 8, 0.85));
+}
+
+.tpl-root.tpl-feed-cover.tpl-feed-cover--social .tpl-feed-cover__kicker {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-weight: var(--p-weight-700, 700);
+  font-size: 56px;
+  line-height: 1;
+  letter-spacing: var(--p-tracking-wide, 0.4px);
+  text-transform: uppercase;
+  color: var(--s-brand-solid, #E07A4A);
+  overflow-wrap: break-word;
+  text-wrap: balance;
+}
+
+.tpl-root.tpl-feed-cover.tpl-feed-cover--social .tpl-feed-cover__headline {
+  margin: 0;
+  max-width: 100%;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-weight: var(--p-weight-700, 700);
+  font-size: 152px;
+  line-height: 0.94;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  text-transform: uppercase;
+  color: var(--s-ink-primary, #f6f1e7);
+  overflow-wrap: break-word;
+  text-wrap: balance;
+}
+
+.tpl-root.tpl-feed-cover.tpl-feed-cover--social.tpl-feed-cover--scale-compact .tpl-feed-cover__headline { font-size: 116px; }
+.tpl-root.tpl-feed-cover.tpl-feed-cover--social.tpl-feed-cover--scale-large .tpl-feed-cover__headline { font-size: 204px; line-height: 0.9; }
+
+/* Foot: handle(s) left, swipe hint right, on one hairline. */
+.tpl-root.tpl-feed-cover.tpl-feed-cover--social .tpl-feed-cover__foot {
+  flex: none;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 32px;
+  margin-top: 48px;
+  padding-top: 36px;
+  border-top: 1px solid var(--s-border-strong, #3a3530);
+}
+
+/* No handle and no swipe: no foot, no orphan hairline. */
+.tpl-root.tpl-feed-cover.tpl-feed-cover--social .tpl-feed-cover__foot:empty { display: none; }
+
+.tpl-root.tpl-feed-cover.tpl-feed-cover--social .tpl-feed-cover__handle {
+  min-width: 0;
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-weight: var(--p-weight-500, 500);
+  font-size: 28px;
+  line-height: 1.3;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  color: var(--s-ink-secondary, #c9c0b4);
+  overflow-wrap: anywhere;
+}
+
+.tpl-root.tpl-feed-cover.tpl-feed-cover--social .tpl-feed-cover__swipe {
+  flex: none;
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-weight: var(--p-weight-500, 500);
+  font-size: 30px;
+  line-height: 1.3;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  text-transform: uppercase;
+  color: var(--s-brand-solid, #E07A4A);
+  margin-left: auto;
+  white-space: nowrap;
+}

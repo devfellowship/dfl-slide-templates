@@ -1,0 +1,46 @@
+id: feed-cover
+name: Feed Cover
+version: "1.0.0"
+category: content
+# An Instagram carousel cover is 4:5 and nothing else. It is not a deck slide,
+# so it declares only the social-portrait canvas (1080x1350) — landscape and
+# portrait would be dead files. Same posture as reel-cover, which is
+# portrait-only.
+canvases: [social-portrait]
+slots:
+  - name: headline
+    type: text
+    required: true
+    description: "The hook — the one line the cover exists to say. Two to five words per line reads best; 20 to 40 characters sets on three or four lines at the regular size."
+    sample: "Como usar IA sem perder o controle"
+  - name: kicker
+    type: text
+    required: false
+    description: "Optional short setup line above the headline, drawn in caps. The half of the hook that makes the headline mean something."
+    sample: "Guia prático"
+  - name: imageUrl
+    type: image
+    required: false
+    description: "Optional floating image or icon above the kicker. A transparent-background PNG or SVG reads best. Omit it and the block centres on the type alone."
+    sample: "data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Crect x='20' y='20' width='160' height='160' rx='36' fill='none' stroke='%23E07A4A' stroke-width='10'/%3E%3Cpath d='M78 62 L122 100 L78 138' fill='none' stroke='%23E07A4A' stroke-width='14' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"
+  - name: imageAlt
+    type: text
+    required: false
+    description: "Alt text for the floating image"
+    sample: "Terminal icon"
+  - name: handle
+    type: text
+    required: false
+    description: "The attribution line at the foot of the cover — one or two social handles separated by a middle dot. Pass it as one string."
+    sample: "@samuel.stefano · @devfellowship"
+  - name: swipe
+    type: text
+    required: false
+    description: "The swipe hint at the foot, right side, in the post's language. Include the arrow. Omit it for a cover that should not prompt a swipe."
+    sample: "arrasta →"
+  - name: scale
+    type: select
+    required: false
+    options: ["compact", "regular", "large"]
+    description: "Headline size step. 'regular' (the default) is 152px and sets a 20 to 40 character headline on three or four lines. 'compact' is 116px, for a headline of 45 to 70 characters. 'large' is 204px, for a headline short enough to hold two lines — under about 22 characters."
+    sample: "regular"

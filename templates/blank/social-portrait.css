@@ -1,0 +1,16 @@
+/*
+ * Blank template — social-portrait (1080×1350, 4:5 Instagram post).
+ *
+ * Fluid on purpose, like landscape and portrait (see fluidTemplates in
+ * scripts/canvas.config.json): width/height are 100% so the backdrop fills
+ * whatever surface the host hands it — at social-portrait that surface is the
+ * 1080×1350 stage. Same true-black backdrop, no content, nothing to crop.
+ */
+.tpl-root.tpl-blank.tpl-blank--social {
+  width: 100%;
+  height: 100%;
+  background: #000000;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}

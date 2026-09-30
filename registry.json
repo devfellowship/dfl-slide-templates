@@ -1021,6 +1021,28 @@
       ],
       "text_density": "none",
       "layout": "Footage fills the canvas; an optional single-line title band sits above it."
+    },
+    {
+      "id": "feed-cover",
+      "version": "1.0.0",
+      "category": "content",
+      "name": "Feed Cover",
+      "when_to_use": "The first frame of an Instagram feed carousel (4:5). One big headline carries the cover, with an optional setup line and floating icon above it, the author handle(s) at the foot and a swipe hint (\"arrasta →\") pointing at the next slide. Social-portrait only; every element sits at least 96px inside the frame and survives the 3:4 profile-grid crop.",
+      "avoid_when": "A slide inside a deck (use title or big-statement), a Reel or Short cover (use reel-cover), a landscape thumbnail, or any inner carousel slide — this one is only the cover.",
+      "media_profile": "text-heavy",
+      "text_density": "low",
+      "layout": "social-portrait-only poster: top brand rule, optional floating icon, kicker and left-aligned caps headline centred vertically, handle(s) and swipe hint on a hairline at the foot",
+      "tags": [
+        "cover",
+        "carousel",
+        "instagram",
+        "feed",
+        "social",
+        "4:5",
+        "hook",
+        "headline",
+        "swipe"
+      ]
     }
   ]
 }

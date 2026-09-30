@@ -1,0 +1,271 @@
+/*
+ * tpl-detail-zoom · social-portrait — 1080×1350 (4:5, Instagram portrait post)
+ *
+ * Same construction as portrait, re-measured for the 4:5 box. THE LENS MATH IS
+ * UNCHANGED: the ring and the lens card are both positioned from the same
+ * focusX/focusY percentages of the photo box, and the lens holds a full copy of
+ * that box (`__lensframe`: same width as the scene, height auto from the same
+ * `__photo` class) scaled about the focus point. Only the numbers that name the
+ * box moved: scene and lensframe are 1080 wide (full-bleed; the 96px page
+ * padding is undone with `margin: 0 -96px`), the photo is 608px tall (16:9),
+ * and the link line lands on the card's top-right corner at x = 96 + 316 = 412
+ * (the `x2` in social-portrait.html), 40px under the scene (the body row-gap).
+ *
+ * Vertical budget for a two-line title: 80 top + 178 head + 36 gap + 608 photo +
+ * 40 row-gap + 316 card + 72 bottom = 1330 of 1350.
+ */
+
+.tpl-root.tpl-detail-zoom.tpl-detail-zoom--social {
+  position: relative;
+  width: 1080px;
+  height: 1350px;
+  padding: 80px 96px 72px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.tpl-root.tpl-detail-zoom.tpl-detail-zoom--social::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: var(--s-texture-dot-size, 32px) var(--s-texture-dot-size, 32px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-detail-zoom.tpl-detail-zoom--social > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-detail-zoom.tpl-detail-zoom--social .tpl-detail-zoom__head {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: none;
+}
+
+.tpl-root.tpl-detail-zoom.tpl-detail-zoom--social .tpl-detail-zoom__eyebrow {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 26px;
+  letter-spacing: var(--p-tracking-wider, 0.8px);
+  text-transform: uppercase;
+  color: var(--s-brand-solid, #e07a4a);
+}
+
+.tpl-root.tpl-detail-zoom.tpl-detail-zoom--social .tpl-detail-zoom__title {
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 72px;
+  font-weight: var(--p-weight-700, 700);
+  line-height: 1;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  text-transform: uppercase;
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+  overflow-wrap: break-word;
+}
+
+/* Full-bleed: the scene reaches both edges, so the 40px page padding is undone
+ * here rather than removed from the root, which the head still needs. */
+.tpl-root.tpl-detail-zoom.tpl-detail-zoom--social .tpl-detail-zoom__scene {
+  position: relative;
+  grid-row: 1;
+  grid-column: 1;
+  width: 1080px;
+  /* No height here any more — it comes from `__photo`'s own px height below,
+   * which is the one thing the Studio Size slider can actually scale. */
+  margin: 0 -96px;
+  overflow: hidden;
+  background: var(--s-surface-raised, #141210);
+}
+
+/* Width stays 100% (full-bleed, already spans the whole canvas — there is no
+ * room to grow it sideways) but height is an explicit px, the exact value it
+ * rendered at before this fix (720×405 crop). `zoom` scales px, not %, so
+ * this is what makes the Studio Size slider on this class do anything at
+ * all: `__scene`'s `height: auto` above then follows it, and so does
+ * `__lensframe`'s below — the SAME class sits on both the scene photo and
+ * the magnified copy inside the card, so one slider value scales both, in
+ * lockstep, keeping the two crops identical the way the design requires. */
+.tpl-root.tpl-detail-zoom.tpl-detail-zoom--social .tpl-detail-zoom__photo {
+  width: 100%;
+  height: 608px;
+  object-fit: cover;
+  display: block;
+}
+
+/* The size comes from the focusW/focusH slots inline. They are optional, and an
+ * empty one makes that inline declaration invalid, which drops it and leaves
+ * this default standing — never a 0×0 ring. */
+.tpl-root.tpl-detail-zoom.tpl-detail-zoom--social .tpl-detail-zoom__ring {
+  position: absolute;
+  width: 12%;
+  height: 16%;
+  transform: translate(-50%, -50%);
+  border: 5px solid var(--s-brand-solid, #e07a4a);
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+
+/* Scene, link line and foot share one box so the line can be placed from the
+ * scene's own corner, whatever height the head above them takes.
+ *
+ * GRID, not flex column, for row 1: the Studio Size slider zooms `__photo`,
+ * which the scene's `height: auto` follows (see `__photo` below), and the
+ * link SVG has to grow the exact same amount to keep its `focusX/focusY`
+ * percentages meaning the same point the ring sits at. Stacking `__scene` and
+ * `__link` in the SAME auto-sized grid cell (row 1) makes the SVG's box
+ * literally equal to the scene's real rendered height — a sibling has no
+ * other CSS-only way to read another sibling's size. Row 2 (`__foot`) is
+ * unaffected, so the card and caption still reflow below it as before. */
+.tpl-root.tpl-detail-zoom.tpl-detail-zoom--social .tpl-detail-zoom__body {
+  display: grid;
+  grid-template-columns: 1fr;
+  /* `1fr` takes the room left, so the scene row stays exactly the photo's
+   * height instead of being stretched by the grid. */
+  grid-template-rows: auto 1fr;
+  row-gap: 40px;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* `flex: none` and not `1 1 auto`: the link line ends on the card's top-right
+ * corner, a fixed point under the scene. A foot that stretched would centre the
+ * card in whatever room was left and pull that corner away from the line. */
+.tpl-root.tpl-detail-zoom.tpl-detail-zoom--social .tpl-detail-zoom__foot {
+  grid-row: 2;
+  grid-column: 1;
+  display: flex;
+  align-items: center;
+  gap: 44px;
+  min-height: 0;
+  align-self: start;
+}
+
+/* No card, no line to land on: the lone caption takes the room back and centres in it. */
+.tpl-root.tpl-detail-zoom.tpl-detail-zoom--social .tpl-detail-zoom__foot:has(> .tpl-detail-zoom__caption:only-child) {
+  align-self: stretch;
+}
+
+/* The line from the ring to the card. The SVG is the scene box exactly, so the
+ * focus percentages mean here what they mean on the ring; it overflows on
+ * purpose to reach the card underneath. The mask cuts the stretch inside the
+ * ring, so the line starts ON the ring and not at its centre. The HTML draws
+ * the line only with a focus point, and masks it only with a ring size: an empty
+ * slot leaves an invalid SVG length behind, which reads as 0 (a line from the
+ * photo's corner) or as 100% (a hole the size of the photo). The mask id carries
+ * all four values, so two slides sharing a document share a mask only when it
+ * is the same mask. */
+/* Stacked in the SAME grid cell as `__scene` (see `__body`), not positioned
+ * relative to it, so `height: 100%` here resolves against the scene's real
+ * (possibly zoomed) height, not the pre-fix constant 405. That keeps
+ * `x1%`/`y1%` on the line below meaning the same point on the photo that the
+ * ring — a plain child of `__scene`, so its own `%`s already track this for
+ * free — is drawn at, at every zoom level. */
+.tpl-root.tpl-detail-zoom.tpl-detail-zoom--social .tpl-detail-zoom__link {
+  grid-row: 1;
+  grid-column: 1;
+  align-self: stretch;
+  width: 1080px;
+  height: 100%;
+  margin: 0 -96px;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.tpl-root.tpl-detail-zoom.tpl-detail-zoom--social .tpl-detail-zoom__linkline {
+  stroke: var(--s-brand-solid, #e07a4a);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--anim-progress, 1));
+}
+
+/* Animation (steps-reveal, indexes 0 ring · 1 line · 2 card · 3 caption ·
+ * 4 title, whose `data-anim-span="slide"` asks the Studio for one beat as long
+ * as the slide instead of a quick reveal). The Studio runtime writes --anim-progress / --anim-opacity for a
+ * given t; every fallback is the final state, so a slide without animation is
+ * unchanged. The ring mask reads only the ALPHA of its colour. The ring is DRAWN around, clockwise from the top; the card grows
+ * out of the corner the line lands on. The title never hides — it only exposes
+ * its progress, which the Studio's gradient text effect sweeps along. */
+.tpl-root.tpl-detail-zoom.tpl-detail-zoom--social .tpl-detail-zoom__ring {
+  -webkit-mask-image: conic-gradient(var(--s-brand-solid, #e07a4a) calc(var(--anim-progress, 1) * 360deg), transparent 0);
+  mask-image: conic-gradient(var(--s-brand-solid, #e07a4a) calc(var(--anim-progress, 1) * 360deg), transparent 0);
+}
+
+.tpl-root.tpl-detail-zoom.tpl-detail-zoom--social .tpl-detail-zoom__lens {
+  opacity: var(--anim-opacity, 1);
+  transform: scale(calc(0.35 + 0.65 * var(--anim-progress, 1)));
+  transform-origin: 100% 0;
+}
+
+.tpl-root.tpl-detail-zoom.tpl-detail-zoom--social .tpl-detail-zoom__caption {
+  opacity: var(--anim-opacity, 1);
+  transform: translateX(calc((1 - var(--anim-progress, 1)) * 24px));
+}
+
+.tpl-root.tpl-detail-zoom.tpl-detail-zoom--social .tpl-detail-zoom__lens {
+  position: relative;
+  flex: none;
+  align-self: flex-start;
+  width: 316px;
+  height: 316px;
+  overflow: hidden;
+  border: 6px solid var(--s-brand-solid, #e07a4a);
+  border-radius: var(--p-radius-xl, 14px);
+  box-sizing: border-box;
+  background: var(--s-surface-raised, #141210);
+}
+
+/* A copy of the scene box, to the pixel — that is what makes its `cover` crop
+ * the same one the scene shows. Its top-left sits at the card's centre; the
+ * inline transform pulls the focus point back onto it. */
+.tpl-root.tpl-detail-zoom.tpl-detail-zoom--social .tpl-detail-zoom__lensframe {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1080px;
+  /* Height, not width, follows `__photo` (see the comment there): its own
+   * `<img>` carries the same class as the scene's, so the Studio Size
+   * slider scales both by the same S and this box ends up the same
+   * 720×(405×S) as `__scene`, which is what keeps the two `cover` crops
+   * identical. The `translate(-focusX%, -focusY%)` on this box (inline,
+   * from the slots) resolves against its own size either way, so it still
+   * lands the focus point dead centre at any height. */
+  height: auto;
+}
+
+.tpl-root.tpl-detail-zoom.tpl-detail-zoom--social .tpl-detail-zoom__caption {
+  align-self: center;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 60px;
+  font-weight: var(--p-weight-700, 700);
+  line-height: 1.08;
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+  max-width: 15ch;
+  overflow-wrap: break-word;
+  /* An author may enlarge the card (per-entity size, stored on the slide), and
+   * a flex item will not shrink past its longest word while min-width is auto.
+   * Without this the caption keeps its width and runs off the slide instead of
+   * rewrapping into the room that is left. */
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* No ring, no lens: the caption is the whole message, so it centres and grows
+ * into the room the card would have taken. */
+.tpl-root.tpl-detail-zoom.tpl-detail-zoom--social .tpl-detail-zoom__caption:only-child {
+  font-size: 100px;
+  text-align: center;
+  color: var(--s-brand-solid, #e07a4a);
+  max-width: 16ch;
+  margin: 0 auto;
+  text-wrap: balance;
+}

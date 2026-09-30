@@ -1,0 +1,105 @@
+/*
+ * tpl-chart · social-portrait — 1080×1350 (4:5, Instagram portrait post)
+ *
+ * The chart area takes every pixel the title leaves (flex: 1) inside the
+ * 888×1142 text box, so a canvas the host draws into it is as large as 4:5
+ * allows: about 888 wide by 950 tall under a one-line title. Hand-tuned title
+ * (76px) and placeholder sizes; a long title wraps and the area shrinks.
+ */
+
+.tpl-root.tpl-chart.tpl-chart--social {
+  position: relative;
+  width: 1080px;
+  height: 1350px;
+  padding: 104px 96px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.tpl-root.tpl-chart.tpl-chart--social::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: var(--s-texture-dot-size, 32px) var(--s-texture-dot-size, 32px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-chart.tpl-chart--social > * { position: relative; z-index: 1; }
+
+.tpl-root.tpl-chart.tpl-chart--social .tpl-chart__title {
+  flex: 0 0 auto;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-size: 76px;
+  font-weight: var(--p-weight-600, 600);
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  line-height: 1.05;
+  color: var(--s-ink-primary, #f6f1e7);
+  margin: 0;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+}
+
+.tpl-root.tpl-chart.tpl-chart--social .tpl-chart__title::after {
+  content: "";
+  display: block;
+  height: 3px;
+  margin-top: 26px;
+  background: linear-gradient(
+    90deg,
+    var(--s-brand-solid, #E07A4A) 0,
+    var(--s-brand-solid, #E07A4A) 80px,
+    var(--s-border-subtle, #2a2622) 80px,
+    var(--s-border-subtle, #2a2622) 100%
+  );
+}
+
+.tpl-root.tpl-chart.tpl-chart--social .tpl-chart__area {
+  flex: 1 1 auto;
+  min-height: 0;
+  border-radius: var(--p-radius-xl, 14px);
+  border: 1px solid var(--s-border-subtle, #2a2622);
+  background: var(--s-surface-panel, #141210);
+  position: relative;
+  overflow: hidden;
+}
+
+.tpl-root.tpl-chart.tpl-chart--social .tpl-chart__canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.tpl-root.tpl-chart.tpl-chart--social .tpl-chart__placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  color: var(--s-brand-solid, #E07A4A);
+}
+
+.tpl-root.tpl-chart.tpl-chart--social .tpl-chart__placeholder-icon {
+  width: 120px;
+  height: 120px;
+}
+
+.tpl-root.tpl-chart.tpl-chart--social .tpl-chart__placeholder-label {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-size: 24px;
+  font-weight: var(--p-weight-500, 500);
+  letter-spacing: var(--p-tracking-wider, 0.8px);
+  text-transform: uppercase;
+  color: var(--s-ink-muted, #7d7568);
+  margin: 0;
+}

@@ -8,6 +8,7 @@
     "showcase": "ts-node scripts/showcase-gen.ts",
     "lint:css": "node scripts/lint-css.mjs",
     "check:theme": "ts-node scripts/check-theme.ts",
+    "check:reel-cover-stacking": "ts-node scripts/check-reel-cover-stacking.ts",
     "test:automerge": "node .github/scripts/automerge-decide.test.mjs",
     "check:registry": "node scripts/check-registry-shape.mjs"
   },

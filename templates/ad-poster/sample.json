@@ -1,0 +1,14 @@
+{
+  "kicker": "Software sob medida",
+  "headline": "Seu produto",
+  "highlight": "no ar em semanas",
+  "items": [
+    { "text": "Da ideia ao deploy, com time dedicado" },
+    { "text": "Entrega toda semana, em produção" },
+    { "text": "Código e infra ficam com você" }
+  ],
+  "cta": "Fale com a gente",
+  "handle": "devfellowship.com",
+  "imageUrl": "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&auto=format&fit=crop",
+  "imageAlt": "A developer workstation with code on screen"
+}

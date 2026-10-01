@@ -1,0 +1,241 @@
+/*
+ * tpl-ad-poster · social-portrait — 1080×1350 (4:5, feed ad / promoted post)
+ *
+ * A single-image AD: brand mark, kicker, a two-tone caps headline, three or
+ * four checked benefits and one call-to-action pill. An optional photograph
+ * bleeds behind the right half under a scrim that is opaque where the type
+ * sits. Declared for social-portrait ONLY (like feed-cover): an ad is not a
+ * deck slide.
+ *
+ * Nothing sits closer than 96px to a side edge, so every glyph survives the
+ * 3:4 profile-grid crop of a 4:5 post.
+ *
+ * Without a photograph the type reads the themed surface inks. With one, the
+ * root carries `--media` and the type switches to the on-media inks, because a
+ * scrim is dark in every theme.
+ */
+
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social {
+  position: relative;
+  width: 1080px;
+  height: 1350px;
+  padding: 96px 96px 104px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', system-ui, sans-serif);
+  box-sizing: border-box;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+}
+
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--s-texture-dot, rgba(255, 240, 220, 0.025)) 1px, transparent 0);
+  background-size: var(--s-texture-dot-size, 32px) var(--s-texture-dot-size, 32px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social > * { position: relative; z-index: 2; }
+
+/* The photograph fills the canvas and is anchored right: the subject lives in
+   the right half, the type in the left. */
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social .tpl-ad-poster__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 78% 50%;
+  display: block;
+  z-index: 0;
+}
+
+/* Two washes: one closes the left half for the type, one closes the foot for
+   the call to action. */
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social .tpl-ad-poster__scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(10, 9, 8, 0.95) 0%,
+      rgba(10, 9, 8, 0.86) 40%,
+      rgba(10, 9, 8, 0.38) 70%,
+      rgba(10, 9, 8, 0.08) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(10, 9, 8, 0.40) 0%,
+      rgba(10, 9, 8, 0) 24%,
+      rgba(10, 9, 8, 0) 62%,
+      rgba(10, 9, 8, 0.88) 100%
+    );
+  z-index: 1;
+}
+
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social .tpl-ad-poster__rule {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 8px;
+  background: var(--s-brand-solid, #E07A4A);
+  z-index: 3;
+}
+
+/* THE MARK IS NOT SLIDE DATA: the theme carries the word and the slash colour,
+   as in outro. */
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social .tpl-ad-poster__brand {
+  flex: none;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-weight: var(--p-weight-700, 700);
+  font-size: 52px;
+  line-height: 1;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  text-transform: uppercase;
+  color: var(--s-ink-primary, #f6f1e7);
+}
+
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social .tpl-ad-poster__word::before {
+  content: var(--s-brand-wordmark, 'DFL');
+}
+
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social .tpl-ad-poster__mark {
+  color: var(--s-brand-solid, #E07A4A);
+}
+
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social .tpl-ad-poster__main {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 32px;
+}
+
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social .tpl-ad-poster__kicker {
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-weight: var(--p-weight-500, 500);
+  font-size: 28px;
+  line-height: 1.3;
+  letter-spacing: var(--p-tracking-wider, 0.8px);
+  text-transform: uppercase;
+  color: var(--s-ink-secondary, #c9c0b4);
+  overflow-wrap: break-word;
+}
+
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social .tpl-ad-poster__headline {
+  margin: 0;
+  max-width: 100%;
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-weight: var(--p-weight-700, 700);
+  font-size: 128px;
+  line-height: 0.94;
+  letter-spacing: var(--p-tracking-tight, -0.4px);
+  text-transform: uppercase;
+  color: var(--s-ink-primary, #f6f1e7);
+  overflow-wrap: break-word;
+}
+
+/* The second tone: the half of the headline that carries the offer. */
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social .tpl-ad-poster__highlight {
+  display: block;
+  color: var(--s-brand-solid, #E07A4A);
+}
+
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social .tpl-ad-poster__items {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  max-width: 780px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social .tpl-ad-poster__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 22px;
+}
+
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social .tpl-ad-poster__check {
+  flex: none;
+  width: 46px;
+  height: 46px;
+  margin-top: 2px;
+  border-radius: var(--p-radius-pill, 999px);
+  background: var(--s-brand-solid, #E07A4A);
+  color: var(--s-ink-inverse, #0a0908);
+  font-size: 28px;
+  font-weight: var(--p-weight-700, 700);
+  line-height: 46px;
+  text-align: center;
+}
+
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social .tpl-ad-poster__text {
+  min-width: 0;
+  font-size: 38px;
+  font-weight: var(--p-weight-500, 500);
+  line-height: 1.3;
+  color: var(--s-ink-primary, #f6f1e7);
+  overflow-wrap: break-word;
+}
+
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social .tpl-ad-poster__foot {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  margin-top: 40px;
+}
+
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social .tpl-ad-poster__foot:empty { display: none; }
+
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social .tpl-ad-poster__cta {
+  flex: none;
+  max-width: 100%;
+  padding: 26px 52px;
+  border-radius: var(--p-radius-pill, 999px);
+  background: var(--s-brand-solid, #E07A4A);
+  color: var(--s-ink-inverse, #0a0908);
+  font-family: var(--s-font-display, 'Barlow Condensed', sans-serif);
+  font-weight: var(--p-weight-700, 700);
+  font-size: 46px;
+  line-height: 1;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  text-transform: uppercase;
+  overflow-wrap: break-word;
+}
+
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social .tpl-ad-poster__handle {
+  min-width: 0;
+  margin-left: auto;
+  font-family: var(--s-font-mono, 'JetBrains Mono', monospace);
+  font-weight: var(--p-weight-500, 500);
+  font-size: 26px;
+  line-height: 1.3;
+  letter-spacing: var(--p-tracking-wide, 0.5px);
+  color: var(--s-ink-secondary, #c9c0b4);
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+/* Over a photograph the type sits on a scrim, which is dark in every theme. */
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social.tpl-ad-poster--media .tpl-ad-poster__brand,
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social.tpl-ad-poster--media .tpl-ad-poster__headline,
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social.tpl-ad-poster--media .tpl-ad-poster__text {
+  color: var(--s-ink-on-media, #f6f1e7);
+}
+
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social.tpl-ad-poster--media .tpl-ad-poster__kicker,
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social.tpl-ad-poster--media .tpl-ad-poster__handle {
+  color: var(--s-ink-on-media-muted, rgba(255, 255, 255, 0.70));
+}

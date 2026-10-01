@@ -1,0 +1,53 @@
+id: ad-poster
+name: Ad Poster
+version: "1.0.0"
+category: content
+# A feed ad is 4:5 and nothing else. It is not a deck slide, so it declares
+# only the social-portrait canvas (1080x1350) — same posture as feed-cover.
+canvases: [social-portrait]
+slots:
+  - name: headline
+    type: text
+    required: true
+    description: "The first tone of the headline, in the primary ink. Two to four words; with `highlight` the pair sets on three or four lines at 128px."
+    sample: "Seu produto"
+  - name: highlight
+    type: text
+    required: false
+    description: "Optional second tone of the headline, on its own line(s) in the brand accent — the half that carries the offer."
+    sample: "no ar em semanas"
+  - name: kicker
+    type: text
+    required: false
+    description: "Optional short setup line above the headline, in mono caps."
+    sample: "Software sob medida"
+  - name: items
+    type: items
+    required: true
+    description: |
+      The benefits, each behind a check mark. Three or four entries; one or two lines each (up to about 60 characters).
+        text — the benefit
+    sample:
+      - text: "Da ideia ao deploy, com time dedicado"
+      - text: "Entrega toda semana, em produção"
+      - text: "Código e infra ficam com você"
+  - name: cta
+    type: text
+    required: false
+    description: "Optional call to action, drawn as a pill at the foot. Two to four words."
+    sample: "Fale com a gente"
+  - name: handle
+    type: text
+    required: false
+    description: "Optional attribution at the foot, right side — a site or a social handle."
+    sample: "devfellowship.com"
+  - name: imageUrl
+    type: image
+    required: false
+    description: "Optional photograph bleeding behind the layout under a scrim. The subject should sit in the right half: the left half is covered for the type. Omit it and the ad sets on the themed surface."
+    sample: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&auto=format&fit=crop"
+  - name: imageAlt
+    type: text
+    required: false
+    description: "Alt text for the photograph"
+    sample: "A developer workstation with code on screen"

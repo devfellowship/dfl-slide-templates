@@ -1,0 +1,15 @@
+<div class="tpl-root tpl-ad-poster tpl-ad-poster--social{{#imageUrl}} tpl-ad-poster--media{{/imageUrl}}">
+  {{#imageUrl}}<img class="tpl-ad-poster__bg" src="{{imageUrl}}" alt="{{imageAlt}}" /><div class="tpl-ad-poster__scrim"></div>{{/imageUrl}}
+  <span class="tpl-ad-poster__rule"></span>
+  <div class="tpl-ad-poster__brand"><span class="tpl-ad-poster__word"></span><span class="tpl-ad-poster__mark">/</span></div>
+  <div class="tpl-ad-poster__main">
+    {{#kicker}}<span class="tpl-ad-poster__kicker">{{kicker}}</span>{{/kicker}}
+    <h1 class="tpl-ad-poster__headline">{{headline}}{{#highlight}} <span class="tpl-ad-poster__highlight">{{highlight}}</span>{{/highlight}}</h1>
+    <ul class="tpl-ad-poster__items">
+      {{#items}}
+      <li class="tpl-ad-poster__item"><span class="tpl-ad-poster__check">&#10003;</span><span class="tpl-ad-poster__text">{{text}}</span></li>
+      {{/items}}
+    </ul>
+  </div>
+  <div class="tpl-ad-poster__foot">{{#cta}}<span class="tpl-ad-poster__cta">{{cta}}</span>{{/cta}}{{#handle}}<span class="tpl-ad-poster__handle">{{handle}}</span>{{/handle}}</div>
+</div>

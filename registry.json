@@ -1043,6 +1043,31 @@
         "headline",
         "swipe"
       ]
+    },
+    {
+      "id": "ad-poster",
+      "version": "1.0.0",
+      "category": "content",
+      "name": "Ad Poster",
+      "when_to_use": "A single-image feed ad or promoted post (4:5) that sells an offer: a kicker, a two-tone caps headline, three or four checked benefits and one call-to-action pill, with an optional photograph bleeding behind the right half under a scrim. Social-portrait only; every element sits at least 96px inside the frame.",
+      "avoid_when": "A carousel cover that prompts a swipe (use feed-cover), a slide inside a deck (use title or bullet-list), a Reel or Short cover (use reel-cover), or a benefits list longer than four items.",
+      "media_profile": "balanced",
+      "text_density": "medium",
+      "layout": "social-portrait-only poster: top brand rule and theme wordmark, kicker, left-aligned two-tone caps headline, checked benefit list, call-to-action pill and handle at the foot, optional full-bleed photograph anchored right under a left-heavy scrim",
+      "tags": [
+        "ad",
+        "advertisement",
+        "promo",
+        "marketing",
+        "offer",
+        "cta",
+        "benefits",
+        "checklist",
+        "hero",
+        "social",
+        "4:5",
+        "feed"
+      ]
     }
   ]
 }

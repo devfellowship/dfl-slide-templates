@@ -1,6 +1,6 @@
 id: ad-poster
 name: Ad Poster
-version: "1.0.0"
+version: "1.1.0"
 category: content
 # A feed ad is 4:5 and nothing else. It is not a deck slide, so it declares
 # only the social-portrait canvas (1080x1350) — same posture as feed-cover.
@@ -46,6 +46,12 @@ slots:
     required: false
     description: "Optional photograph bleeding behind the layout under a scrim. The subject should sit in the right half: the left half is covered for the type. Omit it and the ad sets on the themed surface."
     sample: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&auto=format&fit=crop"
+  - name: imagePlacement
+    type: select
+    required: false
+    options: ["behind", "top"]
+    description: "Where the photograph sits. 'behind' (the default) bleeds it behind the whole layout, subject in the right half — for a scene or an object. 'top' sets it as a 600px band across the top with the type below — for a photograph of people, whose faces would otherwise sit under the headline."
+    sample: "behind"
   - name: imageAlt
     type: text
     required: false

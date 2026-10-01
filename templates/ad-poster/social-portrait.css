@@ -239,3 +239,56 @@
 .tpl-root.tpl-ad-poster.tpl-ad-poster--social.tpl-ad-poster--media .tpl-ad-poster__handle {
   color: var(--s-ink-on-media-muted, rgba(255, 255, 255, 0.70));
 }
+
+/* `imagePlacement: top` — the photograph is a band across the top instead of a
+   wash behind the type. For a photograph whose subject is PEOPLE: behind the
+   type their faces fight the headline; in a band they are seen whole, and the
+   type sets below on the themed surface the band fades into. */
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social.tpl-ad-poster--photo-top .tpl-ad-poster__bg {
+  inset: 0 0 auto 0;
+  height: 600px;
+  object-position: 50% 30%;
+}
+
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social.tpl-ad-poster--photo-top .tpl-ad-poster__scrim {
+  inset: 0 0 auto 0;
+  height: 602px;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 9, 8, 0.55) 0px,
+    rgba(10, 9, 8, 0.10) 170px,
+    rgba(10, 9, 8, 0.10) 330px,
+    var(--s-surface-page, #0a0908) 590px
+  );
+}
+
+/* Below the band the type is back on the themed surface, so it reads the
+   themed inks again. */
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social.tpl-ad-poster--media.tpl-ad-poster--photo-top .tpl-ad-poster__headline,
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social.tpl-ad-poster--media.tpl-ad-poster--photo-top .tpl-ad-poster__text {
+  color: var(--s-ink-primary, #f6f1e7);
+}
+
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social.tpl-ad-poster--media.tpl-ad-poster--photo-top .tpl-ad-poster__kicker,
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social.tpl-ad-poster--media.tpl-ad-poster--photo-top .tpl-ad-poster__handle {
+  color: var(--s-ink-secondary, #c9c0b4);
+}
+
+/* A lockup never sits on a textured photograph without a solid plate under it
+   (Revera guide 6.1), so in the band the mark carries its own. */
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social.tpl-ad-poster--media.tpl-ad-poster--photo-top .tpl-ad-poster__brand {
+  align-self: flex-start;
+  margin: -16px 0 0 -24px;
+  padding: 16px 24px;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+}
+
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social.tpl-ad-poster--photo-top .tpl-ad-poster__main {
+  justify-content: flex-end;
+  gap: 28px;
+}
+
+.tpl-root.tpl-ad-poster.tpl-ad-poster--social.tpl-ad-poster--photo-top .tpl-ad-poster__headline {
+  font-size: 118px;
+}

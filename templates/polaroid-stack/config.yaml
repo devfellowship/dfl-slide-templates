@@ -11,6 +11,8 @@ slots:
   - name: photos
     type: items
     required: true
+    mediaField: url
+    minItems: 3
     description: |
       Array of 3 photos rendered as slightly-rotated polaroid cards in a fan/stack.
       Each item:

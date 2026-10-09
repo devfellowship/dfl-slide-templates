@@ -6,6 +6,8 @@ slots:
   - name: images
     type: items
     required: true
+    mediaField: url
+    minItems: 3
     description: |
       Array of images rendered in an even grid (auto-fit 2–3 columns).
       Each item:

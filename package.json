@@ -9,11 +9,13 @@
     "lint:css": "node scripts/lint-css.mjs",
     "check:theme": "ts-node scripts/check-theme.ts",
     "test:automerge": "node .github/scripts/automerge-decide.test.mjs",
-    "check:registry": "node scripts/check-registry-shape.mjs"
+    "check:registry": "node scripts/check-registry-shape.mjs",
+    "check:media": "node scripts/check-media-fields.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.44.0",
     "@types/mustache": "^4.2.5",
+    "js-yaml": "^4.3.2",
     "mustache": "^4.2.0",
     "playwright": "^1.44.0",
     "ts-node": "^10.9.2",

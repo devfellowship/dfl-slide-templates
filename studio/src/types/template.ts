@@ -14,6 +14,12 @@ export interface TemplateSlot {
   required: boolean
   description: string
   sample?: string | string[] | Record<string, unknown>
+  /** items slots: a new slide starts with this many blank items. */
+  minItems?: number
+  /** items slots: the entry field that holds an image url. */
+  mediaField?: string
+  /** text slots: the slot holds an image or a video url. */
+  media?: "image" | "video"
 }
 
 export interface TemplateConfig {

@@ -6,6 +6,7 @@ slots:
   - name: videoUrl
     type: text
     required: true
+    media: video
     description: "Hosted HTTP(S) H.264 MP4 footage. It plays silently, loops to fill the slide, and exports as motion. Record portrait footage at 9:14 for the titled layout or 9:16 for the full-bleed one."
     sample: "https://media.devfellowship.com/d7339c49-f8ca-42b8-bcbc-d1074b0e8a7a"
   - name: posterUrl

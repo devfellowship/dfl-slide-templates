@@ -6,6 +6,8 @@ slots:
   - name: images
     type: items
     required: true
+    mediaField: url
+    minItems: 3
     description: |
       Array of 1–5 images rendered side-by-side in a row, evenly spaced.
       Each item:

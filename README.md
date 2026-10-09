@@ -61,6 +61,30 @@ slots:
 | `rows`     | Array of row objects (each has a `cells` array)  | `{{#rows}}…{{/rows}}`        |
 | `data`     | Arbitrary JSON string                            | `{{slotName}}`               |
 
+### Items born with the slide: `minItems`
+
+An `items` slot may declare `minItems: N`. A new slide on that layout starts with
+N blank items, so the author sees N empty media boxes instead of an empty stage.
+The editor reads the number from this file and keeps no per-layout list. A blank
+item holds every field that the `sample` entries declare, set to `""`.
+
+```yaml
+  - name: images
+    type: items
+    required: true
+    minItems: 3     # optional; a slide is born with 3 blank items
+```
+
+### Media fields: `mediaField` and `media`
+
+The editor gives every media field the Camera / Photo library picker. It reads
+which fields are media from the config. `npm run check:media` fails when a
+layout forgets:
+
+- an `items` slot whose entries hold a url: `mediaField: url` (the entry field)
+- a `text` slot that holds an image or video url: `media: image` or `media: video`
+- an `image` slot needs no flag
+
 ---
 
 ## HTML guidelines

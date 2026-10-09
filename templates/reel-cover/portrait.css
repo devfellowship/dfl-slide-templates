@@ -73,7 +73,22 @@
   z-index: 1;
 }
 
+/*
+ * Stacking-order fix (2026-09-18): the presenter's pool/floor shadow below
+ * (.tpl-reel-cover__pool / __floor, and the photo itself) are all
+ * `position: relative|absolute` with `z-index: auto`. Per the CSS2.1 painting
+ * order, a positioned descendant with `z-index: auto` paints AFTER a sibling's
+ * plain non-positioned in-flow content — regardless of DOM order — so the
+ * pool's radial gradient bled up over the bottom of the headline and darkened
+ * the middle of the orange line on published covers. `position: relative` plus
+ * an explicit `z-index` here gives the copy its own stacking context painted
+ * above `.tpl-reel-cover__figure`'s, so the text always sits on top of the
+ * shadow. This does NOT remove or shrink the shadow — it only fixes which
+ * layer wins where they overlap.
+ */
 .tpl-root.tpl-reel-cover.tpl-reel-cover--portrait .tpl-reel-cover__copy {
+  position: relative;
+  z-index: 1;
   width: 100%;
   text-align: center;
 }

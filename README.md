@@ -75,6 +75,16 @@ item holds every field that the `sample` entries declare, set to `""`.
     minItems: 3     # optional; a slide is born with 3 blank items
 ```
 
+### Media fields: `mediaField` and `media`
+
+The editor gives every media field the Camera / Photo library picker. It reads
+which fields are media from the config. `npm run check:media` fails when a
+layout forgets:
+
+- an `items` slot whose entries hold a url: `mediaField: url` (the entry field)
+- a `text` slot that holds an image or video url: `media: image` or `media: video`
+- an `image` slot needs no flag
+
 ---
 
 ## HTML guidelines

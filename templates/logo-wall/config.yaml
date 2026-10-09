@@ -16,6 +16,7 @@ slots:
   - name: logos
     type: items
     required: true
+    mediaField: url
     minItems: 3
     description: |
       Array of logo images rendered in a bordered grid. Each item:

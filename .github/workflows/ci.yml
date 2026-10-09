@@ -89,6 +89,10 @@ jobs:
       - name: Check the registry shape
         run: npm run check:registry
 
+      # Every image/video field must declare itself, so the editor gives it the picker.
+      - name: Check the media fields
+        run: npm ci --ignore-scripts --no-audit --no-fund && npm run check:media
+
   preview-regen:
     name: Canvas fill + previews
     runs-on: ubuntu-latest

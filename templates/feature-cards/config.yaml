@@ -16,6 +16,7 @@ slots:
   - name: cards
     type: items
     required: true
+    mediaField: iconUrl
     description: |
       Row of 3–4 feature cards. Each item:
         iconUrl — square image shown at the top of the card (optional)

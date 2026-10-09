@@ -11,6 +11,7 @@ slots:
   - name: images
     type: items
     required: true
+    mediaField: url
     minItems: 3
     description: |
       Array of images with per-cell captions, rendered in a 2×2 (or 3-col) grid.

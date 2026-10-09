@@ -14,6 +14,8 @@ export interface TemplateSlot {
   required: boolean
   description: string
   sample?: string | string[] | Record<string, unknown>
+  /** items slots: a new slide starts with this many blank items. */
+  minItems?: number
 }
 
 export interface TemplateConfig {

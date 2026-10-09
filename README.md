@@ -61,6 +61,20 @@ slots:
 | `rows`     | Array of row objects (each has a `cells` array)  | `{{#rows}}…{{/rows}}`        |
 | `data`     | Arbitrary JSON string                            | `{{slotName}}`               |
 
+### Items born with the slide: `minItems`
+
+An `items` slot may declare `minItems: N`. A new slide on that layout starts with
+N blank items, so the author sees N empty media boxes instead of an empty stage.
+The editor reads the number from this file and keeps no per-layout list. A blank
+item holds every field that the `sample` entries declare, set to `""`.
+
+```yaml
+  - name: images
+    type: items
+    required: true
+    minItems: 3     # optional; a slide is born with 3 blank items
+```
+
 ---
 
 ## HTML guidelines

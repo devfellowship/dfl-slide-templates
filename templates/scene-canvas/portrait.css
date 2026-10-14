@@ -1,0 +1,22 @@
+/* tpl-scene-canvas · portrait — 720×1280
+ *
+ * One full-bleed canvas painted frame by frame by the Lesson Studio scene
+ * engine. Slide text lives in free elements on top of it.
+ */
+
+.tpl-root.tpl-scene-canvas.tpl-scene-canvas--portrait {
+  position: relative;
+  width: 720px;
+  height: 1280px;
+  overflow: hidden;
+  box-sizing: border-box;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', sans-serif);
+}
+
+.tpl-root.tpl-scene-canvas.tpl-scene-canvas--portrait .scene-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

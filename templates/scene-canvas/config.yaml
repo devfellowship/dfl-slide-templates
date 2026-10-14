@@ -1,0 +1,19 @@
+id: scene-canvas
+name: Scene Canvas
+version: "1.0.0"
+category: media
+# No social-portrait: a scene is drawn frame by frame for video export only.
+canvases: [landscape, portrait]
+slots:
+  - name: scene
+    type: text
+    required: true
+    description: |
+      JSON string read by the Lesson Studio scene engine:
+      {"engine":"<engine id>","params":{...engine params...},"t0Ms":0}.
+      engine picks a registered scene engine, params is passed to it untouched,
+      t0Ms is the scene time (ms) drawn at the start of the slide. The canvas is
+      painted frame by frame by the scene animation preset; the static template
+      draws nothing. Put the slide text (title, callouts) in free text elements
+      on top of the canvas.
+    sample: '{"engine":"pulse-demo","params":{},"t0Ms":0}'

@@ -1,0 +1,22 @@
+/* tpl-scene-canvas · landscape — 1280×720
+ *
+ * One full-bleed canvas painted frame by frame by the Lesson Studio scene
+ * engine. Slide text lives in free elements on top of it.
+ */
+
+.tpl-root.tpl-scene-canvas.tpl-scene-canvas--landscape {
+  position: relative;
+  width: 1280px;
+  height: 720px;
+  overflow: hidden;
+  box-sizing: border-box;
+  background: var(--s-surface-page, #0a0908);
+  color: var(--s-ink-primary, #f6f1e7);
+  font-family: var(--s-font-body, 'Inter', sans-serif);
+}
+
+.tpl-root.tpl-scene-canvas.tpl-scene-canvas--landscape .scene-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

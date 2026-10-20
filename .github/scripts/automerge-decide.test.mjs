@@ -37,6 +37,26 @@ const realIds = realRegistry.templates.map((t) => t.id);
 let failures = 0;
 let ran = 0;
 
+/* The preview job keeps its visual checks, but generated PNGs stay ephemeral. */
+{
+  ran++;
+  const workflow = readFileSync(path.join(repoRoot, ".github", "workflows", "ci.yml"), "utf8");
+  const readme = readFileSync(path.join(repoRoot, "README.md"), "utf8");
+  const required = ["- name: Generate previews", "- name: Check for preview drift"];
+  const missing = required.filter((text) => !workflow.includes(text));
+  const forbidden = ["actions/upload-artifact", "regenerated-previews"].filter(
+    (text) => workflow.includes(text) || readme.includes(text),
+  );
+  if (missing.length || forbidden.length) {
+    failures++;
+    console.log(
+      `FAIL  preview artifact policy: missing [${missing.join(", ")}], forbidden [${forbidden.join(", ")}]`,
+    );
+  } else {
+    console.log("ok    preview generation and drift checks remain without a regenerated preview artifact");
+  }
+}
+
 /* Every rule id this suite actually asserts a refusal on. Read by the meta-check
    at the foot of the file, so a new rule cannot ship untested. */
 const assertedRules = new Set();

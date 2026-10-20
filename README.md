@@ -618,8 +618,9 @@ The GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push and 
 - **preview-regen** — canvas-fill guard, theme-conformance guard, then
   regenerates all previews using Playwright.
   - On **pull requests**: it re-renders every preview and **warns** when an image
-    differs from the committed one, then uploads the regenerated set as the
-    `regenerated-previews` artifact.
+    differs from the committed one. It does not upload the regenerated set.
+    Review committed preview changes in the pull request, or run
+    `npm run preview` locally to reproduce the render.
   - 🚨 **The drift step emits `::warning::` and exits 0. It is not a gate.** CI
     fonts and Chromium differ from a local render, so a real difference and a
     harmless one look the same today. Read a green `preview-regen` as "canvas

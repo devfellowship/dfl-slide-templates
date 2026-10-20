@@ -137,17 +137,8 @@ jobs:
         if: github.event_name == 'pull_request'
         run: |
           if ! git diff --quiet; then
-            echo "::warning::Preview images differ from committed versions. CI-rendered previews can drift from local renders due to font/Chromium differences — download the 'regenerated-previews' artifact if you want to inspect or commit them."
+            echo "::warning::Preview images differ from committed versions. Review committed preview changes in the pull request, or reproduce the render locally with 'npm run preview'. CI-rendered previews can drift from local renders due to font/Chromium differences."
             git diff --stat
           else
             echo "No preview drift detected."
           fi
-
-      - name: Upload regenerated previews
-        if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v4
-        with:
-          name: regenerated-previews
-          path: templates/**/preview-*.png
-          if-no-files-found: warn
-          retention-days: 14

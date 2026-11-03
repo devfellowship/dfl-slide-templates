@@ -10,7 +10,8 @@
     "check:theme": "ts-node scripts/check-theme.ts",
     "test:automerge": "node .github/scripts/automerge-decide.test.mjs",
     "check:registry": "node scripts/check-registry-shape.mjs",
-    "check:media": "node scripts/check-media-fields.mjs"
+    "check:media": "node scripts/check-media-fields.mjs",
+    "check:umami": "node scripts/check-umami-exclude-hash.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.44.0",

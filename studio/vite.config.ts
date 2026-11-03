@@ -22,6 +22,9 @@ function umamiTag(mode: string): Plugin {
             defer: true,
             src: 'https://analytics.devfellowship.com/script.js',
             'data-website-id': websiteId,
+            // The GitHub OAuth return carries tokens in the URL hash
+            // (#access_token=...). Umami records the hash by default.
+            'data-exclude-hash': 'true',
           },
           injectTo: 'head',
         },

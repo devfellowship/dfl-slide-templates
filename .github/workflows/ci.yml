@@ -21,7 +21,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "26"
           cache: "npm"
 
       - name: Install dependencies
@@ -43,7 +43,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "26"
 
       - name: Check the Umami tag
         run: npm run check:umami
@@ -65,7 +65,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "26"
 
       # No `npm ci`: the rule engine is dependency-free on purpose, so the gate
       # never runs third-party code to decide whether to merge.
@@ -99,7 +99,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "26"
 
       # No `npm ci`: the check is dependency-free, the same posture as the merge
       # gate. A guard must not run third-party code to decide whether this
@@ -122,7 +122,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "26"
           cache: "npm"
 
       - name: Install dependencies

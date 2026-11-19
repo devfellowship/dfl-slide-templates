@@ -111,6 +111,8 @@ const GREEN = {
     "Lint CSS scoping",
     "Auto-merge rule engine",
     "Canvas fill + previews > Check canvas fill",
+    "Canvas fill + previews > Check component render (every component × every theme)",
+    "Component format + safety",
   ];
   const absent = wanted.filter((w) => !declared.includes(w));
   const themeGuard = conf.rules.guard.find(

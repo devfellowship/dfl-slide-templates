@@ -62,6 +62,13 @@ const RANKED_FIELDS = ['name', 'when_to_use', 'media_profile', 'tags', 'layout',
 /** The `themes[]` shape `list_themes` serves as the source of truth. */
 const THEME_FIELDS = ['id', 'name', 'file', 'mode'];
 
+/**
+ * The `components[]` shape: overlay components (plan
+ * 20261119-lesson-studio-overlay-components, ADR-1). Same discoverability
+ * fields as a slide entry, so the studio MCP can rank them the same way.
+ */
+const COMPONENT_FIELDS = ['id', 'version', 'name', 'when_to_use', 'avoid_when', 'tags'];
+
 const failures = [];
 function fail(msg) {
   failures.push(msg);
@@ -93,9 +100,13 @@ if (String(parsed.$schema_version) !== '2') {
       `and dfl-schema:publish-template writes it.`,
   );
 }
-for (const key of ['themes', 'templates']) {
+for (const key of ['themes', 'templates', 'components']) {
   if (!Array.isArray(parsed[key])) {
-    fail(`there is no top-level "${key}" array. publish-template FAILS CLOSED on that, so no template or theme could be published.`);
+    fail(
+      key === 'components'
+        ? 'there is no top-level "components" array. Overlay components are listed there (components_doc), and the component consumers read it.'
+        : `there is no top-level "${key}" array. publish-template FAILS CLOSED on that, so no template or theme could be published.`,
+    );
   }
 }
 if (failures.length) {
@@ -144,7 +155,7 @@ if (text.slice(here) !== restringified.slice(there)) {
 
 /* ── no ambiguous target ─────────────────────────────────────────────────── */
 
-for (const key of ['templates', 'themes']) {
+for (const key of ['templates', 'themes', 'components']) {
   const seen = new Map();
   for (const entry of parsed[key]) {
     seen.set(entry.id, (seen.get(entry.id) ?? 0) + 1);
@@ -201,6 +212,33 @@ for (const entry of parsed.themes) {
   }
 }
 
+/* ── components[]: overlay components ────────────────────────────────────── */
+/*
+ * A component is NOT a slide: it lives in components/<id>/ and in this array
+ * only, so a slide consumer never lists it. Its directory must hold the
+ * generated slot contract (schema.json), which Studio, the MCP tools and the
+ * long-tutorial skill read. An id that is ALSO a template id would make
+ * "get by id" ambiguous for a consumer that reads both arrays.
+ */
+{
+  const templateIds = new Set(parsed.templates.map((t) => String(t.id)));
+  for (const entry of parsed.components) {
+    const id = entry.id ?? '<no id>';
+    for (const field of COMPONENT_FIELDS) {
+      if (isEmptyValue(entry[field])) fail(`components[] entry '${id}' has no ${field}: the component would be unfindable for an agent.`);
+    }
+    if (!Array.isArray(entry.tags)) fail(`components[] entry '${id}' has a non-array tags field.`);
+    if (templateIds.has(String(entry.id))) fail(`components[] entry '${id}' reuses a templates[] id; a consumer that reads both arrays could not tell them apart.`);
+    if (!existsSync(join(REPO_ROOT, 'components', String(entry.id), 'schema.json'))) {
+      fail(`components[] entry '${id}' has no components/${id}/schema.json, so no consumer can read its slot contract.`);
+    }
+  }
+  const registered = new Set(parsed.components.map((c) => String(c.id)));
+  for (const dir of readdirSafe(join(REPO_ROOT, 'components'))) {
+    if (!registered.has(dir)) fail(`components/${dir}/ exists but has no components[] entry in registry.json.`);
+  }
+}
+
 /* ── every template directory is registered ──────────────────────────────── */
 /*
  * The reverse direction of the check above. An unregistered template renders in
@@ -232,7 +270,7 @@ report();
 function report() {
   if (failures.length === 0) {
     console.log(
-      `registry.json shape OK: ${parsed.templates.length} templates, ${parsed.themes.length} themes.`,
+      `registry.json shape OK: ${parsed.templates.length} templates, ${parsed.themes.length} themes, ${parsed.components.length} components.`,
     );
     process.exit(0);
   }

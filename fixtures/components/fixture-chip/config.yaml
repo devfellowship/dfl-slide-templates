@@ -1,0 +1,37 @@
+# TEST FIXTURE, not a product component. It is not in registry.json, so no
+# picker lists it. It exists so CI always has one component to generate a
+# schema for, to lint and to render in every theme (plan
+# 20261119-lesson-studio-overlay-components, T1). Its slot vocabulary matches
+# the long-video call-out slot spec (internal-skills
+# skills/recording-to-publish/scripts/callout.schema.json): a `type` enum of
+# six values, a short term, an optional image.
+id: fixture-chip
+name: Fixture chip
+version: "1.0.0"
+kind: component
+description: "A one-line chip: a type icon or an image, then a short term."
+box:
+  width: 480
+  height: 96
+anchors: [bottom-left, bottom-right, top-left, top-right, lower-third]
+default_anchor: bottom-left
+duration_ms: 4000
+slots:
+  - name: type
+    type: select
+    options: [conceito, ferramenta, ia, giria, codigo, noticia]
+    default: conceito
+    required: false
+    description: "Picks the icon when there is no image."
+    sample: ia
+  - name: term
+    type: text
+    required: true
+    max_length: 40
+    max_words: 3
+    description: "The term, 1 to 3 words."
+    sample: "AI SEO"
+  - name: image
+    type: image
+    required: false
+    description: "Optional https image (a logo or a screen crop) on the DFL media allowlist. When absent, the type icon shows."

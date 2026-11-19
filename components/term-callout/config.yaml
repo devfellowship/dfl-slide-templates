@@ -1,7 +1,7 @@
 # The long-video call-out as an overlay component (plan
 # 20261119-lesson-studio-overlay-components, T2). The look is style C of plan
 # 20261119-yt-long-callout-style-options (Tainan, Q 6d73ce51 = C): a dark panel,
-# a thin brand border, a square slot on the left (the image, or the Lucide icon
+# a black border and a strong shadow (TG 32881), a square slot on the left (the image, or the Lucide icon
 # of the type when there is no image, with no tile around it), the term and one
 # short line on the right, no badge, half size. It matches the Pillow renderer
 # internal-skills:skills/recording-to-publish/scripts/callout_card.py, and the

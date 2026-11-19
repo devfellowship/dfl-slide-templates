@@ -8,11 +8,11 @@
   gap: 12px;
   box-sizing: border-box;
   max-width: 420px;
-  padding: 13px 15px 12px; /* callout_card.py pads 15 17 14, but draws its 2 px border inside */
+  padding: 12px 14px 11px; /* callout_card.py pads 15 17 14, but draws its 3 px border inside */
   background: var(--s-surface-raised, #1a1714);
-  border: 2px solid var(--s-brand-solid, #e07a4a);
+  border: 3px solid #000; /* Tainan TG 32881: black border, the same in every theme */
   border-radius: 7px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.92); /* strong shadow, = callout_card.py SHADOW_* */
   font-family: var(--s-font-body, "Inter", sans-serif);
 }
 

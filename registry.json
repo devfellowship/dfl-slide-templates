@@ -1092,5 +1092,21 @@
       ]
     }
   ],
-  "components": []
+  "components": [
+    {
+      "id": "term-callout",
+      "version": "1.0.0",
+      "name": "Call-out",
+      "when_to_use": "Explain a term, a tool or a piece of slang for 4-5 s over a video or a slide: a small card with a type icon (or a logo or screen crop), a 1-3 word term and one short line of text.",
+      "avoid_when": "A full-slide statement or a long explanation; use a slide template. Also avoid when the term needs more than one short line.",
+      "tags": [
+        "callout",
+        "overlay",
+        "term",
+        "glossary",
+        "long-video",
+        "lower-third"
+      ]
+    }
+  ]
 }

@@ -1,0 +1,41 @@
+/* Test fixture (see config.yaml). Every selector is scoped under .tpl-root;
+   every colour and family comes from the theme tokens. The page behind a
+   component is transparent: only the chip paints. */
+.tpl-root.tpl-cmp-fixture-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  box-sizing: border-box;
+  max-width: 480px;
+  height: 96px;
+  padding: 0 28px 0 20px;
+  background: var(--s-surface-raised, #1b1712);
+  border: 2px solid var(--s-brand-solid, #f5a524);
+  border-radius: 12px;
+  color: var(--s-ink-primary, #f4ede4);
+  font-family: var(--s-font-display, "Barlow Condensed", sans-serif);
+}
+
+.tpl-root.tpl-cmp-fixture-chip .tpl-cmp-fixture-chip__slot {
+  display: inline-flex;
+  flex: 0 0 auto;
+  width: 48px;
+  height: 48px;
+  color: var(--s-brand-solid, #f5a524);
+}
+
+.tpl-root.tpl-cmp-fixture-chip .tpl-cmp-fixture-chip__icon,
+.tpl-root.tpl-cmp-fixture-chip .tpl-cmp-fixture-chip__img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.tpl-root.tpl-cmp-fixture-chip .tpl-cmp-fixture-chip__term {
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

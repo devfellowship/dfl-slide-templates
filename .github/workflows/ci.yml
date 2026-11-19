@@ -111,6 +111,40 @@ jobs:
       - name: Check the media fields
         run: npm ci --ignore-scripts --no-audit --no-fund && npm run check:media
 
+  component-format:
+    name: Component format + safety
+    # Overlay components (components/<id>/, plan
+    # 20261119-lesson-studio-overlay-components). Tainan, TG 32831: "we must not
+    # allow injecting scripts through components". The safety lint is an
+    # allow-list of elements and attributes and fails closed; it also runs over
+    # fixtures/components/, so it never passes on an empty set. schema.json is
+    # the slot contract that Studio, the MCP tools and the long-tutorial skill
+    # read, so it must be exactly what config.yaml generates.
+    # Public repo: self-hosted dfl-runner blocked (allows_public=false). Authorized Tainan TG 2026-06-06.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # Before `npm ci`, on purpose: the safety lint is dependency-free, so the
+      # decision "is this component safe" never runs third-party code.
+      - name: Check component safety (no script vector)
+        run: npm run check:component-safety
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Check schema.json is generated from config.yaml
+        run: npm run check:component-schema
+
+      - name: Test the component format (named injection cases)
+        run: npm run test:components
+
   preview-regen:
     name: Canvas fill + previews
     runs-on: ubuntu-latest
@@ -147,6 +181,12 @@ jobs:
       # DevFellowship literal and the deck renders in the wrong brand.
       - name: Check theme conformance (every template × every theme)
         run: npm run check:theme
+
+      # Every overlay component × every theme, on a transparent page: mount,
+      # box, theme tokens, brand fonts, and a hostile slot value that must show
+      # as text with zero <script> and zero on* attributes in the DOM.
+      - name: Check component render (every component × every theme)
+        run: npm run check:component-render
 
       - name: Generate previews
         run: npm run preview

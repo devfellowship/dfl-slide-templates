@@ -11,7 +11,12 @@
     "test:automerge": "node .github/scripts/automerge-decide.test.mjs",
     "check:registry": "node scripts/check-registry-shape.mjs",
     "check:media": "node scripts/check-media-fields.mjs",
-    "check:umami": "node scripts/check-umami-exclude-hash.mjs"
+    "check:umami": "node scripts/check-umami-exclude-hash.mjs",
+    "gen:component-schema": "node scripts/component-format.mjs",
+    "check:component-schema": "node scripts/component-format.mjs --check",
+    "check:component-safety": "node scripts/check-component-safety.mjs",
+    "check:component-render": "node scripts/check-component-render.mjs",
+    "test:components": "node --test scripts/components.test.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.44.0",

@@ -31,8 +31,28 @@ themes/
   devfellowship.css       # the DFL Design System tokens (see "Theming" below)
   itera.css               # DFL sub-brand · evergreen accent
   revera.css              # DFL sub-brand · trust-blue accent
-registry.json             # master list of all templates AND all themes
+components/
+  README.md               # the overlay component format spec
+  <id>/                   # one overlay component (config.yaml, component.html/.css, schema.json)
+fixtures/components/      # test-only components; every component guard runs on them too
+registry.json             # master list of all templates, all themes AND all overlay components
 ```
+
+---
+
+## Overlay components
+
+An overlay component is a small HTML box (a call-out, a chip) that Lesson
+Studio places over a slide or a video for a time window. It is not a slide.
+It lives in `components/<id>/`, is listed in the `components` array of
+`registry.json` (never in `templates`), and has three slot types only: `text`,
+`select`, `image`. Its slot contract, `schema.json`, is generated from
+`config.yaml` (`npm run gen:component-schema`). CI refuses any script vector
+(`npm run check:component-safety`) and renders each component in every theme
+(`npm run check:component-render`).
+
+Full spec: [`components/README.md`](components/README.md). Plan:
+`20261119-lesson-studio-overlay-components`.
 
 ---
 

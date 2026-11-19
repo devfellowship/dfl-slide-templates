@@ -1,0 +1,48 @@
+# The long-video call-out as an overlay component (plan
+# 20261119-lesson-studio-overlay-components, T2). The look is style C of plan
+# 20261119-yt-long-callout-style-options (Tainan, Q 6d73ce51 = C): a dark panel,
+# a thin brand border, a square slot on the left (the image, or the Lucide icon
+# of the type when there is no image, with no tile around it), the term and one
+# short line on the right, no badge, half size. It matches the Pillow renderer
+# internal-skills:skills/recording-to-publish/scripts/callout_card.py, and the
+# slot vocabulary matches its callout.schema.json (`type`, `term`, `text`,
+# `image`). The skill keeps local files and screen crops on its side; here
+# `image` is an https URL on the DFL media allowlist. The id is `term-callout`,
+# not `callout`: templates/callout is a slide template, and the registry shape
+# check refuses an id shared by templates[] and components[].
+id: term-callout
+name: Call-out
+version: "1.0.0"
+kind: component
+description: "A small card over a video: a type icon or an image, a short term and one line of text."
+box:
+  width: 420
+  height: 125
+anchors: [bottom-left, bottom-right, top-left, top-right, lower-third]
+default_anchor: bottom-left
+duration_ms: 4500
+slots:
+  - name: type
+    type: select
+    options: [conceito, ferramenta, ia, giria, codigo, noticia]
+    default: conceito
+    required: false
+    description: "Picks the icon when there is no image: conceito = book, ferramenta = wrench, ia = sparkles, giria = languages, codigo = code, noticia = newspaper."
+    sample: ia
+  - name: term
+    type: text
+    required: true
+    max_length: 40
+    max_words: 3
+    description: "The term, 1 to 3 words."
+    sample: "AI SEO"
+  - name: text
+    type: text
+    required: true
+    max_length: 120
+    description: "One short line, 8 to 12 words."
+    sample: "Otimizar o conteúdo para que as IAs citem a sua marca nas respostas."
+  - name: image
+    type: image
+    required: false
+    description: "Optional https image (a logo or a screen crop) on the DFL media allowlist. When absent, the type icon shows."

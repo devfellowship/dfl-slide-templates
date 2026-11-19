@@ -1,0 +1,65 @@
+/* Call-out overlay (style C, Tainan Q 6d73ce51). Every selector is scoped under
+   .tpl-root; every colour and family comes from the theme tokens. The page behind
+   a component is transparent: only the card paints. Sizes are the half-size card
+   of callout_card.py (SCALE 0.5) on the 1920x1080 canvas. */
+.tpl-root.tpl-cmp-term-callout {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  box-sizing: border-box;
+  max-width: 420px;
+  padding: 13px 15px 12px; /* callout_card.py pads 15 17 14, but draws its 2 px border inside */
+  background: var(--s-surface-raised, #1a1714);
+  border: 2px solid var(--s-brand-solid, #e07a4a);
+  border-radius: 7px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.55);
+  font-family: var(--s-font-body, "Inter", sans-serif);
+}
+
+/* The bare slot: nothing is drawn around the image or the icon. */
+.tpl-root.tpl-cmp-term-callout .tpl-cmp-term-callout__slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 54px;
+  height: 54px;
+  color: var(--s-brand-fg, #f0a872);
+}
+
+.tpl-root.tpl-cmp-term-callout .tpl-cmp-term-callout__icon {
+  width: 42px;
+  height: 42px;
+}
+
+.tpl-root.tpl-cmp-term-callout .tpl-cmp-term-callout__img {
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+  border-radius: 5px;
+}
+
+.tpl-root.tpl-cmp-term-callout .tpl-cmp-term-callout__body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  max-width: 320px;
+}
+
+.tpl-root.tpl-cmp-term-callout .tpl-cmp-term-callout__term {
+  margin-bottom: 5px;
+  color: var(--s-ink-primary, #f6f1e7);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 28px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tpl-root.tpl-cmp-term-callout .tpl-cmp-term-callout__text {
+  color: var(--s-ink-secondary, #c9c0b4);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 21px;
+}

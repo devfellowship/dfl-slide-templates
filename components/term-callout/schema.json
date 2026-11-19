@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "urn:dfl-slide-templates:component:term-callout",
+  "title": "Call-out — overlay component slots",
+  "description": "GENERATED from config.yaml next to this file by scripts/component-format.mjs (npm run gen:component-schema). Do not edit by hand: CI fails when this file drifts from config.yaml. This is the slot contract that Lesson Studio, the studio MCP tools and the long-tutorial skill read.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "term",
+    "text"
+  ],
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "conceito",
+        "ferramenta",
+        "ia",
+        "giria",
+        "codigo",
+        "noticia"
+      ],
+      "default": "conceito",
+      "description": "Picks the icon when there is no image: conceito = book, ferramenta = wrench, ia = sparkles, giria = languages, codigo = code, noticia = newspaper.",
+      "x-dfl-slot-type": "select"
+    },
+    "term": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 40,
+      "pattern": "^\\s*\\S+(\\s+\\S+){0,2}\\s*$",
+      "description": "The term, 1 to 3 words.",
+      "x-dfl-slot-type": "text",
+      "x-dfl-max-words": 3
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120,
+      "description": "One short line, 8 to 12 words.",
+      "x-dfl-slot-type": "text"
+    },
+    "image": {
+      "type": "string",
+      "format": "uri",
+      "maxLength": 2048,
+      "pattern": "^https://([a-z0-9-]+\\.)*(devfellowship\\.com|supabase\\.co|s3\\.amazonaws\\.com)(/[^\\s\"'<>\\\\]*)?$",
+      "description": "Optional https image (a logo or a screen crop) on the DFL media allowlist. When absent, the type icon shows.",
+      "x-dfl-slot-type": "image"
+    }
+  },
+  "x-dfl-component": {
+    "id": "term-callout",
+    "name": "Call-out",
+    "version": "1.0.0",
+    "box": {
+      "width": 420,
+      "height": 125
+    },
+    "anchors": [
+      "bottom-left",
+      "bottom-right",
+      "top-left",
+      "top-right",
+      "lower-third"
+    ],
+    "default_anchor": "bottom-left",
+    "duration_ms": 4500,
+    "view_flags": {
+      "type": [
+        "type__conceito",
+        "type__ferramenta",
+        "type__ia",
+        "type__giria",
+        "type__codigo",
+        "type__noticia"
+      ]
+    }
+  }
+}
